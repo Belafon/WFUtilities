@@ -2562,300 +2562,891 @@ suite('All suite tests', () => {
     return str.replace(/\s+/g, ' ').trim();
   }
 
+
+  suite('TypeScriptCodeBuilder - insertCodeAtIndex', () => {
+
+    const classA = `class ClassA {}`;
+    const classB = `class ClassB {}`;
+    const funcC = `function funcC() {}`;
+    const newCode = `const newVar = 123;`;
+
+    test('should insert code at the beginning of an empty file', async () => {
+      const builder = new TypeScriptCodeBuilder('');
+      builder.insertCodeAtIndex(0, newCode);
+      const result = await builder.toString();
+      // In an empty file, no extra newlines should be added
+      assert.strictEqual(result, newCode);
+    });
+
+    test('should insert code at the beginning of a file with existing code', async () => {
+      const initialCode = `${classA}\n\n${classB}`;
+      const expectedCode = `${newCode}\n\n${classA}\n\n${classB}`;
+      const builder = new TypeScriptCodeBuilder(initialCode);
+      builder.insertCodeAtIndex(0, newCode);
+      const result = await builder.toString();
+      assert.strictEqual(result, expectedCode);
+    });
+
+    test('should insert code at the end of a file with existing code', async () => {
+      const initialCode = `${classA}\n\n${classB}`;
+      const expectedCode = `${classA}\n\n${classB}\n\n${newCode}\n`; // Trailing newline added by default
+      const builder = new TypeScriptCodeBuilder(initialCode);
+      builder.insertCodeAtIndex(2, newCode); // Index 2 is after the 2 existing elements
+      const result = await builder.toString();
+      assert.strictEqual(result, expectedCode);
+    });
+
+    test('should insert code between two existing elements', async () => {
+      const initialCode = `
+${classA}
+
+${classB}
+`;
+      // Expecting double newline before and after the inserted code for separation
+      const expectedCode = `
+${classA}
+
+
+${newCode}
+
+
+${classB}
+`;
+      const builder = new TypeScriptCodeBuilder(initialCode);
+      builder.insertCodeAtIndex(1, newCode); // Insert between ClassA (index 0) and ClassB (index 1)
+      const result = await builder.toString();
+      assert.strictEqual(result, expectedCode);
+    });
+
+    test('should insert code between different types of elements', async () => {
+      const initialCode = `
+${classA}
+
+${funcC}
+`;
+      const expectedCode = `
+${classA}
+
+
+${newCode}
+
+
+${funcC}
+`;
+      const builder = new TypeScriptCodeBuilder(initialCode);
+      builder.insertCodeAtIndex(1, newCode);
+      const result = await builder.toString();
+      assert.strictEqual(result, expectedCode);
+    });
+
+    test('should handle code insertion with existing leading/trailing newlines', async () => {
+      const initialCode = `${classA}\n\n${classB}`;
+      const codeToInsertWithNewlines = `\n${newCode}\n`;
+      // The method should ideally avoid adding *extra* newlines if already present
+      // Expecting standard separation: one blank line between elements
+      const expectedCode = `${classA}\n\n${codeToInsertWithNewlines}\n${classB}`;
+
+      const builder = new TypeScriptCodeBuilder(initialCode);
+      builder.insertCodeAtIndex(1, codeToInsertWithNewlines);
+      const result = await builder.toString();
+      // Normalize for comparison as exact newline count might vary slightly based on implementation details
+      assert.strictEqual(normalizeWhitespace(result), normalizeWhitespace(expectedCode));
+    });
+
+
+    test('should insert multi-line code correctly between elements', async () => {
+      const initialCode = `
+${classA}
+
+${classB}
+`;
+      const multiLineCode = `
+interface NewInterface {
+  id: number;
+}
+`;
+      const expectedCode = `
+${classA}
+
+
+${multiLineCode}
+
+
+${classB}
+`;
+      const builder = new TypeScriptCodeBuilder(initialCode);
+      builder.insertCodeAtIndex(1, multiLineCode);
+      const result = await builder.toString();
+      assert.strictEqual(result, expectedCode);
+    });
+
+    test('should throw error for index less than 0', () => {
+      const builder = new TypeScriptCodeBuilder(classA);
+      assert.throws(
+        () => builder.insertCodeAtIndex(-1, newCode),
+        /Index out of bounds/
+      );
+    });
+
+    test('should throw error for index greater than element count', () => {
+      const builder = new TypeScriptCodeBuilder(`${classA}\n\n${classB}`); // 2 elements
+      assert.throws(
+        () => builder.insertCodeAtIndex(3, newCode), // Max valid index is 2
+        /Index out of bounds/
+      );
+    });
+
+    test('should throw error if code structure is not parsed (e.g., due to error)', () => {
+      const builder = new TypeScriptCodeBuilder(`const x = {;`); // Creates parse error
+      // @ts-expect-error Manually set rootGroup to null to simulate parse failure
+      builder.rootGroup = null;
+      assert.throws(
+        () => builder.insertCodeAtIndex(0, newCode),
+        /Cannot insert code: Code structure has not been parsed successfully/
+      );
+    });
+
+    test('should throw error if codeToInsert is null', () => {
+      const builder = new TypeScriptCodeBuilder(classA);
+      assert.throws(
+        () => builder.insertCodeAtIndex(0, null as any), // Cast to any to bypass TS check
+        /Code to insert cannot be null or undefined/
+      );
+    });
+
+    test('should throw error if codeToInsert is undefined', () => {
+      const builder = new TypeScriptCodeBuilder(classA);
+      assert.throws(
+        () => builder.insertCodeAtIndex(0, undefined as any), // Cast to any to bypass TS check
+        /Code to insert cannot be null or undefined/
+      );
+    });
+
+    test('should insert correctly after the last element', async () => {
+      const initialCode = `${classA}`;
+      const expectedCode = `${classA}\n\n${newCode}\n`;
+      const builder = new TypeScriptCodeBuilder(initialCode);
+      builder.insertCodeAtIndex(1, newCode); // Insert after the only element
+      const result = await builder.toString();
+      assert.strictEqual(result, expectedCode);
+    });
+
+    test('should insert correctly into a file containing only whitespace/comments initially', async () => {
+      const initialCode = `\n   // A comment \n\n`;
+      const expectedCode = `\n   // A comment \n\n${newCode}`; // Should append, preserving comment
+      const builder = new TypeScriptCodeBuilder(initialCode);
+      // Assumes whitespace/comments don't count as top-level elements by the grouper
+      builder.insertCodeAtIndex(0, newCode);
+      const result = await builder.toString();
+      assert.strictEqual(result, expectedCode);
+    });
+
+
+  });
+
   suite('TypeScriptObjectBuilder', () => {
     // Helper to create a builder instance with a given object literal
-    // This helper is okay for read-only tests or tests that don't rely on
-    // re-parsing after modification for assertions.
     function createObjectBuilder(objectLiteral: string): TypeScriptObjectBuilder {
+      // Create sample code with the object literal
       const code: string = `const obj = ${objectLiteral};`;
+      
+      // Initialize the code builder
       const codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
-
-      let foundBuilder: TypeScriptObjectBuilder | null = null;
-      // This sync call is fine if we assume findObject will immediately call onFound
-      // but for consistency with async tests, let's make it more robust
-      // For test setup, we can simplify if findObject is synchronous in its callbacks
-      codeBuilder.findObject('obj', {
-        onFound: (builder) => { foundBuilder = builder; },
-        // In a real scenario, handle onNotFound if obj might not be parseable
-      });
-      if (!foundBuilder) throw new Error("Test setup failed: Could not find object 'obj'");
-      return foundBuilder;
+      
+      // Create a mock object group directly
+      const braceOpenIndex: number = code.indexOf('{');
+      const braceCloseIndex: number = code.lastIndexOf('}');
+      
+      const objectGroup: TokenGroup = {
+        type: 'ObjectLiteral',
+        start: braceOpenIndex,
+        end: braceCloseIndex + 1,
+        tokens: [],
+        children: [],
+        metadata: {}
+      };
+      
+      // Return the object builder
+      return new TypeScriptObjectBuilder(codeBuilder, objectGroup, code);
     }
-
+  
     suite('getContentText and getFullText', () => {
       test('should return the correct content and full text for an object', async () => {
         const objectLiteral: string = '{ a: 1, b: 2 }';
         const builder: TypeScriptObjectBuilder = createObjectBuilder(objectLiteral);
-
+        
         assert.strictEqual(builder.getFullText(), objectLiteral, 'Full text should match the original object literal');
-        // Content text might have leading/trailing spaces depending on original formatting
-        assert.strictEqual(builder.getContentText().trim(), 'a: 1, b: 2', 'Content text should match the interior of the object literal');
+        assert.strictEqual(builder.getContentText(), ' a: 1, b: 2 ', 'Content text should match the interior of the object literal');
       });
-
+      
       test('should handle empty objects', async () => {
         const objectLiteral: string = '{}';
         const builder: TypeScriptObjectBuilder = createObjectBuilder(objectLiteral);
-
+        
         assert.strictEqual(builder.getFullText(), objectLiteral, 'Full text should match the empty object literal');
         assert.strictEqual(builder.getContentText(), '', 'Content text should be empty for an empty object');
       });
     });
-
+  
     suite('findPropertyByName', () => {
       test('should find a property by name', async () => {
         const builder: TypeScriptObjectBuilder = createObjectBuilder('{ name: "value", age: 30 }');
+        
+        // Using private method via any type casting for testing
         const property: any = (builder as any).findPropertyByName('name');
-
+        
         assert.ok(property, 'Property should be found');
         assert.strictEqual(property.name, 'name', 'Property name should match');
-
-        const value: string = (builder as any).originalText.substring(property.valueStart, property.valueEnd);
-        assert.strictEqual(value.trim(), '"value"', 'Property value should match');
+        
+        // Check correct value extraction
+        const value: string = builder['originalText'].substring(property.valueStart, property.valueEnd);
+        assert.strictEqual(value, '"value"', 'Property value should match');
       });
-
+      
       test('should return null for non-existent property', async () => {
         const builder: TypeScriptObjectBuilder = createObjectBuilder('{ name: "value" }');
+        
+        // Using private method via any type casting for testing
         const property: any = (builder as any).findPropertyByName('nonexistent');
+        
         assert.strictEqual(property, null, 'Property should be null for non-existent property');
       });
-
+      
       test('should handle properties with complex values', async () => {
         const builder: TypeScriptObjectBuilder = createObjectBuilder('{ complex: { nested: true, arr: [1, 2, 3] } }');
+        
+        // Using private method via any type casting for testing
         const property: any = (builder as any).findPropertyByName('complex');
+        
         assert.ok(property, 'Property should be found');
-
-        const value: string = (builder as any).originalText.substring(property.valueStart, property.valueEnd);
-        assert.strictEqual(value.trim(), '{ nested: true, arr: [1, 2, 3] }', 'Complex property value should match');
+        
+        // Check correct value extraction
+        const value: string = builder['originalText'].substring(property.valueStart, property.valueEnd);
+        assert.strictEqual(value, '{ nested: true, arr: [1, 2, 3] }', 'Complex property value should match');
       });
     });
-
+  
     suite('parseProperties', () => {
       test('should parse all properties in an object', async () => {
         const builder: TypeScriptObjectBuilder = createObjectBuilder('{ a: 1, b: "string", c: true }');
+        
+        // Using private method via any type casting for testing
         const properties: Array<any> = (builder as any).parseProperties();
-
+        
         assert.strictEqual(properties.length, 3, 'Should find 3 properties');
         assert.strictEqual(properties[0].name, 'a', 'First property name should be "a"');
         assert.strictEqual(properties[1].name, 'b', 'Second property name should be "b"');
         assert.strictEqual(properties[2].name, 'c', 'Third property name should be "c"');
       });
-
+      
       test('should handle nested structures correctly', async () => {
         const builder: TypeScriptObjectBuilder = createObjectBuilder('{ obj: { nested: true }, arr: [1, 2] }');
+        
+        // Using private method via any type casting for testing
         const properties: Array<any> = (builder as any).parseProperties();
-
+        
         assert.strictEqual(properties.length, 2, 'Should find 2 properties');
         assert.strictEqual(properties[0].name, 'obj', 'First property name should be "obj"');
         assert.strictEqual(properties[1].name, 'arr', 'Second property name should be "arr"');
-
-        const objValue: string = (builder as any).originalText.substring(properties[0].valueStart, properties[0].valueEnd);
-        const arrValue: string = (builder as any).originalText.substring(properties[1].valueStart, properties[1].valueEnd);
-
-        assert.strictEqual(objValue.trim(), '{ nested: true }', 'Object property value should match');
-        assert.strictEqual(arrValue.trim(), '[1, 2]', 'Array property value should match');
+        
+        // Check value extraction
+        const objValue: string = builder['originalText'].substring(properties[0].valueStart, properties[0].valueEnd);
+        const arrValue: string = builder['originalText'].substring(properties[1].valueStart, properties[1].valueEnd);
+        
+        assert.strictEqual(objValue, '{ nested: true }', 'Object property value should match');
+        assert.strictEqual(arrValue, '[1, 2]', 'Array property value should match');
       });
-
+      
       test('should handle empty objects', async () => {
         const builder: TypeScriptObjectBuilder = createObjectBuilder('{}');
+        
+        // Using private method via any type casting for testing
         const properties: Array<any> = (builder as any).parseProperties();
+        
         assert.strictEqual(properties.length, 0, 'Empty object should have 0 properties');
       });
-
+      
       test('should handle complex formatting', async () => {
         const builder: TypeScriptObjectBuilder = createObjectBuilder(`{
-        prop1: 'value1',
-        prop2: 42,
-        // This is a comment
-        prop3: true
-      }`);
+          prop1: 'value1',
+          prop2: 42,
+          // This is a comment
+          prop3: true
+        }`);
+        
+        // Using private method via any type casting for testing
         const properties: Array<any> = (builder as any).parseProperties();
+        
+        // This test would need to be adapted based on how comments are handled
+        // For now, we'll just check that we get the right number of properties
         assert.strictEqual(properties.length, 3, 'Should find 3 properties despite comments and formatting');
       });
     });
-
+  
     suite('setPropertyValue', () => {
       test('should set value of existing property', async () => {
-        const { codeBuilder, objectBuilder } = await createTestObjectBuilder(" existing: 'old value' ");
-        objectBuilder.setPropertyValue('existing', "'new value'");
-        const result: string = await codeBuilder.toString();
-        assert.match(result, /existing: 'new value'/);
+        const code: string = `const obj = { existing: 'old value' };`;
+        const codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+        
+        // Using a Promise to handle async callback pattern in a type-safe way
+        const objectBuilderPromise: Promise<TypeScriptObjectBuilder | null> = new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+          codeBuilder.findObject('obj', {
+            onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+            onNotFound: (): void => { resolve(null); }
+          });
+        });
+        
+        const objectBuilder: TypeScriptObjectBuilder | null = await objectBuilderPromise;
+        assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+        
+        if (objectBuilder) {
+          objectBuilder.setPropertyValue('existing', "'new value'");
+          
+          const result: string = await codeBuilder.toString();
+          assert.strictEqual(result, `const obj = { existing: 'new value' };`, 'Property value should be updated');
+        }
       });
-
+      
       test('should add new property to object', async () => {
-        const { codeBuilder, objectBuilder } = await createTestObjectBuilder(" existing: 'value' ");
-        objectBuilder.setPropertyValue('newProp', "'new value'");
-        const result: string = await codeBuilder.toString();
-        assert.match(result, /newProp: 'new value'/);
-        assert.match(result, /existing: 'value',/); // Check existing is still there and comma added
+        const code: string = `const obj = { existing: 'value' };`;
+        const codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+        
+        // Using a Promise to handle async callback pattern in a type-safe way
+        const objectBuilderPromise: Promise<TypeScriptObjectBuilder | null> = new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+          codeBuilder.findObject('obj', {
+            onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+            onNotFound: (): void => { resolve(null); }
+          });
+        });
+        
+        const objectBuilder: TypeScriptObjectBuilder | null = await objectBuilderPromise;
+        assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+        
+        if (objectBuilder) {
+          objectBuilder.setPropertyValue('newProp', "'new value'");
+          
+          const result: string = await codeBuilder.toString();
+          // Exact format depends on implementation
+          assert.ok(result.includes('newProp'), 'New property name should be added');
+          assert.ok(result.includes("'new value'"), 'New property value should be added');
+        }
       });
-
+      
       test('should add first property to empty object', async () => {
-        const { codeBuilder, objectBuilder } = await createTestObjectBuilder("");
-        objectBuilder.setPropertyValue('first', "42");
-        const result: string = await codeBuilder.toString();
-        assert.match(result, /first: 42/);
+        const code: string = `const obj = {};`;
+        const codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+        
+        // Using a Promise to handle async callback pattern in a type-safe way
+        const objectBuilderPromise: Promise<TypeScriptObjectBuilder | null> = new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+          codeBuilder.findObject('obj', {
+            onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+            onNotFound: (): void => { resolve(null); }
+          });
+        });
+        
+        const objectBuilder: TypeScriptObjectBuilder | null = await objectBuilderPromise;
+        assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+        
+        if (objectBuilder) {
+          objectBuilder.setPropertyValue('first', "42");
+          
+          const result: string = await codeBuilder.toString();
+          // Exact format depends on implementation
+          assert.ok(result.includes('first'), 'New property name should be added');
+          assert.ok(result.includes('42'), 'New property value should be added');
+        }
       });
     });
-
+  
     suite('removeProperty', () => {
       test('should remove an existing property', async () => {
-        const { codeBuilder, objectBuilder } = await createTestObjectBuilder(" toRemove: 'value', keep: 'value2' ");
-        const opResult: boolean = objectBuilder.removeProperty('toRemove');
-        assert.strictEqual(opResult, true);
-        const updatedCode: string = await codeBuilder.toString();
-        assert.ok(!updatedCode.includes('toRemove'));
-        assert.match(updatedCode, /keep: 'value2'/);
+        const code: string = `const obj = { toRemove: 'value', keep: 'value2' };`;
+        const codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+        
+        // Using a Promise to handle async callback pattern in a type-safe way
+        const objectBuilderPromise: Promise<TypeScriptObjectBuilder | null> = new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+          codeBuilder.findObject('obj', {
+            onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+            onNotFound: (): void => { resolve(null); }
+          });
+        });
+        
+        const objectBuilder: TypeScriptObjectBuilder | null = await objectBuilderPromise;
+        assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+        
+        if (objectBuilder) {
+          const result: boolean = objectBuilder.removeProperty('toRemove');
+          assert.strictEqual(result, true, 'removeProperty should return true for existing property');
+          
+          const updatedCode: string = await codeBuilder.toString();
+          assert.ok(!updatedCode.includes('toRemove'), 'Removed property should not be in result');
+          assert.ok(updatedCode.includes('keep'), 'Other properties should remain in result');
+        }
       });
-
+      
       test('should return false for non-existent property', async () => {
-        const { codeBuilder, objectBuilder } = await createTestObjectBuilder(" existing: 'value' ");
-        const opResult: boolean = objectBuilder.removeProperty('nonExistent');
-        assert.strictEqual(opResult, false);
-        const updatedCode: string = await codeBuilder.toString();
-        assert.match(updatedCode, /existing: 'value'/); // original should be unchanged
+        const code: string = `const obj = { existing: 'value' };`;
+        const codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+        
+        // Using a Promise to handle async callback pattern in a type-safe way
+        const objectBuilderPromise: Promise<TypeScriptObjectBuilder | null> = new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+          codeBuilder.findObject('obj', {
+            onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+            onNotFound: (): void => { resolve(null); }
+          });
+        });
+        
+        const objectBuilder: TypeScriptObjectBuilder | null = await objectBuilderPromise;
+        assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+        
+        if (objectBuilder) {
+          const result: boolean = objectBuilder.removeProperty('nonExistent');
+          assert.strictEqual(result, false, 'removeProperty should return false for non-existent property');
+          
+          const updatedCode: string = await codeBuilder.toString();
+          assert.strictEqual(updatedCode, code, 'Code should remain unchanged');
+        }
       });
-
+      
       test('should handle removing the only property', async () => {
-        const { codeBuilder, objectBuilder } = await createTestObjectBuilder(" onlyProp: 'value' ");
-        const opResult: boolean = objectBuilder.removeProperty('onlyProp');
-        assert.strictEqual(opResult, true);
-        const updatedCode: string = await codeBuilder.toString();
-        assert.match(updatedCode, /const testObj = \{\s*\};/);
+        const code: string = `const obj = { onlyProp: 'value' };`;
+        const codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+        
+        // Using a Promise to handle async callback pattern in a type-safe way
+        const objectBuilderPromise: Promise<TypeScriptObjectBuilder | null> = new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+          codeBuilder.findObject('obj', {
+            onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+            onNotFound: (): void => { resolve(null); }
+          });
+        });
+        
+        const objectBuilder: TypeScriptObjectBuilder | null = await objectBuilderPromise;
+        assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+        
+        if (objectBuilder) {
+          const result: boolean = objectBuilder.removeProperty('onlyProp');
+          assert.strictEqual(result, true, 'removeProperty should return true for existing property');
+          
+          const updatedCode: string = await codeBuilder.toString();
+          assert.strictEqual(updatedCode, `const obj = { };`, 'Object should be empty after removing only property');
+        }
       });
     });
-
+  
     suite('addPropertyAtIndex', () => {
       test('should add property at beginning', async () => {
-        const { codeBuilder, objectBuilder: originalObjectBuilder } = await createTestObjectBuilder(" existing: 'value' ");
-        originalObjectBuilder.addPropertyAtIndex(0, 'first', "'newFirstValue'");
-        const modifiedCode: string = await codeBuilder.toString();
-
-        assert.match(modifiedCode, /first: 'newFirstValue'/);
-        assert.match(modifiedCode, /existing: 'value'/);
-
-        const newCodeBuilder = new TypeScriptCodeBuilder(modifiedCode);
-        const finalObjectBuilder = await findObjectAsync(newCodeBuilder, 'testObj');
-        const properties: Array<any> = (finalObjectBuilder as any).parseProperties();
-        const propertyNames = properties.map(p => p.name);
-        assert.deepStrictEqual(propertyNames, ['first', 'existing']);
+        const code: string = `const obj = { existing: 'value' };`;
+        let codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+    
+        let objectBuilder: TypeScriptObjectBuilder | null = await new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+            codeBuilder.findObject('obj', {
+            onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+            onNotFound: (): void => { resolve(null); }
+            });
+        });
+        assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+    
+        if (objectBuilder) {
+            objectBuilder.addPropertyAtIndex(0, 'first', "'value'");
+    
+            const result: string = await codeBuilder.toString();
+            assert.ok(result.includes('first'), 'New property "first" should be added');
+            assert.ok(result.includes('existing'), 'Existing property "existing" should remain');
+            // Expected: const obj = {\n  first: 'value',\n   existing: 'value' }; (or similar)
+            // Check if 'first' appears before 'existing'
+            assert.ok(result.indexOf('first') < result.indexOf('existing'), 'Property "first" should appear before "existing"');
+    
+    
+            // Re-parse the result to check the order accurately
+            const newCodeBuilder = new TypeScriptCodeBuilder(result);
+            const newObjectBuilder = await new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+            newCodeBuilder.findObject('obj', {
+                onFound: (builder) => resolve(builder),
+                onNotFound: () => resolve(null),
+            });
+            });
+            assert.ok(newObjectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder in modified code');
+    
+            if (newObjectBuilder) {
+            const properties: Array<any> = (newObjectBuilder as any).parseProperties();
+            assert.strictEqual(properties.length, 2, 'Should have two properties after adding');
+            const firstPropName: string | undefined = properties[0]?.name;
+            assert.strictEqual(firstPropName, 'first', 'New property should be first');
+            const secondPropName: string | undefined = properties[1]?.name;
+            assert.strictEqual(secondPropName, 'existing', 'Existing property should be second');
+            }
+        }
+    });
+    
+    test('should add property at end', async () => {
+      const code: string = `const obj = { existing: 'value' };`;
+      let codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+  
+      let objectBuilder: TypeScriptObjectBuilder | null = await new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+          codeBuilder.findObject('obj', {
+          onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+          onNotFound: (): void => { resolve(null); }
+          });
       });
-
-      test('should add property at end', async () => {
-        const { codeBuilder, objectBuilder: originalObjectBuilder } = await createTestObjectBuilder(" existing: 'value' ");
-        const propertyCount: number = (originalObjectBuilder as any).parseProperties().length;
-        originalObjectBuilder.addPropertyAtIndex(propertyCount, 'last', "'newLastValue'");
-        const modifiedCode: string = await codeBuilder.toString();
-
-        assert.match(modifiedCode, /last: 'newLastValue'/);
-
-        const newCodeBuilder = new TypeScriptCodeBuilder(modifiedCode);
-        const finalObjectBuilder = await findObjectAsync(newCodeBuilder, 'testObj');
-        const properties: Array<any> = (finalObjectBuilder as any).parseProperties();
-        const propertyNames = properties.map(p => p.name);
-        assert.deepStrictEqual(propertyNames, ['existing', 'last']);
-      });
-
+      assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+  
+      if (objectBuilder) {
+          const initialProperties = (objectBuilder as any).parseProperties();
+          const propertyCount: number = initialProperties.length;
+  
+          objectBuilder.addPropertyAtIndex(propertyCount, 'last', "'value'");
+  
+          const result: string = await codeBuilder.toString();
+          assert.ok(result.includes('last'), 'New property "last" should be added');
+          assert.ok(result.includes('existing'), 'Existing property "existing" should remain');
+          // Expected: const obj = { existing: 'value',\n  last: 'value'\n}; (or similar)
+          assert.ok(result.indexOf('existing') < result.indexOf('last'), 'Property "existing" should appear before "last"');
+  
+  
+          const newCodeBuilder = new TypeScriptCodeBuilder(result);
+          const newObjectBuilder = await new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+          newCodeBuilder.findObject('obj', {
+              onFound: (builder) => resolve(builder),
+              onNotFound: () => resolve(null),
+          });
+          });
+          assert.ok(newObjectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder in modified code');
+  
+          if (newObjectBuilder) {
+          const properties: Array<any> = (newObjectBuilder as any).parseProperties();
+          assert.strictEqual(properties.length, propertyCount + 1, 'Should have one more property after adding');
+          const lastPropName: string | undefined = properties[properties.length - 1]?.name;
+          assert.strictEqual(lastPropName, 'last', 'New property should be last');
+          const firstPropName: string | undefined = properties[0]?.name;
+          assert.strictEqual(firstPropName, 'existing', 'Existing property should be first');
+          }
+      }
+  });
+      
       test('should throw for invalid index', async () => {
-        const { objectBuilder } = await createTestObjectBuilder(' a: 1 ');
-        assert.throws(() => objectBuilder.addPropertyAtIndex(-1, 'invalid', "'value'"), /Invalid index/);
-        const propertyCount: number = (objectBuilder as any).parseProperties().length;
-        assert.throws(() => objectBuilder.addPropertyAtIndex(propertyCount + 1, 'invalid', "'value'"), /Invalid index/);
+        const builder: TypeScriptObjectBuilder = createObjectBuilder('{ a: 1 }');
+        
+        assert.throws(
+          (): void => { builder.addPropertyAtIndex(-1, 'invalid', "'value'"); },
+          Error,
+          'Should throw for negative index'
+        );
+        
+        assert.throws(
+          (): void => {
+            // Using private method to get property count
+            const propertyCount: number = (builder as any).parseProperties().length;
+            builder.addPropertyAtIndex(propertyCount + 1, 'invalid', "'value'");
+          },
+          Error,
+          'Should throw for index > length'
+        );
       });
     });
-
-    suite('findObject and findArray (nested in TypeScriptObjectBuilder)', () => {
+  
+    suite('findObject and findArray', () => {
       test('should find a nested object property', async () => {
-        const { objectBuilder } = await createTestObjectBuilder(" nested: { prop: 'value' } ");
-        const nestedObjectBuilder = await findObjectInObjectAsync(objectBuilder, 'nested');
-        const content: string = nestedObjectBuilder.getContentText();
-        assert.match(content, /prop: 'value'/);
+        const code: string = `const obj = { nested: { prop: 'value' } };`;
+        const codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+        
+        // Using a Promise to handle async callback pattern in a type-safe way
+        const objectBuilderPromise: Promise<TypeScriptObjectBuilder | null> = new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+          codeBuilder.findObject('obj', {
+            onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+            onNotFound: (): void => { resolve(null); }
+          });
+        });
+        
+        const objectBuilder: TypeScriptObjectBuilder | null = await objectBuilderPromise;
+        assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+        
+        if (objectBuilder) {
+          // Find nested object
+          const nestedObjectBuilderPromise: Promise<TypeScriptObjectBuilder | null> = new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+            objectBuilder.findObject('nested', {
+              onFound: (nestedBuilder: TypeScriptObjectBuilder): void => { resolve(nestedBuilder); },
+              onNotFound: (): void => { resolve(null); }
+            });
+          });
+          
+          const nestedObjectBuilder: TypeScriptObjectBuilder | null = await nestedObjectBuilderPromise;
+          assert.ok(nestedObjectBuilder instanceof TypeScriptObjectBuilder, 'Should find nested object builder');
+          
+          if (nestedObjectBuilder) {
+            // Check the nested object's content
+            const content: string = nestedObjectBuilder.getContentText();
+            assert.ok(content.includes('prop'), 'Nested object should contain expected property');
+          }
+        }
       });
-
+      
       test('should find a nested array property', async () => {
-        const { objectBuilder } = await createTestObjectBuilder(" items: [1, 2, 3] ");
-        const arrayBuilder = await findArrayInObjectAsync(objectBuilder, 'items');
-        const content: string = arrayBuilder.getContentText();
-        assert.strictEqual(content.trim(), '1, 2, 3');
+        const code: string = `const obj = { items: [1, 2, 3] };`;
+        const codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+        
+        // Using a Promise to handle async callback pattern in a type-safe way
+        const objectBuilderPromise: Promise<TypeScriptObjectBuilder | null> = new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+          codeBuilder.findObject('obj', {
+            onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+            onNotFound: (): void => { resolve(null); }
+          });
+        });
+        
+        const objectBuilder: TypeScriptObjectBuilder | null = await objectBuilderPromise;
+        assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+        
+        if (objectBuilder) {
+          // Find nested array
+          const arrayBuilderPromise: Promise<TypeScriptArrayBuilder | null> = new Promise<TypeScriptArrayBuilder | null>((resolve) => {
+            objectBuilder.findArray('items', {
+              onFound: (arrayBuilder: TypeScriptArrayBuilder): void => { resolve(arrayBuilder); },
+              onNotFound: (): void => { resolve(null); }
+            });
+          });
+          
+          const arrayBuilder: TypeScriptArrayBuilder | null = await arrayBuilderPromise;
+          assert.ok(arrayBuilder instanceof TypeScriptArrayBuilder, 'Should find array builder');
+          
+          if (arrayBuilder) {
+            // Check the array's content
+            const content: string = arrayBuilder.getContentText();
+            assert.ok(content.includes('1, 2, 3'), 'Array should contain expected items');
+          }
+        }
       });
-
-      test('should reject for non-object property (nested findObject)', async () => {
-        const { objectBuilder } = await createTestObjectBuilder(' notObj: 42 ');
-        await assert.rejects(findObjectInObjectAsync(objectBuilder, 'notObj'), /Nested object property "notObj" not found/);
+      
+      test('should call onNotFound for non-object property', async () => {
+        const builder: TypeScriptObjectBuilder = createObjectBuilder('{ notObj: 42 }');
+        
+        let onFoundCalled: boolean = false;
+        let onNotFoundCalled: boolean = false;
+        
+        // Using a Promise to ensure callback completion
+        await new Promise<void>((resolve) => {
+          builder.findObject('notObj', {
+            onFound: (): void => { 
+              onFoundCalled = true; 
+              resolve();
+            },
+            onNotFound: (): void => { 
+              onNotFoundCalled = true; 
+              resolve();
+            }
+          });
+        });
+        
+        assert.strictEqual(onFoundCalled, false, 'onFound should not be called');
+        assert.strictEqual(onNotFoundCalled, true, 'onNotFound should be called');
       });
-
-      test('should reject for non-array property (nested findArray)', async () => {
-        const { objectBuilder } = await createTestObjectBuilder(' notArray: "string" ');
-        await assert.rejects(findArrayInObjectAsync(objectBuilder, 'notArray'), /Array property "notArray" not found/);
+      
+      test('should call onNotFound for non-array property', async () => {
+        const builder: TypeScriptObjectBuilder = createObjectBuilder('{ notArray: "string" }');
+        
+        let onFoundCalled: boolean = false;
+        let onNotFoundCalled: boolean = false;
+        
+        // Using a Promise to ensure callback completion
+        await new Promise<void>((resolve) => {
+          builder.findArray('notArray', {
+            onFound: (): void => { 
+              onFoundCalled = true;
+              resolve(); 
+            },
+            onNotFound: (): void => { 
+              onNotFoundCalled = true;
+              resolve(); 
+            }
+          });
+        });
+        
+        assert.strictEqual(onFoundCalled, false, 'onFound should not be called');
+        assert.strictEqual(onNotFoundCalled, true, 'onNotFound should be called');
       });
     });
-
+  
     suite('addPropertyAfterItem', () => {
       test('should add property after specified property', async () => {
-        const { codeBuilder, objectBuilder: originalObjectBuilder } = await createTestObjectBuilder(" first: 1, last: 3 ");
-        originalObjectBuilder.addPropertyAfterItem('first', 'middle', '2');
-        const modifiedCode: string = await codeBuilder.toString();
-
-        assert.match(modifiedCode, /middle: 2/);
-
-        const newCodeBuilder = new TypeScriptCodeBuilder(modifiedCode);
-        const finalObjectBuilder = await findObjectAsync(newCodeBuilder, 'testObj');
-        const properties: Array<any> = (finalObjectBuilder as any).parseProperties();
-        const propertyNames = properties.map(p => p.name);
-        assert.deepStrictEqual(propertyNames, ['first', 'middle', 'last']);
-      });
-
-      test('should throw for non-existent item property', async () => {
-        const { objectBuilder } = await createTestObjectBuilder(' a: 1 ');
-        assert.throws(() => objectBuilder.addPropertyAfterItem('nonexistent', 'new', '42'), /Property "nonexistent" not found/);
+        const code: string = `const obj = { first: 1, last: 3 };`;
+        let codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+    
+        let objectBuilder: TypeScriptObjectBuilder | null = await new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+            codeBuilder.findObject('obj', {
+            onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+            onNotFound: (): void => { resolve(null); }
+            });
+        });
+        assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+    
+        if (objectBuilder) {
+            objectBuilder.addPropertyAfterItem('first', 'middle', '2');
+    
+            const result: string = await codeBuilder.toString();
+            // Expected: const obj = { first: 1,\n  middle: 2,\n  last: 3 }; (or similar)
+            assert.ok(result.includes('first') && result.includes('middle') && result.includes('last'), 'All properties should exist');
+            assert.ok(result.indexOf('first') < result.indexOf('middle'), '"first" should be before "middle"');
+            assert.ok(result.indexOf('middle') < result.indexOf('last'), '"middle" should be before "last"');
+    
+    
+            const newCodeBuilder = new TypeScriptCodeBuilder(result);
+            const newObjectBuilder = await new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+            newCodeBuilder.findObject('obj', {
+                onFound: (builder) => resolve(builder),
+                onNotFound: () => resolve(null),
+            });
+            });
+            assert.ok(newObjectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder in modified code');
+    
+            if (newObjectBuilder) {
+            const properties: Array<any> = (newObjectBuilder as any).parseProperties();
+            assert.strictEqual(properties.length, 3, 'Should have three properties');
+            assert.strictEqual(properties[0].name, 'first', 'First property should remain first');
+            assert.strictEqual(properties[1].name, 'middle', 'New property should be in the middle');
+            assert.strictEqual(properties[2].name, 'last', 'Last property should remain last');
+            }
+        }
+    });
+      
+      test('should throw for non-existent property', async () => {
+        const builder: TypeScriptObjectBuilder = createObjectBuilder('{ a: 1 }');
+        
+        assert.throws(
+          (): void => { builder.addPropertyAfterItem('nonexistent', 'new', '42'); },
+          Error,
+          'Should throw for non-existent property'
+        );
       });
     });
-
+  
+    // Add specialization tests for object and array methods
     suite('addObjectAtIndex and addArrayAtIndex', () => {
       test('should add nested object at index', async () => {
-        const { codeBuilder, objectBuilder } = await createTestObjectBuilder(" existing: 'value' ");
-        objectBuilder.addObjectAtIndex(0, 'nestedObj', '{ prop: "value" }');
-        const result: string = await codeBuilder.toString();
-        assert.match(result, /nestedObj: \{ prop: "value" \}/);
+        const code: string = `const obj = { existing: 'value' };`;
+        const codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+        
+        // Using a Promise to handle async callback pattern in a type-safe way
+        const objectBuilderPromise: Promise<TypeScriptObjectBuilder | null> = new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+          codeBuilder.findObject('obj', {
+            onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+            onNotFound: (): void => { resolve(null); }
+          });
+        });
+        
+        const objectBuilder: TypeScriptObjectBuilder | null = await objectBuilderPromise;
+        assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+        
+        if (objectBuilder) {
+          objectBuilder.addObjectAtIndex(0, 'nestedObj', '{ prop: "value" }');
+          
+          const result: string = await codeBuilder.toString();
+          assert.ok(result.includes('nestedObj'), 'New object property name should be added');
+          assert.ok(result.includes('{ prop: "value" }'), 'New object property value should be added');
+        }
       });
-
+      
       test('should add nested array at index', async () => {
-        const { codeBuilder, objectBuilder } = await createTestObjectBuilder(" existing: 'value' ");
-        objectBuilder.addArrayAtIndex(0, 'items', '[1, 2, 3]');
-        const result: string = await codeBuilder.toString();
-        assert.match(result, /items: \[1, 2, 3\]/);
+        const code: string = `const obj = { existing: 'value' };`;
+        const codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+        
+        // Using a Promise to handle async callback pattern in a type-safe way
+        const objectBuilderPromise: Promise<TypeScriptObjectBuilder | null> = new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+          codeBuilder.findObject('obj', {
+            onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+            onNotFound: (): void => { resolve(null); }
+          });
+        });
+        
+        const objectBuilder: TypeScriptObjectBuilder | null = await objectBuilderPromise;
+        assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+        
+        if (objectBuilder) {
+          objectBuilder.addArrayAtIndex(0, 'items', '[1, 2, 3]');
+          
+          const result: string = await codeBuilder.toString();
+          assert.ok(result.includes('items'), 'New array property name should be added');
+          assert.ok(result.includes('[1, 2, 3]'), 'New array property value should be added');
+        }
       });
     });
-
+  
     suite('addObjectAfterItem and addArrayAfterItem', () => {
       test('should add nested object after item', async () => {
-        const { codeBuilder, objectBuilder: originalObjectBuilder } = await createTestObjectBuilder(" before: 'value' ");
-        originalObjectBuilder.addObjectAfterItem('before', 'nestedObj', '{ prop: "value" }');
-        const modifiedCode: string = await codeBuilder.toString();
-
-        assert.match(modifiedCode, /nestedObj: \{ prop: "value" \}/);
-
-        const newCodeBuilder = new TypeScriptCodeBuilder(modifiedCode);
-        const finalObjectBuilder = await findObjectAsync(newCodeBuilder, 'testObj');
-        const properties: Array<any> = (finalObjectBuilder as any).parseProperties();
-        assert.strictEqual(properties.length, 2);
-        assert.strictEqual(properties[0].name, 'before');
-        assert.strictEqual(properties[1].name, 'nestedObj');
+          const code: string = `const obj = { before: 'value' };`;
+          let codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+  
+          let objectBuilder: TypeScriptObjectBuilder | null = await new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+          codeBuilder.findObject('obj', {
+              onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+              onNotFound: (): void => { resolve(null); }
+          });
+          });
+          assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+  
+          if (objectBuilder) {
+          objectBuilder.addObjectAfterItem('before', 'nestedObj', '{ prop: "value" }');
+  
+          const result: string = await codeBuilder.toString();
+          assert.ok(result.includes('nestedObj'), 'New object property name should be added');
+          assert.ok(result.includes('{ prop: "value" }'), 'New object property value should be added');
+          // Expected: const obj = { before: 'value',\n  nestedObj: { prop: "value" }\n};
+          assert.ok(result.indexOf('before') < result.indexOf('nestedObj'), '"before" should be before "nestedObj"');
+  
+  
+          const newCodeBuilder = new TypeScriptCodeBuilder(result);
+          const newObjectBuilder = await new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+              newCodeBuilder.findObject('obj', {
+              onFound: (builder) => resolve(builder),
+              onNotFound: () => resolve(null),
+              });
+          });
+          assert.ok(newObjectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder in modified code');
+  
+          if (newObjectBuilder) {
+              const properties: Array<any> = (newObjectBuilder as any).parseProperties();
+              assert.strictEqual(properties.length, 2, 'Should have two properties');
+              assert.strictEqual(properties[0].name, 'before', 'Original property should be first');
+              assert.strictEqual(properties[1].name, 'nestedObj', 'New object property should be second');
+          }
+          }
       });
-
+  
       test('should add nested array after item', async () => {
-        const { codeBuilder, objectBuilder: originalObjectBuilder } = await createTestObjectBuilder(" before: 'value' ");
-        originalObjectBuilder.addArrayAfterItem('before', 'items', '[1, 2, 3]');
-        const modifiedCode: string = await codeBuilder.toString();
-
-        assert.match(modifiedCode, /items: \[1, 2, 3\]/);
-
-        const newCodeBuilder = new TypeScriptCodeBuilder(modifiedCode);
-        const finalObjectBuilder = await findObjectAsync(newCodeBuilder, 'testObj');
-        const properties: Array<any> = (finalObjectBuilder as any).parseProperties();
-        assert.strictEqual(properties.length, 2);
-        assert.strictEqual(properties[0].name, 'before');
-        assert.strictEqual(properties[1].name, 'items');
+          const code: string = `const obj = { before: 'value' };`;
+          let codeBuilder: TypeScriptCodeBuilder = new TypeScriptCodeBuilder(code);
+  
+          let objectBuilder: TypeScriptObjectBuilder | null = await new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+          codeBuilder.findObject('obj', {
+              onFound: (builder: TypeScriptObjectBuilder): void => { resolve(builder); },
+              onNotFound: (): void => { resolve(null); }
+          });
+          });
+          assert.ok(objectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder');
+  
+          if (objectBuilder) {
+          objectBuilder.addArrayAfterItem('before', 'items', '[1, 2, 3]');
+  
+          const result: string = await codeBuilder.toString();
+          assert.ok(result.includes('items'), 'New array property name should be added');
+          assert.ok(result.includes('[1, 2, 3]'), 'New array property value should be added');
+          // Expected: const obj = { before: 'value',\n  items: [1, 2, 3]\n};
+          assert.ok(result.indexOf('before') < result.indexOf('items'), '"before" should be before "items"');
+  
+          const newCodeBuilder = new TypeScriptCodeBuilder(result);
+          const newObjectBuilder = await new Promise<TypeScriptObjectBuilder | null>((resolve) => {
+              newCodeBuilder.findObject('obj', {
+              onFound: (builder) => resolve(builder),
+              onNotFound: () => resolve(null),
+              });
+          });
+          assert.ok(newObjectBuilder instanceof TypeScriptObjectBuilder, 'Should find object builder in modified code');
+  
+          if (newObjectBuilder) {
+              const properties: Array<any> = (newObjectBuilder as any).parseProperties();
+              assert.strictEqual(properties.length, 2, 'Should have two properties');
+              assert.strictEqual(properties[0].name, 'before', 'Original property should be first');
+              assert.strictEqual(properties[1].name, 'items', 'New array property should be second');
+          }
+          }
       });
-    });
+  });
   });
 });

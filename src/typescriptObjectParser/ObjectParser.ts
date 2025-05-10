@@ -3084,6 +3084,14 @@ export class TypeScriptObjectBuilder {
  * Provides methods for inspecting and modifying a specific array literal ([ ... ]).
  * Operates based on a TokenGroup of type 'ArrayLiteral'.
  */
+/******************************************************
+ * Array Literal Builder
+ ******************************************************/
+
+/**
+ * Provides methods for inspecting and modifying a specific array literal ([ ... ]).
+ * Operates based on a TokenGroup of type 'ArrayLiteral'.
+ */
 export class TypeScriptArrayBuilder {
 	/**
 	 * Creates an instance of TypeScriptArrayBuilder.
@@ -3097,32 +3105,67 @@ export class TypeScriptArrayBuilder {
 		public arrayGroup: TokenGroup,
 		private originalText: string
 	) {
-		if (DEBUG) console.log(`TypeScriptArrayBuilder: New instance created for array at positions ${arrayGroup.start}-${arrayGroup.end}`);
+	}
+
+	private isWhitespace(char: string): boolean {
+		return /\s/.test(char);
 	}
 
 	/**
 	 * Adds a new item (as a string literal) to the end of the array.
-	 * Handles correct placement, comma insertion, and formatting (respecting existing style if possible).
-	 * @param itemToAdd The string representation of the item to add (e.g., "'new'", "123", "{ id: 1 }").
-	 *                  Must be a valid TypeScript expression.
+	 * Handles correct placement, comma insertion, and formatting.
+	 * It aims to preserve a trailing comma style if the original array had one.
+	 * @param itemToAdd The string representation of the item to add.
 	 */
 	public addItem(itemToAdd: string): void {
-		// TODO: Implement parsing of array items to determine correct insertion point and comma handling.
-		// For now, a naive implementation:
 		const items = this.parseItems();
-		const contentEnd = this.arrayGroup.end - 1; // Before closing bracket
+		const contentStart = this.arrayGroup.start + 1; // Position after '['
+		const contentEnd = this.arrayGroup.end - 1;     // Position before ']'
 
-		let newContent: string;
 		if (items.length === 0) {
-			// Empty array
-			newContent = ` ${itemToAdd} `; // Add with spaces for basic formatting
+			// Array is empty like [] or contains only whitespace like [   ]
+			// The edit replaces the entire content between brackets.
+			// Tests expect "[ 'newItem' ]" for input "[]" and item "'newItem'".
+			this.parentBuilder.addEdit(contentStart, contentEnd, ` ${itemToAdd} `);
 		} else {
-			// Array has items, add with a preceding comma and space
-			newContent = `, ${itemToAdd}`;
+			// Array has existing items.
+			const lastItem = items[items.length - 1]; // lastItem.end is the pos *after* the last char of the item's text
+
+			// Text between the end of the last actual item's text and the closing bracket (exclusive of ']')
+			const textSuffixAfterLastItemValue = this.originalText.substring(lastItem.end, contentEnd);
+			
+			let effectiveInsertionPoint: number;
+			let prefixForNewItemText: string;
+
+			// Check if there's already a comma after the last item's text
+			const firstCommaPosInSuffix = textSuffixAfterLastItemValue.indexOf(',');
+			
+			if (firstCommaPosInSuffix !== -1) { 
+				// A comma exists (e.g., [a,] or [a, b,]). Insert *after* this existing comma.
+				effectiveInsertionPoint = lastItem.end + firstCommaPosInSuffix + 1; 
+				prefixForNewItemText = " "; // Default: add a space before the new item
+			} else { 
+				// No comma after last item's text (e.g. [a] or [a  ]). Add a new comma.
+				effectiveInsertionPoint = lastItem.end; // Insert right after the last item's text
+				prefixForNewItemText = ", "; // Add a comma and a space
+			}
+			
+			let stringToEffectivelyInsert = prefixForNewItemText + itemToAdd;
+
+            // Style preservation: if the original array content (trimmed) ended with a comma,
+            // the newly added item (which is now last) should also get a trailing comma.
+            const originalTrimmedContentBetweenBrackets = this.originalText.substring(contentStart, contentEnd).trim();
+            if (originalTrimmedContentBetweenBrackets.endsWith(',')) {
+                 // Ensure the string we're inserting doesn't accidentally create a double comma if itemToAdd itself ends with one.
+                 if (!itemToAdd.trim().endsWith(',')) { 
+                    stringToEffectivelyInsert += ",";
+                } else if (!stringToEffectivelyInsert.trim().endsWith(',')){ // if itemToAdd had it, but prefix didn't make it final
+                    stringToEffectivelyInsert += ",";
+                }
+            }
+            
+			this.parentBuilder.addEdit(effectiveInsertionPoint, effectiveInsertionPoint, stringToEffectivelyInsert);
 		}
-		// Insert before the closing bracket
-		this.parentBuilder.addEdit(contentEnd, contentEnd, newContent);
-		if (DEBUG) console.log(`TypeScriptArrayBuilder.addItem: Added item "${itemToAdd}"`);
 	}
 
 	/**
@@ -3132,27 +3175,42 @@ export class TypeScriptArrayBuilder {
 	 * @param itemToAdd The string representation of the item to insert.
 	 */
 	public insertItemAtIndex(index: number, itemToAdd: string): void {
-		// TODO: Implement parsing of array items for precise insertion.
-		if (DEBUG) console.log(`TypeScriptArrayBuilder.insertItemAtIndex: Inserting "${itemToAdd}" at index ${index}`);
 		const items = this.parseItems();
-
 		if (index < 0 || index > items.length) {
-			throw new Error(`TypeScriptArrayBuilder.insertItemAtIndex: Invalid index ${index}. Valid range is 0 to ${items.length}`);
+			throw new Error(`Invalid index ${index}. Valid range is 0 to ${items.length}.`);
 		}
 
-		const contentStart = this.arrayGroup.start + 1; // After opening bracket
+		const contentStart = this.arrayGroup.start + 1;
+		// const contentEnd = this.arrayGroup.end - 1;
 
-		if (items.length === 0) { // Also covers index === 0 for empty array
-			this.parentBuilder.addEdit(contentStart, contentStart, ` ${itemToAdd} `);
-		} else if (index === 0) { // Insert at beginning of non-empty array
-			const firstItem = items[0];
-			this.parentBuilder.addEdit(contentStart, firstItem.start - contentStart, `${itemToAdd}, `);
-		} else if (index === items.length) { // Insert at end of non-empty array
+		if (items.length === 0) { // Empty array, index must be 0
+			this.parentBuilder.addEdit(contentStart, this.arrayGroup.end - 1, ` ${itemToAdd} `);
+		} else if (index === items.length) { // At the end, like addItem but without trailing comma logic for *this* item specifically.
 			const lastItem = items[items.length - 1];
-			this.parentBuilder.addEdit(lastItem.end - contentStart, lastItem.end - contentStart, `, ${itemToAdd}`);
-		} else { // Insert between items
-			const prevItem = items[index - 1];
-			this.parentBuilder.addEdit(prevItem.end - contentStart, prevItem.end - contentStart, `, ${itemToAdd}`);
+			const textSuffixAfterLastItemValue = this.originalText.substring(lastItem.end, this.arrayGroup.end - 1);
+			const firstCommaPosInSuffix = textSuffixAfterLastItemValue.indexOf(',');
+			
+			let effectiveInsertionPoint: number;
+			let prefixForNewItemText: string;
+
+			if (firstCommaPosInSuffix !== -1) { 
+				effectiveInsertionPoint = lastItem.end + firstCommaPosInSuffix + 1; 
+				prefixForNewItemText = " "; 
+			} else { 
+				effectiveInsertionPoint = lastItem.end;
+				prefixForNewItemText = ", "; 
+			}
+			this.parentBuilder.addEdit(effectiveInsertionPoint, effectiveInsertionPoint, prefixForNewItemText + itemToAdd);
+
+		} else if (index === 0) { // At the beginning
+			const firstItem = items[0];
+			// The item is inserted before firstItem.start, add comma *after* itemToAdd
+			this.parentBuilder.addEdit(firstItem.start, firstItem.start, itemToAdd + ', ');
+		} else { // In the middle
+			const itemBefore = items[index - 1]; // New item goes after this one
+			// const itemAfter = items[index]; // And before this one
+			// Insert ", itemToAdd" after itemBefore.end
+			this.parentBuilder.addEdit(itemBefore.end, itemBefore.end, `, ${itemToAdd}`);
 		}
 	}
 
@@ -3161,89 +3219,129 @@ export class TypeScriptArrayBuilder {
 	 * Removes the item at the specified index from the array.
 	 * Handles removing the item and the preceding/succeeding comma and whitespace correctly.
 	 * @param indexToRemove The zero-based index of the item to remove.
-	 * @returns True if an item was removed at the index, false if the index was out of bounds.
-	 * @throws Error if index is out of bounds (alternative: return false).
+	 * @returns True if an item was removed at the index.
+	 * @throws Error if index is out of bounds.
 	 */
 	public removeItemAtIndex(indexToRemove: number): boolean {
-		// TODO: Implement this robustly
-		throw new Error("Not implemented: removeItemAtIndex");
+		const items = this.parseItems();
+		if (indexToRemove < 0 || indexToRemove >= items.length) {
+			throw new Error(`Index out of bounds: Cannot remove at index ${indexToRemove}. Valid range is 0 to ${items.length - 1}.`);
+		}
+
+		const itemToRemove = items[indexToRemove];
+		let startDelete = itemToRemove.start;
+		let endDelete = itemToRemove.end;
+
+		if (items.length === 1) { // Removing the only item
+			// Remove everything between brackets
+			startDelete = this.arrayGroup.start + 1;
+			endDelete = this.arrayGroup.end - 1;
+		} else if (indexToRemove === 0) { // Removing first of many
+			// Remove from start of first item up to the start of the second item (to get the comma)
+			const nextItem = items[1];
+			endDelete = nextItem.start; 
+		} else { // Removing middle or last item
+			// Remove from end of previous item (to get the comma) up to end of current item
+			const prevItem = items[indexToRemove - 1];
+			startDelete = prevItem.end;
+		}
+		this.parentBuilder.addEdit(startDelete, endDelete, '');
+		return true;
 	}
 
 	/**
 	 * Replaces the item at the specified index with a new item.
 	 * @param index The zero-based index of the item to replace.
 	 * @param newItem The string representation of the new item.
-	 * @returns True if an item was replaced at the index, false if the index was out of bounds.
+	 * @returns True if an item was replaced at the index.
+	 * @throws Error if index is out of bounds.
 	 */
 	public replaceItemAtIndex(index: number, newItem: string): boolean {
-		// TODO: Implement this robustly
-		throw new Error("Not implemented: replaceItemAtIndex");
+		const items = this.parseItems();
+		if (index < 0 || index >= items.length) {
+			throw new Error(`Index out of bounds: Cannot replace at index ${index}. Valid range is 0 to ${items.length -1}.`);
+		}
+		const itemToReplace = items[index];
+		this.parentBuilder.addEdit(itemToReplace.start, itemToReplace.end, newItem);
+		return true;
 	}
 
 
 	/**
 	 * Gets builders for all object literal elements within the array.
-	 * Filters out non-object elements.
 	 * @returns An array of TypeScriptObjectBuilder instances.
 	 */
 	public getObjectItems(): TypeScriptObjectBuilder[] {
-		// TODO: Implement this robustly
-		throw new Error("Not implemented: getObjectItems");
+		const items = this.parseItems();
+		const objectBuilders: TypeScriptObjectBuilder[] = [];
+		for (const item of items) {
+			const trimmedValue = item.value.trim(); // item.value is already trimmed by parseItems
+			if (trimmedValue.startsWith('{') && trimmedValue.endsWith('}')) {
+				const objectGroup: TokenGroup = {
+					type: 'ObjectLiteral',
+					start: item.start,
+					end: item.end,
+					tokens: [], 
+					children: [], 
+					metadata: {}
+				};
+				objectBuilders.push(new TypeScriptObjectBuilder(this.parentBuilder, objectGroup, this.originalText));
+			}
+		}
+		return objectBuilders;
 	}
 
 	/**
 	 * Gets builders for all array literal elements within the array.
-	 * Filters out non-array elements.
 	 * @returns An array of TypeScriptArrayBuilder instances.
 	 */
 	public getArrayItems(): TypeScriptArrayBuilder[] {
-		// TODO: Implement this robustly
-		throw new Error("Not implemented: getArrayItems");
+		const items = this.parseItems();
+		const arrayBuilders: TypeScriptArrayBuilder[] = [];
+		for (const item of items) {
+			const trimmedValue = item.value.trim(); // item.value is already trimmed
+			if (trimmedValue.startsWith('[') && trimmedValue.endsWith(']')) {
+				const arrayGroup: TokenGroup = {
+					type: 'ArrayLiteral',
+					start: item.start,
+					end: item.end,
+					tokens: [],
+					children: [],
+					metadata: {}
+				};
+				arrayBuilders.push(new TypeScriptArrayBuilder(this.parentBuilder, arrayGroup, this.originalText));
+			}
+		}
+		return arrayBuilders;
 	}
 
 	/**
 	 * Gets the string representation of all elements in the array.
-	 * Parses the array content to identify individual elements.
-	 * @returns An array of strings, each representing an element.
+	 * @returns An array of strings, each representing an element's text.
 	 */
 	public getItemTexts(): string[] {
-		// TODO: Implement this robustly by parsing items
-		const content = this.getContentText().trim();
-		if (!content) return [];
-		// This is a naive split, proper parsing is needed for nested structures
-		return content.split(',').map(s => s.trim());
+		return this.parseItems().map(item => item.value);
 	}
 
 
 	/**
 	 * Gets the number of elements currently in the array.
-	 * Parses the array content to count elements.
 	 * @returns The count of elements.
 	 */
 	public getItemCount(): number {
-		// TODO: Implement this robustly by parsing items
-		return this.getItemTexts().length;
+		return this.parseItems().length;
 	}
 
 	/**
 	 * Gets the string representation of the array content (excluding the outer brackets).
-	 * Reflects the current state including pending edits.
 	 * @returns The content of the array literal.
 	 */
 	public getContentText(): string {
-		const contentStart = this.arrayGroup.start + 1; // Skip the opening bracket
-		const contentEnd = this.arrayGroup.end - 1;   // Skip the closing bracket
-
-		// Ensure start is not past end, which can happen for empty or malformed arrays
-		if (contentStart >= contentEnd) {
-			return "";
-		}
-		return this.originalText.substring(contentStart, contentEnd);
+		return this.originalText.substring(this.arrayGroup.start + 1, this.arrayGroup.end - 1);
 	}
 
 	/**
 	 * Gets the full string representation of the array literal (including the outer brackets).
-	 * Reflects the current state including pending edits.
 	 * @returns The full array literal text.
 	 */
 	public getFullText(): string {
@@ -3253,36 +3351,38 @@ export class TypeScriptArrayBuilder {
 	/**
 	 * Helper method to parse items of the array literal.
 	 * Returns an array of item information including value range.
+	 * Each item's `start` and `end` define the range of its trimmed text.
 	 * @returns Array of item information objects.
 	 */
 	private parseItems(): Array<{
-		value: string;
-		start: number; // Absolute start in originalText
-		end: number;   // Absolute end in originalText
+		value: string; // The trimmed text of the item
+		start: number; // Absolute start of the trimmed item text in originalText
+		end: number;   // Absolute end of the trimmed item text in originalText
 	}> {
-		const content = this.getContentText();
-		if (DEBUG) console.log(`TypeScriptArrayBuilder.parseItems: Content: "${content.substring(0, 50)}${content.length > 50 ? '...' : ''}"`);
-
 		const items: Array<{ value: string; start: number; end: number; }> = [];
-		const contentStartOffset = this.arrayGroup.start + 1;
+		// Content between '[' and ']'
+		const content = this.originalText.substring(this.arrayGroup.start + 1, this.arrayGroup.end - 1);
+		const contentOffsetInOriginal = this.arrayGroup.start + 1;
 
-		// Simple state machine to parse items
 		let pos = 0;
+		let currentItemTextStartInContent = -1; // Start of current item's text (including leading ws) within `content`
+
 		let inString = false;
 		let stringChar = '';
-		let braceDepth = 0;
-		let bracketDepth = 0;
-		let parenDepth = 0;
-		let itemStartIndex = -1;
+		let braceDepth = 0;    // For {}
+		let bracketDepth = 0;  // For []
+		let parenDepth = 0;    // For ()
 
 		while (pos < content.length) {
 			const char = content[pos];
 
-			if (itemStartIndex === -1 && !/\s/.test(char)) {
-				itemStartIndex = pos;
+			// Mark start of a potential item's text (non-whitespace, non-comma)
+			if (currentItemTextStartInContent === -1 && !this.isWhitespace(char) && char !== ',') {
+				currentItemTextStartInContent = pos;
 			}
 
-			if ((char === '"' || char === "'") && (pos === 0 || content[pos - 1] !== '\\')) {
+			// Handle string literal state
+			if ((char === '"' || char === "'") && (pos === 0 || content[pos - 1] !== '\\')) { // check for unescaped quotes
 				if (!inString) {
 					inString = true;
 					stringChar = char;
@@ -3290,51 +3390,56 @@ export class TypeScriptArrayBuilder {
 					inString = false;
 				}
 			}
+            
+            // Track nesting depth only if not inside a string literal
+            if (!inString) {
+                if (char === '{') braceDepth++;
+                else if (char === '}') braceDepth--;
+                else if (char === '[') bracketDepth++;
+                else if (char === ']') bracketDepth--;
+                else if (char === '(') parenDepth++;
+                else if (char === ')') parenDepth--;
+            }
 
-			if (!inString) {
-				if (char === '{') braceDepth++;
-				else if (char === '}') braceDepth--;
-				else if (char === '[') bracketDepth++;
-				else if (char === ']') bracketDepth--;
-				else if (char === '(') parenDepth++;
-				else if (char === ')') parenDepth--;
-			}
-
-			if (itemStartIndex !== -1 && !inString && braceDepth === 0 && bracketDepth === 0 && parenDepth === 0 &&
-				(char === ',' || pos === content.length - 1)) {
-
-				let itemEndIndex = (char === ',') ? pos : pos + 1;
-				const rawItemText = content.substring(itemStartIndex, itemEndIndex).trim();
-
-				// If the item ends with a comma, trim it for the value, but keep it for the end position
-				const actualItemValue = rawItemText.endsWith(',') ? rawItemText.slice(0, -1).trim() : rawItemText;
-
-				if (actualItemValue) { // Ensure we don't add empty items from trailing commas etc.
-					items.push({
-						value: actualItemValue,
-						start: contentStartOffset + itemStartIndex,
-						end: contentStartOffset + itemEndIndex // This end includes the comma if present
-					});
+			// Check for end of an item
+            // An item ends if we hit a comma at nesting level 0, or if it's the last character of the content.
+			if (currentItemTextStartInContent !== -1 && // We are inside a potential item
+				!inString && braceDepth === 0 && bracketDepth === 0 && parenDepth === 0 && // Not inside nested structures
+				(char === ',' || pos === content.length - 1) // Item separator or end of content
+			) {
+				
+				let itemRawTextEndInContent: number;
+				if (char === ',') {
+					itemRawTextEndInContent = pos; // Item text ends *before* this comma
+				} else { // Last character of the content
+					itemRawTextEndInContent = pos + 1; // Item text includes this last character
 				}
-				itemStartIndex = -1;
+                
+                const rawItemText = content.substring(currentItemTextStartInContent, itemRawTextEndInContent);
+
+                // Trim whitespace from this specific rawItemText
+                let trimRelativeStart = 0;
+                while(trimRelativeStart < rawItemText.length && this.isWhitespace(rawItemText[trimRelativeStart])) {
+                    trimRelativeStart++;
+                }
+                let trimRelativeEnd = rawItemText.length;
+                while(trimRelativeEnd > trimRelativeStart && this.isWhitespace(rawItemText[trimRelativeEnd - 1])) {
+                    trimRelativeEnd--;
+                }
+                
+                const trimmedItemValue = rawItemText.substring(trimRelativeStart, trimRelativeEnd);
+
+                if (trimmedItemValue.length > 0) { // Only add if it's not just whitespace
+                    items.push({
+                        value: trimmedItemValue,
+                        start: contentOffsetInOriginal + currentItemTextStartInContent + trimRelativeStart,
+                        end: contentOffsetInOriginal + currentItemTextStartInContent + trimRelativeEnd
+                    });
+                }
+				currentItemTextStartInContent = -1; // Reset for the next potential item
 			}
 			pos++;
 		}
-
-		// Handle the case where the last item is not followed by a comma
-		if (itemStartIndex !== -1 && itemStartIndex < content.length) {
-			const rawItemText = content.substring(itemStartIndex).trim();
-			if (rawItemText) { // check if there's actual content
-				items.push({
-					value: rawItemText,
-					start: contentStartOffset + itemStartIndex,
-					end: contentStartOffset + content.length
-				});
-			}
-		}
-
-
-		if (DEBUG) console.log(`TypeScriptArrayBuilder.parseItems: Found ${items.length} items: ${JSON.stringify(items.map(i => i.value))}`);
 		return items;
 	}
 }

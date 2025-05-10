@@ -1,0 +1,17 @@
+{
+    "mochaExplorer.ui": "tdd",
+    "mochaExplorer.require": "ts-node/register",
+    "mochaExplorer.files": "src/tests/**/*.test.ts",
+    "mocha.files.glob": "src/tests/**/*.test.ts",
+    "mocha.requires": ["ts-node/register"],
+    "mocha.tdd": true,
+    "files.exclude": {
+      "out": false,
+      "dist": false
+    },
+    "search.exclude": {
+      "out": true,
+      "dist": true
+    },
+    "typescript.tsc.autoDetect": "off"
+  }
