@@ -1,0 +1,31 @@
+2025-05-16 23:28:41 [[32minfo[39m]: Server running on port 3000 
+2025-05-16 23:28:41 [[32minfo[39m]: Swagger documentation available at: http://localhost:3000/api-docs 
+2025-05-16 23:28:41 [[32minfo[39m]: Press Ctrl+C to stop the server 
+2025-05-16 23:30:49 [[32minfo[39m]: Shutting down server... 
+2025-05-16 23:30:58 [[32minfo[39m]: Server running on port 3000 
+2025-05-16 23:30:58 [[32minfo[39m]: Swagger documentation available at: http://localhost:3000/api-docs 
+2025-05-16 23:30:58 [[32minfo[39m]: Press Ctrl+C to stop the server 
+2025-05-16 23:31:15 [[32minfo[39m]: Shutting down server... 
+2025-05-16 23:33:54 [[32minfo[39m]: Server running on port 3000 
+2025-05-16 23:33:54 [[32minfo[39m]: Swagger documentation available at: http://localhost:3000/api-docs 
+2025-05-16 23:33:54 [[32minfo[39m]: Press Ctrl+C to stop the server 
+2025-05-16 23:38:39 [[32minfo[39m]: Server running on port 3000 
+2025-05-16 23:38:39 [[32minfo[39m]: Swagger documentation available at: http://localhost:3000/api-docs 
+2025-05-16 23:38:39 [[32minfo[39m]: Press Ctrl+C to stop the server 
+2025-05-16 23:40:07 [[32minfo[39m]: Shutting down server... 
+2025-05-16 23:40:11 [[32minfo[39m]: Server running on port 3000 
+2025-05-16 23:40:11 [[32minfo[39m]: Swagger documentation available at: http://localhost:3000/api-docs 
+2025-05-16 23:40:11 [[32minfo[39m]: Press Ctrl+C to stop the server 
+2025-05-16 23:44:57 [[32minfo[39m]: Server running on port 3000 
+2025-05-16 23:44:57 [[32minfo[39m]: Swagger documentation available at: http://localhost:3000/api-docs 
+2025-05-16 23:44:57 [[32minfo[39m]: Press Ctrl+C to stop the server 
+2025-05-16 23:47:35 [[32minfo[39m]: Server running on http://localhost:3000 
+2025-05-16 23:47:35 [[32minfo[39m]: Health check endpoint: http://localhost:3000/health 
+2025-05-16 23:47:35 [[32minfo[39m]: Swagger documentation: http://localhost:3000/api-docs 
+2025-05-16 23:47:35 [[32minfo[39m]: Press Ctrl+C to stop the server 
+2025-05-16 23:48:01 [[32minfo[39m]: Shutting down server... 
+2025-05-16 23:48:07 [[32minfo[39m]: Server running on http://localhost:3000 
+2025-05-16 23:48:07 [[32minfo[39m]: Health check endpoint: http://localhost:3000/health 
+2025-05-16 23:48:07 [[32minfo[39m]: Swagger documentation: http://localhost:3000/api-docs 
+2025-05-16 23:48:07 [[32minfo[39m]: Press Ctrl+C to stop the server 
+2025-05-16 23:49:35 [[32minfo[39m]: Shutting down server... 
