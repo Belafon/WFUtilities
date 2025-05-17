@@ -1,0 +1,429 @@
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 7, char '_'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":7,"end":8,"name":"_"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 8, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":8,"end":9}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 9, char '='
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":9,"end":10,"name":"="}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 10, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":10,"end":11}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 11, char '('
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":11,"end":12,"name":"("}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 12, char 's'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":12,"end":15,"name":"str"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 15, char ')'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":15,"end":16,"name":")"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 16, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":16,"end":17}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 17, char '='
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":17,"end":18,"name":"="}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 18, char '>'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":18,"end":19,"name":">"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 19, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":19,"end":20}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 20, char '`'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":20,"end":21,"name":"`"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 21, char '_'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":21,"end":22,"name":"_"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 22, char '('
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":22,"end":23,"name":"("}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 23, char '''
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"literal","start":23,"end":31,"name":"'${str}'"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 31, char ')'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":31,"end":32,"name":")"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 32, char '`'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":32,"end":33,"name":"`"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 33, char ';'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":33,"end":34,"name":";"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 34, char '
+
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":34,"end":35}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 35, char 'e'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":35,"end":41,"name":"export"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 41, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":41,"end":42}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 42, char 'c'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"variable","start":42,"end":47}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 47, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":47,"end":48}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 48, char 'i'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":48,"end":53,"name":"intro"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 53, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":53,"end":54}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 54, char '='
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":54,"end":55,"name":"="}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 55, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":55,"end":56}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 56, char '{'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":56,"end":57,"name":"{"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 57, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":57,"end":58}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 58, char '/'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":58,"end":59,"name":"/"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 59, char '/'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":59,"end":60,"name":"/"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 60, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":60,"end":61}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 61, char 'N'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":61,"end":65,"name":"Name"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 65, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":65,"end":66}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 66, char '''
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"literal","start":66,"end":73,"name":"'intro'"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 73, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":73,"end":74}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 74, char 'm'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":74,"end":81,"name":"matches"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 81, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":81,"end":82}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 82, char 'p'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":82,"end":95,"name":"passagePartId"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 95, char '
+
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":95,"end":100}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 100, char 'e'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":100,"end":107,"name":"eventId"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 107, char ':'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":107,"end":108,"name":":"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 108, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":108,"end":109}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 109, char '''
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"literal","start":109,"end":121,"name":"'constEvent'"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 121, char ','
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":121,"end":122,"name":","}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 122, char '
+
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":122,"end":127}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 127, char 'c'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":127,"end":138,"name":"characterId"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 138, char ':'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":138,"end":139,"name":":"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 139, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":139,"end":140}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 140, char '''
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"literal","start":140,"end":151,"name":"'constChar'"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 151, char ','
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":151,"end":152,"name":","}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 152, char '
+
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":152,"end":157}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 157, char 'i'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":157,"end":159,"name":"id"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 159, char ':'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":159,"end":160,"name":":"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 160, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":160,"end":161}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 161, char '''
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"literal","start":161,"end":168,"name":"'intro'"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 168, char ','
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":168,"end":169,"name":","}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 169, char '
+
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":169,"end":174}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 174, char 't'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"type","start":174,"end":178}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 178, char ':'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":178,"end":179,"name":":"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 179, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":179,"end":180}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 180, char '''
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"literal","start":180,"end":188,"name":"'linear'"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 188, char ','
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":188,"end":189,"name":","}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 189, char '
+
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":189,"end":194}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 194, char 't'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":194,"end":199,"name":"title"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 199, char ':'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":199,"end":200,"name":":"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 200, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":200,"end":201}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 201, char '_'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":201,"end":202,"name":"_"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 202, char '('
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":202,"end":203,"name":"("}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 203, char '''
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"literal","start":203,"end":220,"name":"'Old Title Const'"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 220, char ')'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":220,"end":221,"name":")"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 221, char ','
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":221,"end":222,"name":","}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 222, char '
+
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":222,"end":227}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 227, char 'd'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":227,"end":238,"name":"description"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 238, char ':'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":238,"end":239,"name":":"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 239, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":239,"end":240}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 240, char '_'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":240,"end":241,"name":"_"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 241, char '('
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":241,"end":242,"name":"("}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 242, char '''
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"literal","start":242,"end":265,"name":"'Old description const'"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 265, char ')'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":265,"end":266,"name":")"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 266, char ','
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":266,"end":267,"name":","}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 267, char '
+
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":267,"end":272}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 272, char 'n'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":272,"end":285,"name":"nextPassageId"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 285, char ':'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":285,"end":286,"name":":"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 286, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":286,"end":287}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 287, char '''
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"literal","start":287,"end":315,"name":"'constEvent-constChar-start'"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 315, char ','
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":315,"end":316,"name":","}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 316, char '
+
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":316,"end":321}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 321, char 'i'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":321,"end":326,"name":"image"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 326, char ':'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":326,"end":327,"name":":"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 327, char ' '
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":327,"end":328}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 328, char '''
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"literal","start":328,"end":349,"name":"'old_image_const.png'"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 349, char ','
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":349,"end":350,"name":","}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 350, char '
+
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"whitespace","start":350,"end":351}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 351, char '}'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":351,"end":352,"name":"}"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      Tokenizer.tokenize: at index 352, char ';'
+      at Tokenizer.tokenize (src/typescriptObjectParser/ObjectParser.ts:107:13)
+      TokenFactory.createToken: created token {"type":"unknown","start":352,"end":353,"name":";"}
+      at Function.createToken (src/typescriptObjectParser/ObjectParser.ts:88:12)
+      TokenGrouper.processVariableDeclaration: found const at position 1
+      at TokenGrouper.processVariableDeclaration (src/typescriptObjectParser/ObjectParser.ts:1252:12)
+      TokenGrouper.processVariableDeclaration: processed name "_"
+      at TokenGrouper.processVariableDeclaration (src/typescriptObjectParser/ObjectParser.ts:1348:15)
+      TokenGrouper.processVariableDeclaration: processed initializer
+      at TokenGrouper.processVariableDeclaration (src/typescriptObjectParser/ObjectParser.ts:1540:14)
+      TokenGrouper.processVariableDeclaration: found const at position 42
+      at TokenGrouper.processVariableDeclaration (src/typescriptObjectParser/ObjectParser.ts:1252:12)
+      TokenGrouper.processVariableDeclaration: processed name "intro"
+      at TokenGrouper.processVariableDeclaration (src/typescriptObjectParser/ObjectParser.ts:1348:15)
+      TokenGrouper.processVariableDeclaration: processed initializer
+      at TokenGrouper.processVariableDeclaration (src/typescriptObjectParser/ObjectParser.ts:1540:14)
+
+  ● PassageManager - updatePassage › should update a screen passage defined as a function in primary path
+
+    Could not find passage definition (object or function return) for 'visit' (tried patterns: visitPassage, visit) in /test-workspace/src/data/events/funcEvent/funcChar.passages/visit.ts
+
+      103 |
+      104 |     if (!passageObjectBuilder) {
+    > 105 |       throw new Error(`Could not find passage definition (object or function return) for '${passagePartId}' (tried patterns: ${funcNamePattern}, ${varNamePattern}) in ${resolvedPassageFilePath}`);
+          |             ^
+      106 |     }
+      107 |
+      108 |     // After the throw, TypeScript should understand passageObjectBuilder is not null.
+
+      at PassageManager.updatePassage (src/api/services/passage.manager.ts:105:13)
+      at Object.<anonymous> (src/api/services/passage.manager.spec.ts:149:26)
+
+Test Suites: 7 failed, 7 total
+Tests:       1 failed, 13 skipped, 1 passed, 15 total
+Snapshots:   0 total
+Time:        2.068 s
+Ran all test suites with tests matching "screen passage|linear passage".
+belafon@belafon-LOQ-15IRH8:~/Documents/projects/WFUtilities$ 

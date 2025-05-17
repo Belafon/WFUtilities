@@ -2149,82 +2149,315 @@ export class TypeScriptCodeBuilder {
 			return;
 		}
 
-		const functionGroup = this.findGroup(
+		let funcBodyTokens: ParsedItemToken[] | undefined;
+		let isArrowFunctionContext = false;
+
+		// Try to find a FunctionDeclaration first
+		const functionDeclarationGroup = this.findGroup(
 			(group) => group.type === 'FunctionDeclaration' && group.name === functionName
 		);
 
-		if (!functionGroup || !functionGroup.tokens) {
-			options.onNotFound?.();
-			return;
-		}
+		if (functionDeclarationGroup && functionDeclarationGroup.tokens) {
+			// ... (logic for FunctionDeclaration - assuming it correctly assigns funcBodyTokens or leaves it undefined)
+			// For standard functions, find tokens within the main {} body
+			let bodyStartIndex = -1, bodyEndIndex = -1, braceDepth = 0;
+			let firstBraceFound = false;
+			let openParenTokenIndex = -1;
+			let closeParenTokenIndex = -1;
 
-		let returnTokenIndex = -1;
-		for (let i = 0; i < functionGroup.tokens.length; i++) {
-			const tokenName = functionGroup.tokens[i].name ?? this.originalText.substring(functionGroup.tokens[i].start, functionGroup.tokens[i].end);
-			if (tokenName === 'return') {
-				returnTokenIndex = i;
-				break;
+			// Find the parameter list '()' to correctly identify the start of the body '{'
+			// A more robust parser would have this info directly from the FunctionDeclaration group
+			let nameTokenIndex = functionDeclarationGroup.tokens.findIndex(t => t.name === functionDeclarationGroup.name && t.type !== 'function'); // find the name token after 'function'
+			if (nameTokenIndex === -1) nameTokenIndex = functionDeclarationGroup.tokens.findIndex(t => t.type === 'function'); // fallback to 'function' token itself
+
+			for (let i = nameTokenIndex + 1; i < functionDeclarationGroup.tokens.length; i++) {
+				if (functionDeclarationGroup.tokens[i].name === '(') {
+					openParenTokenIndex = i;
+				} else if (functionDeclarationGroup.tokens[i].name === ')' && openParenTokenIndex !== -1) {
+					closeParenTokenIndex = i;
+					break;
+				}
+				// If no parens, like `function foo {}`, closeParenTokenIndex remains -1
 			}
-		}
 
-		if (returnTokenIndex === -1) {
-			options.onNotFound?.();
-			return;
-		}
+			const searchStartForBodyBrace = closeParenTokenIndex !== -1 ? closeParenTokenIndex + 1 :
+				(openParenTokenIndex === -1 ? nameTokenIndex + 1 : 0); // If no '()', start after name
 
-		let openBraceToken: ParsedItemToken | null = null;
-		for (let i = returnTokenIndex + 1; i < functionGroup.tokens.length; i++) {
-			const token = functionGroup.tokens[i];
-			if (token.type === 'whitespace') continue;
-			if (token.name === '{') {
-				openBraceToken = token;
-				break;
-			} else {
-				// Found something other than whitespace or '{' after return
-				options.onNotFound?.();
-				return;
-			}
-		}
 
-		if (!openBraceToken) {
-			options.onNotFound?.();
-			return;
-		}
-
-		// Find matching closing brace
-		let braceDepth = 1;
-		let closeBraceToken: ParsedItemToken | null = null;
-		const openBraceIndexInFuncTokens = functionGroup.tokens.indexOf(openBraceToken);
-
-		for (let i = openBraceIndexInFuncTokens + 1; i < functionGroup.tokens.length; i++) {
-			const token = functionGroup.tokens[i];
-			if (token.name === '{') {
-				braceDepth++;
-			} else if (token.name === '}') {
-				braceDepth--;
-				if (braceDepth === 0) {
-					closeBraceToken = token;
+			for (let i = searchStartForBodyBrace; i < functionDeclarationGroup.tokens.length; i++) {
+				const token = functionDeclarationGroup.tokens[i];
+				if (token.type === 'whitespace') continue; // Skip whitespace before body brace
+				if (token.name === '{') {
+					if (bodyStartIndex === -1) {
+						bodyStartIndex = i + 1;
+					}
+					braceDepth++;
+					firstBraceFound = true;
+				} else if (token.name === '}') {
+					if (firstBraceFound) {
+						braceDepth--;
+						if (braceDepth === 0 && bodyStartIndex !== -1) {
+							bodyEndIndex = i;
+							break;
+						}
+					}
+				} else if (bodyStartIndex === -1 && token.name !== '{' && firstBraceFound === false) {
+					// Encountered something other than '{' where body was expected
 					break;
 				}
 			}
+			if (bodyStartIndex !== -1 && bodyEndIndex !== -1 && bodyStartIndex < bodyEndIndex) {
+				funcBodyTokens = functionDeclarationGroup.tokens.slice(bodyStartIndex, bodyEndIndex);
+			}
+		} else {
+			// If not found, try to find a VariableDeclaration (for const/let/var arrow functions or function expressions)
+			const variableDeclarationGroup = this.findGroup(
+				(group) => group.type === 'VariableDeclaration' && group.name === functionName
+			);
+
+			if (variableDeclarationGroup && variableDeclarationGroup.tokens) {
+				const allVarTokens = variableDeclarationGroup.tokens;
+				let assignmentOperatorIndex = -1;
+
+				// Find the main '=' assignment for the variable
+				for (let i = 0; i < allVarTokens.length; i++) {
+					if (allVarTokens[i].name === '=' && allVarTokens[i].type === 'unknown') {
+						let tempParenDepth = 0;
+						let tempAngleDepth = 0;
+						let tempBraceDepthInType = 0;
+						for (let k = 0; k < i; k++) {
+							if (allVarTokens[k].name === '(') tempParenDepth++;
+							else if (allVarTokens[k].name === ')') tempParenDepth--;
+							else if (allVarTokens[k].name === '<') tempAngleDepth++;
+							else if (allVarTokens[k].name === '>') tempAngleDepth--;
+							else if (allVarTokens[k].name === '{' && allVarTokens[k - 1]?.name === ':') tempBraceDepthInType++;
+							else if (allVarTokens[k].name === '}' && tempBraceDepthInType > 0) tempBraceDepthInType--;
+						}
+						if (tempParenDepth === 0 && tempAngleDepth === 0 && tempBraceDepthInType === 0) {
+							assignmentOperatorIndex = i;
+							break;
+						}
+					}
+				}
+
+				if (assignmentOperatorIndex !== -1) {
+					const tokensAfterAssignment = allVarTokens.slice(assignmentOperatorIndex + 1);
+					let bodyStartIndexInSlice = -1;
+					let bodyEndIndexInSlice = -1;
+					let currentTokenPos = 0;
+
+					while (currentTokenPos < tokensAfterAssignment.length && tokensAfterAssignment[currentTokenPos].type === 'whitespace') {
+						currentTokenPos++;
+					}
+
+					// Check for arrow function `(...) => ...`
+					// Check if first non-whitespace token is '(' for params or directly '{' for body if => {
+					if (tokensAfterAssignment[currentTokenPos]?.name === '(' || tokensAfterAssignment[currentTokenPos]?.name === '{' || isIdentifierStart(tokensAfterAssignment[currentTokenPos]?.name ?? '')) {
+						let arrowSymbolIndex = -1; // Index of '=>' token or '>' if separate
+						let parenDepthForArrowParams = 0;
+						let searchStartForArrow = currentTokenPos;
+
+						// Handle simple arrow params like `x => ...` (no parens)
+						if (isIdentifierStart(tokensAfterAssignment[searchStartForArrow]?.name ?? '') && tokensAfterAssignment[searchStartForArrow + 1]?.type === 'whitespace' && (tokensAfterAssignment[searchStartForArrow + 2]?.name === '=>' || (tokensAfterAssignment[searchStartForArrow + 2]?.name === '=' && tokensAfterAssignment[searchStartForArrow + 3]?.name === '>'))) {
+							arrowSymbolIndex = searchStartForArrow + 2 + (tokensAfterAssignment[searchStartForArrow + 2].name === '=>' ? 0 : 1);
+						} else if (isIdentifierStart(tokensAfterAssignment[searchStartForArrow]?.name ?? '') && (tokensAfterAssignment[searchStartForArrow + 1]?.name === '=>' || (tokensAfterAssignment[searchStartForArrow + 1]?.name === '=' && tokensAfterAssignment[searchStartForArrow + 2]?.name === '>'))) {
+							arrowSymbolIndex = searchStartForArrow + 1 + (tokensAfterAssignment[searchStartForArrow + 1].name === '=>' ? 0 : 1);
+						} else {
+							// Handle params with parens `() => ...` or `(x) => ...`
+							for (let k = searchStartForArrow; k < tokensAfterAssignment.length; k++) {
+								if (tokensAfterAssignment[k].name === '(') parenDepthForArrowParams++;
+								else if (tokensAfterAssignment[k].name === ')') parenDepthForArrowParams--;
+								else if (tokensAfterAssignment[k].name === '=>' && parenDepthForArrowParams === 0) {
+									arrowSymbolIndex = k;
+									break;
+								} else if (tokensAfterAssignment[k].name === '=' && tokensAfterAssignment[k + 1]?.name === '>' && parenDepthForArrowParams === 0) {
+									arrowSymbolIndex = k + 1; // point to '>'
+									break;
+								}
+							}
+						}
+
+
+						if (arrowSymbolIndex !== -1) {
+							isArrowFunctionContext = true;
+							funcBodyTokens = tokensAfterAssignment.slice(arrowSymbolIndex + 1);
+						}
+					}
+
+					if (!funcBodyTokens) { // If not an arrow function, check for `function` keyword
+						if (tokensAfterAssignment[currentTokenPos]?.type === 'function') {
+							let openBraceForExpressionBodyIndex = -1;
+							let braceDepthForExpression = 0;
+							// Find the opening brace of the function expression body
+							for (let k = currentTokenPos; k < tokensAfterAssignment.length; k++) {
+								if (tokensAfterAssignment[k].name === '{') {
+									if (braceDepthForExpression === 0) openBraceForExpressionBodyIndex = k;
+									braceDepthForExpression++;
+								} else if (tokensAfterAssignment[k].name === '}') {
+									braceDepthForExpression--;
+									if (braceDepthForExpression === 0 && openBraceForExpressionBodyIndex !== -1) {
+										bodyStartIndexInSlice = openBraceForExpressionBodyIndex + 1;
+										bodyEndIndexInSlice = k;
+										break;
+									}
+								}
+							}
+							if (bodyStartIndexInSlice !== -1 && bodyEndIndexInSlice !== -1) {
+								funcBodyTokens = tokensAfterAssignment.slice(bodyStartIndexInSlice, bodyEndIndexInSlice);
+							}
+						}
+					}
+				}
+				// If funcBodyTokens is still undefined here, it means neither arrow nor function expr was found after '='
+				if (!funcBodyTokens) {
+					options.onNotFound?.();
+					return;
+				}
+			} else { // variableDeclarationGroup not found
+				options.onNotFound?.();
+				return;
+			}
+		} // End of `else` for `VariableDeclaration`
+
+		// CRITICAL CHECK: Ensure funcBodyTokens is defined before proceeding
+		if (!funcBodyTokens) {
+			// This case implies either FunctionDeclaration didn't yield a body
+			// or VariableDeclaration path failed to set it (though it should have called onNotFound already).
+			// This is a safety net.
+			options.onNotFound?.();
+			return;
 		}
 
-		if (openBraceToken && closeBraceToken) {
-			const objectLiteralGroup: TokenGroup = {
-				type: 'ObjectLiteral',
-				start: openBraceToken.start,
-				end: closeBraceToken.end,
-				tokens: functionGroup.tokens.slice(openBraceIndexInFuncTokens, functionGroup.tokens.indexOf(closeBraceToken) + 1),
-				children: [], // Could be parsed further if needed
-				metadata: {}
-			};
-			const objectBuilder = new TypeScriptObjectBuilder(this, objectLiteralGroup, this.originalText);
-			options.onFound(objectBuilder);
+		// At this point, funcBodyTokens *should* contain tokens of the "effective body"
+		// However, for arrow functions like `() => value` (no braces), funcBodyTokens could be just that value.
+		// The implicit return logic needs to handle that.
+
+		// Attempt to find implicit return for arrow functions: e.g., () => ({...}) or () => value
+		if (isArrowFunctionContext) {
+			let effectiveBodyStartIndex = 0;
+			while (effectiveBodyStartIndex < funcBodyTokens.length && funcBodyTokens[effectiveBodyStartIndex].type === 'whitespace') {
+				effectiveBodyStartIndex++;
+			}
+
+			if (effectiveBodyStartIndex < funcBodyTokens.length) {
+				const firstSignificantTokenInBody = funcBodyTokens[effectiveBodyStartIndex];
+				let objectOpenBraceIndexInFuncBody = -1;
+
+				// Case 1: Arrow function returns an object literal wrapped in parens: () => ({...})
+				if (firstSignificantTokenInBody.name === '(') {
+					let nextAfterParen = effectiveBodyStartIndex + 1;
+					while (nextAfterParen < funcBodyTokens.length && funcBodyTokens[nextAfterParen].type === 'whitespace') {
+						nextAfterParen++;
+					}
+					if (nextAfterParen < funcBodyTokens.length && funcBodyTokens[nextAfterParen].name === '{') {
+						objectOpenBraceIndexInFuncBody = nextAfterParen;
+					}
+				}
+				// Case 2: Arrow function returns an object literal directly (if body is a block): () => { return {...} }
+				// This is handled by the explicit 'return' check later.
+				// Case 3: Arrow function returns an object literal directly (implicit, if not a block): () => { ... } -- this is rare and usually a syntax error if ambiguous with block
+				// For safety, if it's an arrow function and the body starts with '{' but is NOT a block (i.e. no 'return'),
+				// we might consider it an object literal. This is tricky.
+				// Let's assume `() => { ... }` where `{...}` is an object means it's a block unless a `return` is present.
+				// The test case is `() => ({...})` which is Case 1.
+
+				if (objectOpenBraceIndexInFuncBody !== -1) { // This means we found `(` then `{`
+					const openBraceToken = funcBodyTokens[objectOpenBraceIndexInFuncBody];
+					let braceDepth = 1;
+					let closeBraceToken: ParsedItemToken | null = null;
+					// Search for the matching '}' for this object literal
+					for (let k = objectOpenBraceIndexInFuncBody + 1; k < funcBodyTokens.length; k++) {
+						const token = funcBodyTokens[k];
+						if (token.name === '{') braceDepth++;
+						else if (token.name === '}') {
+							braceDepth--;
+							if (braceDepth === 0) {
+								closeBraceToken = token;
+								// Now check if this is followed by ')' if we started with `(`
+								let finalParenIndex = k + 1;
+								while (finalParenIndex < funcBodyTokens.length && funcBodyTokens[finalParenIndex].type === 'whitespace') finalParenIndex++;
+								if (firstSignificantTokenInBody.name === '(' && funcBodyTokens[finalParenIndex]?.name === ')') {
+									// Correctly found ({...})
+								} else if (firstSignificantTokenInBody.name === '(') {
+									// Malformed, like ({... ;
+									closeBraceToken = null; // Invalidate
+								}
+								break;
+							}
+						}
+					}
+					if (openBraceToken && closeBraceToken) {
+						const objectLiteralGroup: TokenGroup = {
+							type: 'ObjectLiteral', start: openBraceToken.start, end: closeBraceToken.end,
+							tokens: [], children: [], metadata: {}
+						};
+						const objectBuilder = new TypeScriptObjectBuilder(this, objectLiteralGroup, this.originalText);
+						options.onFound(objectBuilder);
+						return;
+					}
+				}
+			}
+			// If it was an arrow function like `() => { return {...} }` or `() => value;`,
+			// the implicit object literal return check above will fail or not apply,
+			// and it will proceed to the explicit 'return' check below, which is correct for the former.
+			// For `() => value;` where value is not an object, it will also correctly go to onNotFound.
+		}
+
+		// If funcBodyTokens is empty (e.g. `const x = () => ;`), or no implicit return found for arrow, proceed.
+		if (funcBodyTokens.length === 0 && isArrowFunctionContext) {
+			options.onNotFound?.(); // Arrow function with empty body or non-object implicit return
+			return;
+		}
+
+
+		// Standard 'return' keyword check for function/method bodies or arrow function blocks
+		let returnKeywordTokenIndex = -1;
+		for (let i = 0; i < funcBodyTokens.length; i++) {
+			if (funcBodyTokens[i].name === 'return' && funcBodyTokens[i].type === 'unknown') { // 'unknown' because tokenizer classifies keywords that way if not a specific 'function' type token.
+				returnKeywordTokenIndex = i;
+				break;
+			}
+		}
+
+		if (returnKeywordTokenIndex === -1) {
+			options.onNotFound?.();
+			return;
+		}
+
+		let openBraceAfterReturnIdx = returnKeywordTokenIndex + 1;
+		while (openBraceAfterReturnIdx < funcBodyTokens.length && funcBodyTokens[openBraceAfterReturnIdx].type === 'whitespace') {
+			openBraceAfterReturnIdx++;
+		}
+
+		if (openBraceAfterReturnIdx < funcBodyTokens.length && funcBodyTokens[openBraceAfterReturnIdx].name === '{') {
+			const openBraceToken = funcBodyTokens[openBraceAfterReturnIdx];
+			let braceDepth = 1;
+			let closeBraceToken: ParsedItemToken | null = null;
+			for (let k = openBraceAfterReturnIdx + 1; k < funcBodyTokens.length; k++) {
+				const token = funcBodyTokens[k];
+				if (token.name === '{') braceDepth++;
+				else if (token.name === '}') {
+					braceDepth--;
+					if (braceDepth === 0) {
+						closeBraceToken = token;
+						break;
+					}
+				}
+			}
+			if (openBraceToken && closeBraceToken) {
+				const objectLiteralGroup: TokenGroup = {
+					type: 'ObjectLiteral', start: openBraceToken.start, end: closeBraceToken.end,
+					tokens: [], children: [], metadata: {}
+				};
+				const objectBuilder = new TypeScriptObjectBuilder(this, objectLiteralGroup, this.originalText);
+				options.onFound(objectBuilder);
+			} else {
+				options.onNotFound?.();
+			}
 		} else {
 			options.onNotFound?.();
 		}
 	}
-
 
 	public addEdit(start: number, end: number, replacement: string): void {
 		if (start < 0 || end < start || end > this.originalText.length) {
@@ -2579,95 +2812,95 @@ export class TypeScriptObjectBuilder {
 	 * @param callbacks Callbacks to execute for properties, objects, arrays, and primitives.
 	 * @param currentPath Internal: Used for recursive calls to track the path.
 	 */
-// In TypeScriptObjectBuilder
-public traverseObjectTree(
-    callbacks: {
-        onProperty?: (path: string, name: string, valueText: string, valueType: 'object' | 'array' | 'primitive') => void;
-        onObjectEnter?: (path: string, name?: string) => void; // name is the name of the object itself
-        onObjectLeave?: (path: string, name?: string) => void;
-        onArrayEnter?: (path: string, name: string) => void; // name is the property name holding the array
-        onArrayLeave?: (path: string, name: string) => void;
-        onArrayItem?: (path: string, index: number, itemText: string, itemType: 'object' | 'array' | 'primitive') => void; // path is to the array
-        onPrimitive?: (path: string, name: string, valueText: string) => void; // path is to the parent object
-    },
-    // currentObjectPath is the path TO THIS OBJECT.
-    // For the first call, this might be the variable name if known, or empty.
-    currentObjectPath: string = ''
-): void {
-    // The "name" of this object being traversed.
-    // If currentObjectPath is "data.config", its name is "config".
-    // If currentObjectPath is "data", its name is "data".
-    // If currentObjectPath is "", it means it's the root object from the initial call,
-    // and its name isn't derived from a path segment but is implicitly the object itself.
-    // The test's logging `name || 'C'` handles this by defaulting to 'C'.
-    const nameOfThisObject = currentObjectPath.split('.').pop() || (currentObjectPath === '' ? (this.objectGroup.name || '') : '');
+	// In TypeScriptObjectBuilder
+	public traverseObjectTree(
+		callbacks: {
+			onProperty?: (path: string, name: string, valueText: string, valueType: 'object' | 'array' | 'primitive') => void;
+			onObjectEnter?: (path: string, name?: string) => void; // name is the name of the object itself
+			onObjectLeave?: (path: string, name?: string) => void;
+			onArrayEnter?: (path: string, name: string) => void; // name is the property name holding the array
+			onArrayLeave?: (path: string, name: string) => void;
+			onArrayItem?: (path: string, index: number, itemText: string, itemType: 'object' | 'array' | 'primitive') => void; // path is to the array
+			onPrimitive?: (path: string, name: string, valueText: string) => void; // path is to the parent object
+		},
+		// currentObjectPath is the path TO THIS OBJECT.
+		// For the first call, this might be the variable name if known, or empty.
+		currentObjectPath: string = ''
+	): void {
+		// The "name" of this object being traversed.
+		// If currentObjectPath is "data.config", its name is "config".
+		// If currentObjectPath is "data", its name is "data".
+		// If currentObjectPath is "", it means it's the root object from the initial call,
+		// and its name isn't derived from a path segment but is implicitly the object itself.
+		// The test's logging `name || 'C'` handles this by defaulting to 'C'.
+		const nameOfThisObject = currentObjectPath.split('.').pop() || (currentObjectPath === '' ? (this.objectGroup.name || '') : '');
 
 
-    if (callbacks.onObjectEnter) {
-        callbacks.onObjectEnter(currentObjectPath, nameOfThisObject);
-    }
+		if (callbacks.onObjectEnter) {
+			callbacks.onObjectEnter(currentObjectPath, nameOfThisObject);
+		}
 
-    const properties = this.parseProperties();
-    for (const prop of properties) {
-        // pathForProperty is the full path leading to this specific property.
-        // If currentObjectPath is "data.config" and prop.name is "settings",
-        // then pathForProperty becomes "data.config.settings".
-        const pathForProperty = currentObjectPath ? `${currentObjectPath}.${prop.name}` : prop.name;
-        const valueText = this.originalText.substring(prop.valueStart, prop.valueEnd).trim();
-        let valueType: 'object' | 'array' | 'primitive' = 'primitive';
+		const properties = this.parseProperties();
+		for (const prop of properties) {
+			// pathForProperty is the full path leading to this specific property.
+			// If currentObjectPath is "data.config" and prop.name is "settings",
+			// then pathForProperty becomes "data.config.settings".
+			const pathForProperty = currentObjectPath ? `${currentObjectPath}.${prop.name}` : prop.name;
+			const valueText = this.originalText.substring(prop.valueStart, prop.valueEnd).trim();
+			let valueType: 'object' | 'array' | 'primitive' = 'primitive';
 
-        if (valueText.startsWith('{') && valueText.endsWith('}')) {
-            valueType = 'object';
-        } else if (valueText.startsWith('[') && valueText.endsWith(']')) {
-            valueType = 'array';
-        }
+			if (valueText.startsWith('{') && valueText.endsWith('}')) {
+				valueType = 'object';
+			} else if (valueText.startsWith('[') && valueText.endsWith(']')) {
+				valueType = 'array';
+			}
 
-        if (callbacks.onProperty) {
-            // The 'path' for onProperty is the path to the object containing this property.
-            callbacks.onProperty(currentObjectPath, prop.name, valueText, valueType);
-        }
+			if (callbacks.onProperty) {
+				// The 'path' for onProperty is the path to the object containing this property.
+				callbacks.onProperty(currentObjectPath, prop.name, valueText, valueType);
+			}
 
-        if (valueType === 'object') {
-            const tempGroup: TokenGroup = { type: 'ObjectLiteral', start: prop.valueStart, end: prop.valueEnd, tokens: [], children: [], metadata: {} };
-            // Pass the actual name of the property as the group name for the nested object.
-            tempGroup.name = prop.name;
-            const nestedObjectBuilder = new TypeScriptObjectBuilder(this.parentBuilder, tempGroup, this.originalText);
-            // When recursing, pathForProperty (path to this nested object) is passed.
-            nestedObjectBuilder.traverseObjectTree(callbacks, pathForProperty);
-        } else if (valueType === 'array') {
-            // pathForProperty is the path to this array property. prop.name is the name of this array property.
-            if (callbacks.onArrayEnter) callbacks.onArrayEnter(pathForProperty, prop.name);
+			if (valueType === 'object') {
+				const tempGroup: TokenGroup = { type: 'ObjectLiteral', start: prop.valueStart, end: prop.valueEnd, tokens: [], children: [], metadata: {} };
+				// Pass the actual name of the property as the group name for the nested object.
+				tempGroup.name = prop.name;
+				const nestedObjectBuilder = new TypeScriptObjectBuilder(this.parentBuilder, tempGroup, this.originalText);
+				// When recursing, pathForProperty (path to this nested object) is passed.
+				nestedObjectBuilder.traverseObjectTree(callbacks, pathForProperty);
+			} else if (valueType === 'array') {
+				// pathForProperty is the path to this array property. prop.name is the name of this array property.
+				if (callbacks.onArrayEnter) callbacks.onArrayEnter(pathForProperty, prop.name);
 
-            const tempGroup: TokenGroup = { type: 'ArrayLiteral', start: prop.valueStart, end: prop.valueEnd, tokens: [], children: [], metadata: {} };
-            tempGroup.name = prop.name; // Name of the array property
-            const nestedArrayBuilder = new TypeScriptArrayBuilder(this.parentBuilder, tempGroup, this.originalText);
+				const tempGroup: TokenGroup = { type: 'ArrayLiteral', start: prop.valueStart, end: prop.valueEnd, tokens: [], children: [], metadata: {} };
+				tempGroup.name = prop.name; // Name of the array property
+				const nestedArrayBuilder = new TypeScriptArrayBuilder(this.parentBuilder, tempGroup, this.originalText);
 
-            const items = (nestedArrayBuilder as any).parseItems() as Array<{ value: string; start: number; end: number; }>;
-            items.forEach((item, index) => {
-                const itemText = item.value.trim();
-                let itemType: 'object' | 'array' | 'primitive' = 'primitive';
-                if (itemText.startsWith('{') && itemText.endsWith('}')) itemType = 'object';
-                else if (itemText.startsWith('[') && itemText.endsWith(']')) itemType = 'array';
+				const items = (nestedArrayBuilder as any).parseItems() as Array<{ value: string; start: number; end: number; }>;
+				items.forEach((item, index) => {
+					const itemText = item.value.trim();
+					let itemType: 'object' | 'array' | 'primitive' = 'primitive';
+					if (itemText.startsWith('{') && itemText.endsWith('}')) itemType = 'object';
+					else if (itemText.startsWith('[') && itemText.endsWith(']')) itemType = 'array';
 
-                if (callbacks.onArrayItem) {
-                    // The 'path' for onArrayItem is the path to the array itself.
-                    callbacks.onArrayItem(pathForProperty, index, itemText, itemType);
-                }
-                // No deeper recursion for items in arrays as per test expectation.
-            });
-            if (callbacks.onArrayLeave) callbacks.onArrayLeave(pathForProperty, prop.name);
+					if (callbacks.onArrayItem) {
+						// The 'path' for onArrayItem is the path to the array itself.
+						callbacks.onArrayItem(pathForProperty, index, itemText, itemType);
+					}
+					// No deeper recursion for items in arrays as per test expectation.
+				});
+				if (callbacks.onArrayLeave) callbacks.onArrayLeave(pathForProperty, prop.name);
 
-        } else { // Primitive
-            if (callbacks.onPrimitive) {
-                // The 'path' for onPrimitive is the path to the object containing this primitive.
-                callbacks.onPrimitive(currentObjectPath, prop.name, valueText);
-            }
-        }
-    }
-    if (callbacks.onObjectLeave) {
-        callbacks.onObjectLeave(currentObjectPath, nameOfThisObject);
-    }
-}
+			} else { // Primitive
+				if (callbacks.onPrimitive) {
+					// The 'path' for onPrimitive is the path to the object containing this primitive.
+					callbacks.onPrimitive(currentObjectPath, prop.name, valueText);
+				}
+			}
+		}
+		if (callbacks.onObjectLeave) {
+			callbacks.onObjectLeave(currentObjectPath, nameOfThisObject);
+		}
+	}
 
 
 	/**
