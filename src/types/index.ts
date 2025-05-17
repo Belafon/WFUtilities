@@ -66,3 +66,33 @@ export interface ErrorResponse {
   success: boolean;
   error: string;
 }
+
+// New Map related type definitions
+export interface MapTileData {
+  tile: string;
+  title?: string;
+}
+
+export interface MapLocationReference {
+  i: number;
+  j: number;
+  locationId: string;
+}
+
+export interface MapMapReference {
+  i: number;
+  j: number;
+  mapId: string;
+}
+
+export interface MapData {
+  title: string;
+  width: number;
+  height: number;
+  data: MapTileData[][];
+  locations: MapLocationReference[];
+  maps: MapMapReference[];
+}
+
+// This is used for the PUT request body
+export interface MapUpdateRequest extends MapData {}

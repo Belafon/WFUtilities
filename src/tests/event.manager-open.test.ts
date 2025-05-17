@@ -38,6 +38,20 @@ const mockFileSystemController: IFileSystem = {
   unlinkSync: (p: string): void => {
     delete mockFsStore[p];
   },
+  readdirSync: (p: string): string[] => {
+    return Object.keys(mockFsStore).filter(key => key.startsWith(p));
+  },
+  mkdirSync: (p: string, options?: { recursive?: boolean }): void => {
+    if (options?.recursive) {
+      const parts = p.split(path.sep);
+      for (let i = 1; i <= parts.length; i++) {
+        const dir = parts.slice(0, i).join(path.sep);
+        if (!(dir in mockFsStore)) {
+          mockFsStore[dir] = '';
+        }
+      }
+    }
+  }
 };
 
 function applyGlobalMocks() {
@@ -69,7 +83,7 @@ suite('EventManager - openEvent', () => {
     mockEditorAdapter = new DefaultEditorAdapter();
     showErrorNotificationSpy = sinon.spy(mockEditorAdapter, 'showErrorNotification');
     showInformationNotificationSpy = sinon.spy(mockEditorAdapter, 'showInformationNotification');
-    
+
     // CHANGE: Use sinon.stub to replace the method and control its return value
     openFileStub = sinon.stub(mockEditorAdapter, 'openFile');
 
@@ -129,10 +143,10 @@ suite('EventManager - openEvent', () => {
     assert.ok(consoleErrorSpy.calledWith(sinon.match(`Error opening event file ${filePath}`), openError), 'Error log for openFile failure not present or incorrect.');
   });
 
-   test('should handle non-Error objects thrown by editorAdapter.openFile', async () => {
+  test('should handle non-Error objects thrown by editorAdapter.openFile', async () => {
     mockFsStore[filePath] = "event content";
     const openErrorString = "Unexpected editor problem"; // This is what Sinon puts in error.name
-    
+
     openFileStub.rejects(openErrorString); // Sinon creates an Error obj: {name: "...", message: ""}
 
     await eventManager.openEvent(eventId);
@@ -141,13 +155,13 @@ suite('EventManager - openEvent', () => {
     const expectedNotificationMessage = `Failed to open event file ${filePath}: ${openErrorString}`;
 
     assert.ok(
-        showErrorNotificationSpy.calledOnce,
-        "showErrorNotificationSpy should have been called once"
+      showErrorNotificationSpy.calledOnce,
+      "showErrorNotificationSpy should have been called once"
     );
     assert.strictEqual(
-        showErrorNotificationSpy.firstCall.args[0],
-        expectedNotificationMessage,
-        `Error notification message mismatch.
+      showErrorNotificationSpy.firstCall.args[0],
+      expectedNotificationMessage,
+      `Error notification message mismatch.
          Expected: "${expectedNotificationMessage}"
          Actual:   "${showErrorNotificationSpy.firstCall.args[0]}"`
     );
@@ -155,11 +169,11 @@ suite('EventManager - openEvent', () => {
     // console.error in EventManager logs the actual error object/string rejected by the promise
     // In this case, Sinon rejects with an Error object whose 'name' is our string.
     assert.ok(
-        consoleErrorSpy.calledOnceWith(
-            `Error opening event file ${filePath}:`, 
-            sinon.match.instanceOf(Error).and(sinon.match.has("name", openErrorString))
-        ),
-        `console.error call mismatch or not called as expected.
+      consoleErrorSpy.calledOnceWith(
+        `Error opening event file ${filePath}:`,
+        sinon.match.instanceOf(Error).and(sinon.match.has("name", openErrorString))
+      ),
+      `console.error call mismatch or not called as expected.
          Expected prefix: "Error opening event file ${filePath}:"
          Expected error value to be an Error with name: "${openErrorString}"
          Actual console.error args: ${consoleErrorSpy.firstCall?.args.map(a => JSON.stringify(a)).join(', ')}`

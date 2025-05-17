@@ -51,11 +51,20 @@ const mockFileSystemController: IFileSystem = {
     delete mockFsStore[p];
     unlinkSyncCalls.push(p);
   },
-  // Add other methods from YOUR IFileSystem interface if PassageManager uses them
-  // For example, if IFileSystem has these:
-  // mkdirSync: (p: string, options?: any) => { /* mock implementation or throw */ },
-  // statSync: (p: string) => { /* mock implementation or throw */ },
-  // isDirectory: (p: string) => { /* mock implementation or throw */ },
+  readdirSync: (p: string): string[] => {
+    return Object.keys(mockFsStore).filter(key => key.startsWith(p));
+  },
+  mkdirSync: (p: string, options?: { recursive?: boolean }): void => {
+    if (options?.recursive) {
+      const parts = p.split(path.sep);
+      for (let i = 1; i <= parts.length; i++) {
+        const dir = parts.slice(0, i).join(path.sep);
+        if (!(dir in mockFsStore)) {
+          mockFsStore[dir] = '';
+        }
+      }
+    }
+  }
 };
 
 function applyGlobalMocks() {

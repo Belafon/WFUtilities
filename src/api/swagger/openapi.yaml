@@ -177,6 +177,119 @@ components:
         - success
         - error
 
+    # Map related schemas
+    MapTileData:
+      type: object
+      required:
+        - tile
+      properties:
+        tile:
+          type: string
+          description: Identifier for the tile graphic or type.
+        title:
+          type: string
+          nullable: true
+          description: Optional title or label for this specific tile instance.
+
+    MapLocationReference:
+      type: object
+      required:
+        - i
+        - j
+        - locationId
+      properties:
+        i:
+          type: integer
+          format: int32
+          description: Row index (y-coordinate) of the location on the map.
+        j:
+          type: integer
+          format: int32
+          description: Column index (x-coordinate) of the location on the map.
+        locationId:
+          type: string
+          description: ID of the location.
+
+    MapMapReference:
+      type: object
+      required:
+        - i
+        - j
+        - mapId
+      properties:
+        i:
+          type: integer
+          format: int32
+          description: Row index (y-coordinate) of the map link on the map.
+        j:
+          type: integer
+          format: int32
+          description: Column index (x-coordinate) of the map link on the map.
+        mapId:
+          type: string
+          description: ID of the map to link to.
+          
+    MapData:
+      type: object
+      required:
+        - title
+        - width
+        - height
+        - data
+        - locations
+        - maps
+      properties:
+        title:
+          type: string
+        width:
+          type: integer
+          format: int32
+        height:
+          type: integer
+          format: int32
+        data:
+          type: array
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/MapTileData'
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/MapLocationReference'
+        maps:
+          type: array
+          items:
+            $ref: '#/components/schemas/MapMapReference'
+            
+    MapUpdateRequest: 
+      $ref: '#/components/schemas/MapData'
+      
+    MapResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/MapData'
+      required:
+        - success
+        - data
+
+    MapListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            type: string # Array of map IDs
+          description: A list of map identifiers.
+      required:
+        - success
+        - data
+
   responses:
     Success:
       description: Operation successful
@@ -310,3 +423,93 @@ paths:
           $ref: '#/components/responses/Success'
         '404':
           $ref: '#/components/responses/NotFound'
+          
+  # Map API Endpoints
+  /map/{mapId}:
+    put:
+      summary: Update or create map data
+      tags:
+        - Map
+      parameters:
+        - name: mapId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier for the map.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MapUpdateRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success' 
+        '400':
+          description: Bad request due to invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Get map data by ID
+      tags:
+        - Map
+      parameters:
+        - name: mapId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier for the map.
+      responses:
+        '200':
+          description: Map data retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MapResponse'
+        '400': 
+          description: Bad request due to invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Map not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /map: 
+    get:
+      summary: List all available map IDs
+      tags:
+        - Map
+      responses:
+        '200':
+          description: List of map IDs retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MapListResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

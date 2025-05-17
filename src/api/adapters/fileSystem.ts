@@ -5,8 +5,8 @@ export interface IFileSystem {
   readFileSync(path: string, encoding: string): string;
   writeFileSync(path: string, data: string, encoding: string): void;
   unlinkSync(path: string): void;
-  // If you later need readdirSync or other methods, add them here
-  // readdirSync(path: string): string[]; 
+  readdirSync(path: string): string[];
+  mkdirSync(path: string, options?: { recursive?: boolean }): void;
 }
 
 export class NodeFileSystemAdapter implements IFileSystem {
@@ -24,6 +24,14 @@ export class NodeFileSystemAdapter implements IFileSystem {
 
   public unlinkSync(path: string): void {
     fs.unlinkSync(path);
+  }
+  
+  public readdirSync(path: string): string[] {
+    return fs.readdirSync(path);
+  }
+  
+  public mkdirSync(path: string, options?: { recursive?: boolean }): void {
+    fs.mkdirSync(path, options);
   }
 }
 

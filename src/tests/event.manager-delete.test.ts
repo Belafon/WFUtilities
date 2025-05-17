@@ -45,6 +45,20 @@ const mockFileSystemController: IFileSystem = {
     delete mockFsStore[p];
     unlinkSyncCalls.push(p);
   },
+  readdirSync: (p: string): string[] => {
+    return Object.keys(mockFsStore).filter(key => key.startsWith(p));
+  },
+  mkdirSync: (p: string, options?: { recursive?: boolean }): void => {
+    if (options?.recursive) {
+      const parts = p.split(path.sep);
+      for (let i = 1; i <= parts.length; i++) {
+        const dir = parts.slice(0, i).join(path.sep);
+        if (!(dir in mockFsStore)) {
+          mockFsStore[dir] = '';
+        }
+      }
+    }
+  }
 };
 
 function applyGlobalMocks() {
