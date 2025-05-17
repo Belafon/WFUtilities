@@ -44,7 +44,6 @@ export class PassageManager {
     }
     const [eventId, characterId, passagePartId] = parts;
 
-    // Construct primary and alternative file paths
     const primaryPassageParentDir = path.join(
       eventsDir(),
       eventId,
@@ -80,28 +79,24 @@ export class PassageManager {
 
     let passageObjectBuilder: TypeScriptObjectBuilder | null = null;
     
-    // Attempt to find the passage definition, trying common naming patterns
-    const funcNamePattern = `${passagePartId}Passage`; // e.g., visitPassage
-    const varNamePattern = passagePartId;          // e.g., visit
+    const funcNamePattern = `${passagePartId}Passage`; 
+    const varNamePattern = passagePartId;          
 
-    // 1. Try finding as a returned object from a function (e.g., export const visitPassage = () => ({ ... }))
     codeBuilder.findReturnObjectInFunction(funcNamePattern, {
-        onFound: (objBuilder) => { passageObjectBuilder = objBuilder; },
+        onFound: (objBuilder: TypeScriptObjectBuilder) => { passageObjectBuilder = objBuilder; },
         onNotFound: () => {}
     });
 
-    // 2. If not found, try as a top-level variable with "Passage" suffix (e.g., export const visitPassage = { ... })
     if (!passageObjectBuilder) {
         codeBuilder.findObject(funcNamePattern, {
-            onFound: (objBuilder) => { passageObjectBuilder = objBuilder; },
+            onFound: (objBuilder: TypeScriptObjectBuilder) => { passageObjectBuilder = objBuilder; },
             onNotFound: () => {}
         });
     }
     
-    // 3. If still not found, try as a top-level variable with direct name (e.g., export const visit = { ... })
     if (!passageObjectBuilder) {
         codeBuilder.findObject(varNamePattern, {
-            onFound: (objBuilder) => { passageObjectBuilder = objBuilder; },
+            onFound: (objBuilder: TypeScriptObjectBuilder) => { passageObjectBuilder = objBuilder; },
             onNotFound: () => {}
         });
     }
@@ -110,34 +105,37 @@ export class PassageManager {
       throw new Error(`Could not find passage definition (object or function return) for '${passagePartId}' (tried patterns: ${funcNamePattern}, ${varNamePattern}) in ${resolvedPassageFilePath}`);
     }
 
+    // After the throw, TypeScript should understand passageObjectBuilder is not null.
+    // However, if it's still inferring 'never', we assert the type.
+    // Assign to a new const with an explicit assertion for clarity.
+    const builder = passageObjectBuilder as TypeScriptObjectBuilder;
+
     // Update properties based on passageData
-    // The 'type' property in the passage object itself should be updated to reflect passageData.type
-    passageObjectBuilder.setPropertyValue('type', `'${passageData.type}'`);
+    builder.setPropertyValue('type', `'${passageData.type}'`);
 
     if (passageData.title !== undefined) {
-      passageObjectBuilder.setPropertyValue('title', this.formatStringForI18nCode(passageData.title));
+      builder.setPropertyValue('title', this.formatStringForI18nCode(passageData.title));
     }
 
     if (passageData.image !== undefined) {
-      passageObjectBuilder.setPropertyValue('image', `'${passageData.image}'`); // Image paths are usually direct strings
+      builder.setPropertyValue('image', `'${passageData.image}'`); 
     }
 
     if (passageData.type === 'screen') {
       if (passageData.body !== undefined) {
         const bodyString = this.convertPassageBodyToString(passageData.body);
-        passageObjectBuilder.setPropertyValue('body', bodyString);
+        builder.setPropertyValue('body', bodyString);
       }
     } else if (passageData.type === 'linear') {
       if (passageData.description !== undefined) {
-        // Linear passages use 'description' for main text, might be a direct string or i18n key
-        passageObjectBuilder.setPropertyValue('description', this.formatStringForI18nCode(passageData.description));
+        builder.setPropertyValue('description', this.formatStringForI18nCode(passageData.description));
       }
       if (passageData.nextPassageId !== undefined) {
-        passageObjectBuilder.setPropertyValue('nextPassageId', `'${passageData.nextPassageId}'`);
+        builder.setPropertyValue('nextPassageId', `'${passageData.nextPassageId}'`);
       }
     } else if (passageData.type === 'transition') {
       if (passageData.nextPassageId !== undefined) {
-        passageObjectBuilder.setPropertyValue('nextPassageId', `'${passageData.nextPassageId}'`);
+        builder.setPropertyValue('nextPassageId', `'${passageData.nextPassageId}'`);
       }
     }
 
@@ -147,21 +145,16 @@ export class PassageManager {
 
   private formatStringForI18nCode(value: string): string {
     const trimmedValue = value.trim();
-    // Check if it already looks like an i18n call _('...') or _("...")
     if (trimmedValue.startsWith("_(") && trimmedValue.endsWith(")")) {
         const inner = trimmedValue.substring(2, trimmedValue.length - 1).trim();
-        // Ensure inner part is a single or double quoted string
         if ((inner.startsWith("'") && inner.endsWith("'")) || (inner.startsWith('"') && inner.endsWith('"'))) {
-            return trimmedValue; // It's a valid _('key') or _("key")
+            return trimmedValue; 
         }
     }
-    // If it's a literal string like 'my text' or "my text" from the request
     if ((trimmedValue.startsWith("'") && trimmedValue.endsWith("'")) || (trimmedValue.startsWith('"') && trimmedValue.endsWith('"'))) {
         const bareString = trimmedValue.substring(1, trimmedValue.length - 1);
-        // Convert literal to _('literal'), escaping single quotes within the key
         return `_('${bareString.replace(/'/g, "\\'")}')`;
     }
-    // Otherwise, assume it's a key that needs to be wrapped and quoted
     return `_('${trimmedValue.replace(/'/g, "\\'")}')`;
 }
 
@@ -169,8 +162,6 @@ export class PassageManager {
     const itemsStr = bodyItems.map(item => {
       let itemParts: string[] = [];
       if (item.condition !== undefined) {
-        // Assuming condition is a simple boolean from request. Code might have complex expressions.
-        // For robust update, this might need parsing or smarter generation if conditions are not just booleans.
         itemParts.push(`condition: ${item.condition}`);
       }
       if (item.redirect !== undefined) {
@@ -189,18 +180,17 @@ export class PassageManager {
             linkParts.push(`passageId: '${link.passageId}'`);
           }
           if (link.autoPriority !== undefined) { 
-            // Check your TLink type for exact key: autoPriority or autoPriortiy
             linkParts.push(`autoPriority: ${link.autoPriority}`); 
           }
           if (link.cost !== undefined) {
             linkParts.push(`cost: ${this.convertLinkCostToString(link.cost)}`);
           }
-          linkParts = linkParts.filter(p => p); // Remove undefined/empty parts
+          linkParts = linkParts.filter(p => p); 
           return `{\n              ${linkParts.join(',\n              ')}\n            }`;
         }).join(',\n            ');
         itemParts.push(`links: [\n            ${linksStr}\n          ]`);
       }
-      itemParts = itemParts.filter(p => p); // Remove undefined/empty parts
+      itemParts = itemParts.filter(p => p); 
       return `{\n        ${itemParts.join(',\n        ')}\n      }`;
     }).join(',\n      ');
 
@@ -208,21 +198,18 @@ export class PassageManager {
   }
 
   private convertLinkCostToString(cost: TLinkCostUpdateRequest): string {
-    // Check for simple DeltaTime form: { value: number; unit: 'min' | 'hour' | 'day' }
     if ('value' in cost && 'unit' in cost && typeof cost.value === 'number' && typeof cost.unit === 'string') {
       const unit = cost.unit.toLowerCase();
-      // Ensure DeltaTime is imported in the target file or this won't be valid TS code.
       if (unit === 'min') return `DeltaTime.fromMin(${cost.value})`;
-      if (unit === 'hour') return `DeltaTime.fromHours(${cost.value})`; // Assuming DeltaTime.fromHours
-      if (unit === 'day') return `DeltaTime.fromDays(${cost.value})`;   // Assuming DeltaTime.fromDays
+      if (unit === 'hour') return `DeltaTime.fromHours(${cost.value})`; 
+      if (unit === 'day') return `DeltaTime.fromDays(${cost.value})`;   
       console.warn(`Unknown DeltaTime unit for cost: ${cost.unit}`);
-      return '{}'; // Fallback for unrecognized unit
+      return '{}'; 
     } else {
-      // Assumed to be TLinkCostObjectUpdateRequest
       const objCost = cost as TLinkCostObjectUpdateRequest;
       let costParts: string[] = [];
-      if (objCost.time) { // objCost.time is { value, unit }
-        costParts.push(`time: ${this.convertLinkCostToString(objCost.time)}`); // Recursive call
+      if (objCost.time) { 
+        costParts.push(`time: ${this.convertLinkCostToString(objCost.time)}`); 
       }
       if (objCost.items && objCost.items.length > 0) {
         const itemsStr = objCost.items.map(ci => `{ id: '${ci.id}', amount: ${ci.amount} }`).join(', ');
@@ -232,15 +219,11 @@ export class PassageManager {
         const toolsStr = objCost.tools.map(t => `'${t}'`).join(', ');
         costParts.push(`tools: [${toolsStr}]`);
       }
-      costParts = costParts.filter(p => p); // Remove undefined/empty parts
+      costParts = costParts.filter(p => p); 
       return `{ ${costParts.join(', ')} }`;
     }
   }
 
-  /**
-   * Deletes a passage
-   * @param passageId The ID of the passage to delete
-   */
   public async deletePassage(passageId: string): Promise<void> {
     const parts = validatePassageId(passageId);
     if (!parts) {
@@ -264,17 +247,12 @@ export class PassageManager {
     try {
         fileSystem.unlinkSync(passageFilePath);
         console.log(`Passage file ${passageFilePath} deleted successfully.`);
-        // Further logic might be needed to update any indexes or dependent files.
     } catch (error) {
         console.error(`Error deleting passage file ${passageFilePath}:`, error);
         throw new Error(`Failed to delete passage file: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
-  /**
-   * Opens a passage in the editor
-   * @param passageId The ID of the passage to open
-   */
   public async openPassage(passageId: string): Promise<void> {
     const parts = validatePassageId(passageId);
     if (!parts) {
@@ -296,7 +274,6 @@ export class PassageManager {
     }
 
     try {
-        // Use the editor adapter to open the file
         await this.editorAdapter.openFile(passageFilePath);
         console.log(`File opened via editor adapter: ${passageFilePath}`);
     } catch (error) {
@@ -306,5 +283,4 @@ export class PassageManager {
   }
 }
 
-// Export a singleton instance with the default adapter
 export const passageManager = new PassageManager();
