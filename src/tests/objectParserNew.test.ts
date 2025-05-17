@@ -3028,7 +3028,7 @@ ${classB}
           assert.strictEqual(result, true, 'removeProperty should return true for existing property');
           
           const updatedCode: string = await codeBuilder.toString();
-          assert.strictEqual(updatedCode, `const obj = { };`, 'Object should be empty after removing only property');
+          assert.strictEqual(updatedCode, `const obj = {};`, 'Object should be empty after removing only property');
         }
       });
     });
