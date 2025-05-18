@@ -1,8 +1,9 @@
 {
-  "name": "WFUtilities",
+  "name": "wfnodeserver",
   "version": "1.0.0",
-  "main": "dist/typescriptObjectParser/ObjectParser.js",
-  "types": "dist/typescriptObjectParser/ObjectParser.d.ts",
+  "description": "Node server library for WorldsFactory",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
     "start": "node dist/server.js",
@@ -11,7 +12,12 @@
     "build": "yarn tsc && yarn copy-files",
     "copy-files": "mkdir -p dist/api/swagger && cp src/api/swagger/openapi.yaml dist/api/swagger/",
     "test": "yarn mocha -r ts-node/register --ui tdd src/tests/**/*.test.ts",
-    "test:watch": "yarn mocha -r ts-node/register --ui tdd --watch --watch-files src/**/*.ts src/tests/**/*.test.ts"
+    "test:watch": "yarn mocha -r ts-node/register --ui tdd --watch --watch-files src/**/*.ts src/tests/**/*.test.ts",
+    "prepare": "yarn build",
+    "example:basic": "yarn ts-node examples/library-usage.ts",
+    "example:advanced": "yarn ts-node examples/advanced-usage.ts",
+    "link-local": "./scripts/link-library.sh",
+    "prepublishOnly": "yarn test && yarn build"
   },
   "devDependencies": {
     "@types/compression": "^1.7.5",

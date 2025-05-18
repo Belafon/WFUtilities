@@ -1,0 +1,33 @@
+# Source files
+src/
+*.ts
+*.tsx
+!*.d.ts
+
+# Test files
+src/tests/
+*.test.ts
+
+# Config files
+.github/
+.vscode/
+.gitignore
+tsconfig.json
+.eslintrc
+.eslintignore
+.prettierrc
+.prettierignore
+jest.config.js
+
+# Scripts
+scripts/
+
+# Examples
+examples/
+
+# Logs
+logs/
+*.log
+
+# Development files
+node_modules/

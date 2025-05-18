@@ -1,3 +1,20 @@
+/**
+ * Express application for WFNodeServer
+ * 
+ * This app can be used:
+ * 1. As a standalone server (via createServer from index.ts)
+ * 2. As middleware in another Express app (by mounting on a route)
+ * 
+ * Example of using as middleware:
+ * ```
+ * import express from 'express';
+ * import { app as wfApp } from 'wfnodeserver';
+ * 
+ * const app = express();
+ * app.use('/wf-api', wfApp);
+ * ```
+ */
+
 import express from 'express';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';

@@ -1,17 +1,13 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import http from 'http';
-import app from './app';
+import { app } from './index';
 
-const PORT = 3149;
-const HOST = 'localhost';
+const PORT = Number(process.env.PORT) || 3149;
+const HOST = process.env.HOST || 'localhost';
 
-// Create HTTP server
-const server = http.createServer(app);
-
-// Start the server
-server.listen(PORT, () => {
+// Create HTTP server and start it
+const server = app.listen(PORT, () => {
   console.log(`Server running on http://${HOST}:${PORT}`);
   console.log(`Swagger documentation URL: http://${HOST}:${PORT}/api-docs`);
   console.log(`Health check URL: http://${HOST}:${PORT}/health`);
