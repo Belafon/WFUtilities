@@ -45,3 +45,6 @@ export function createServer(port: number = 3000) {
   
   return server;
 }
+
+import { config  } from './WFServerConfig';
+export { config as wfNodeServerConfig };
