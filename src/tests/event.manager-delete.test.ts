@@ -5,10 +5,10 @@ import sinon from 'sinon';
 // --- SUT and Types ---
 import { EventManager } from '../api/services/event.manager'; // Adjust path
 import { EditorAdapter, DefaultEditorAdapter } from '../api/adapters/editorAdapter'; // Adjust path
+import { config } from '../WFServerConfig'; // Import the config object
 
 // --- Modules to be Mocked ---
 import * as ActualPaths from '../Paths'; // Adjust path
-import * as ActualFileSystemModule from '../api/adapters/fileSystem'; // Adjust path
 import { IFileSystem } from '../api/adapters/fileSystem'; // Adjust path
 
 // --- Test Constants ---
@@ -65,7 +65,9 @@ function applyGlobalMocks() {
   (ActualPaths as any).workspaceFolders = mockPathsConfiguration.workspaceFolders;
   (ActualPaths as any).eventsDir = mockPathsConfiguration.eventsDir;
   (ActualPaths as any).eventFilePostfix = mockPathsConfiguration.eventFilePostfix;
-  (ActualFileSystemModule as any).fileSystem = mockFileSystemController;
+  
+  // Set the mock file system in the config
+  config.setFileSystem(mockFileSystemController);
 }
 
 suite('EventManager - deleteEvent', () => {
@@ -75,7 +77,6 @@ suite('EventManager - deleteEvent', () => {
   let showInformationNotificationSpy: sinon.SinonSpy;
   let consoleErrorSpy: sinon.SinonSpy;
   let consoleLogSpy: sinon.SinonSpy;
-
 
   const getEventsDir = () => mockPathsConfiguration.eventsDir();
   const getEventFilePath = (eventId: string) => {
@@ -87,20 +88,25 @@ suite('EventManager - deleteEvent', () => {
     unlinkSyncCalls = [];
     applyGlobalMocks();
 
+    // Create the mock editor adapter
     mockEditorAdapter = new DefaultEditorAdapter();
     showErrorNotificationSpy = sinon.spy(mockEditorAdapter, 'showErrorNotification');
     showInformationNotificationSpy = sinon.spy(mockEditorAdapter, 'showInformationNotification');
-    // No showWarningNotificationSpy needed for deleteEvent/openEvent specific tests unless you add warnings there.
+    
+    // Set the mock editor adapter in the config
+    config.setEditorAdapter(mockEditorAdapter);
 
     consoleErrorSpy = sinon.spy(console, 'error');
     consoleLogSpy = sinon.spy(console, 'log');
 
-
-    eventManager = new EventManager(mockEditorAdapter);
+    // Create an instance of EventManager - no arguments needed
+    eventManager = new EventManager();
   });
 
   teardown(() => {
     sinon.restore();
+    // Reset the config to default values
+    config.reset();
   });
 
   const eventId = 'deleteTestEvent';
@@ -140,32 +146,31 @@ suite('EventManager - deleteEvent', () => {
     mockFsStore[filePath] = "event content"; // File exists initially
     const unlinkError = new Error('Permission Denied');
 
-    // Sabotage unlinkSync
-    const originalUnlinkSync = mockFileSystemController.unlinkSync;
-    mockFileSystemController.unlinkSync = sinon.stub().throws(unlinkError);
+    // Sabotage unlinkSync - now using config.fileSystem
+    const originalUnlinkSync = config.fileSystem.unlinkSync;
+    const unlinkSyncStub = sinon.stub(config.fileSystem, 'unlinkSync').throws(unlinkError);
 
     await eventManager.deleteEvent(eventId);
 
-    assert.ok((mockFileSystemController.unlinkSync as sinon.SinonStub).calledOnceWith(filePath), 'Mocked unlinkSync should have been called.');
+    assert.ok(unlinkSyncStub.calledOnceWith(filePath), 'Mocked unlinkSync should have been called.');
     const expectedErrorMessage = `Failed to delete event file ${filePath}: ${unlinkError.message}`;
     assert.ok(showErrorNotificationSpy.calledOnceWith(expectedErrorMessage), 'Error notification for unlinkSync failure not shown or incorrect.');
     assert.ok(consoleErrorSpy.calledWith(sinon.match(`Error deleting event file ${filePath}`), unlinkError), 'Error log for unlinkSync failure not present or incorrect.');
 
-    // Restore
-    mockFileSystemController.unlinkSync = originalUnlinkSync;
+    // Restore the stub
+    unlinkSyncStub.restore();
   });
 
   test('should handle non-Error objects thrown by unlinkSync', async () => {
     mockFsStore[filePath] = "event content";
     const unlinkErrorString = "Disk quota exceeded"; // The string we tell Sinon to "throw"
 
-    const originalUnlinkSync = mockFileSystemController.unlinkSync;
     // Stub unlinkSync to throw the string (Sinon will wrap it in an Error)
-    const unlinkSyncStub = sinon.stub(mockFileSystemController, 'unlinkSync').throws(unlinkErrorString);
+    const unlinkSyncStub = sinon.stub(config.fileSystem, 'unlinkSync').throws(unlinkErrorString);
 
     await eventManager.deleteEvent(eventId);
 
-    // The message in the Error object thrown by Sinon will be prefixed
+    // The message in the Error object thrown by Sinon will include a "Sinon-provided" prefix
     const sinonGeneratedErrorMessage = `Sinon-provided ${unlinkErrorString}`;
     const expectedNotificationMessage = `Failed to delete event file ${filePath}: ${sinonGeneratedErrorMessage}`;
 
@@ -176,13 +181,11 @@ suite('EventManager - deleteEvent', () => {
          Got: "${showErrorNotificationSpy.firstCall?.args[0]}"`
     );
 
-    // For console.error, your EventManager logs the caught error object itself.
-    // We need to check that the error object passed to console.error has the Sinon-generated message.
+    // For console.error, test that it received both parts (first string argument and second error argument)
     assert.ok(
       consoleErrorSpy.calledWith(
         sinon.match(`Error deleting event file ${filePath}`), // Matches the first argument (string prefix)
-        sinon.match.has("message", sinonGeneratedErrorMessage) // Matches the second argument (the error object)
-        // by checking its 'message' property.
+        sinon.match.has("message", sinonGeneratedErrorMessage) // Check for the specific error message
       ),
       `Error log for non-Error unlinkSync failure not present or incorrect.
          Console error args: ${JSON.stringify(consoleErrorSpy.firstCall?.args)}`

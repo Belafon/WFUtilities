@@ -1,15 +1,17 @@
-// A test to examine string error throwing
+
 import { strict as assert } from 'assert';
 import * as sinon from 'sinon';
-import { fileSystem } from '../api/adapters/fileSystem';
+import { config } from '../WFServerConfig'; 
 import { passageManager } from '../api/services/passage.manager';
 import * as ActualPaths from '../Paths';
 
 suite('Error Handling Investigation', function() {
   test('should correctly handle string errors from unlink', async function() {
     // Setup stubs
-    const unlinkSyncStub = sinon.stub(fileSystem, 'unlinkSync');
-    const existsSyncStub = sinon.stub(fileSystem, 'existsSync');
+    const unlinkSyncStub = sinon.stub(config.fileSystem, 'unlinkSync');
+    const existsSyncStub = sinon.stub(config.fileSystem, 'existsSync');
+    // Important: Since passageManager is a singleton and already initialized,
+    // we need to stub its internal editorAdapter directly
     const showErrorNotificationStub = sinon.stub(passageManager['editorAdapter'], 'showErrorNotification');
     const consoleErrorStub = sinon.stub(console, 'error');
     
@@ -41,12 +43,19 @@ suite('Error Handling Investigation', function() {
       
       // Check that error notification contains the expected message
       assert.ok(showErrorNotificationStub.called, 'Error notification should be called');
+      
+      // Expect the Sinon-prefixed error message
+      const expectedErrorMessage = `Sinon-provided ${stringError}`;
       assert.ok(
-        showErrorNotificationStub.getCall(0).args[0].includes(stringError),
-        'Error message should include the string error'
+        showErrorNotificationStub.getCall(0).args[0].includes(expectedErrorMessage),
+        `Error message should include the string error with Sinon prefix.
+        Expected to contain: "${expectedErrorMessage}"
+        Got: "${showErrorNotificationStub.getCall(0).args[0]}"`
       );
     } finally {
       sinon.restore();
+      // Reset the config to default values
+      config.reset();
     }
   });
 });

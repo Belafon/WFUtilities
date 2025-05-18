@@ -6,10 +6,10 @@ import sinon from 'sinon'; // Using sinon for spies and stubs
 import { EventManager } from '../api/services/event.manager'; // Adjust path
 import { EventUpdateRequest, TimeRange } from '../types'; // Adjust path
 import { EditorAdapter, DefaultEditorAdapter } from '../api/adapters/editorAdapter'; // Adjust path
+import { config } from '../WFServerConfig'; // Import the config object
 
 // --- Modules to be Mocked ---
 import * as ActualPaths from '../Paths'; // Adjust path
-import * as ActualFileSystemModule from '../api/adapters/fileSystem'; // Adjust path
 import { IFileSystem } from '../api/adapters/fileSystem'; // Adjust path
 
 // --- Test Constants ---
@@ -66,7 +66,9 @@ function applyGlobalMocks() {
   (ActualPaths as any).workspaceFolders = mockPathsConfiguration.workspaceFolders;
   (ActualPaths as any).eventsDir = mockPathsConfiguration.eventsDir;
   (ActualPaths as any).eventFilePostfix = mockPathsConfiguration.eventFilePostfix;
-  (ActualFileSystemModule as any).fileSystem = mockFileSystemController;
+  
+  // Set the mock file system in the config
+  config.setFileSystem(mockFileSystemController);
 }
 
 // Helper to normalize string content for easier comparison
@@ -78,7 +80,6 @@ suite('EventManager - updateEvent & setEventTime', () => {
   let showErrorNotificationSpy: sinon.SinonSpy;
   let showInformationNotificationSpy: sinon.SinonSpy;
   let showWarningNotificationSpy: sinon.SinonSpy;
-
 
   const getEventsDir = () => mockPathsConfiguration.eventsDir();
   const getEventFilePath = (eventId: string) => {
@@ -95,12 +96,18 @@ suite('EventManager - updateEvent & setEventTime', () => {
     showErrorNotificationSpy = sinon.spy(mockEditorAdapter, 'showErrorNotification');
     showInformationNotificationSpy = sinon.spy(mockEditorAdapter, 'showInformationNotification');
     showWarningNotificationSpy = sinon.spy(mockEditorAdapter, 'showWarningNotification');
+    
+    // Set the mock editor adapter in the config
+    config.setEditorAdapter(mockEditorAdapter);
 
-    eventManager = new EventManager(mockEditorAdapter);
+    // Create EventManager without arguments - it will use config
+    eventManager = new EventManager();
   });
 
   teardown(() => {
     sinon.restore(); // Restores all stubs and spies created by sinon
+    // Reset config to default
+    config.reset();
   });
 
   suite('updateEvent', () => {
@@ -184,10 +191,6 @@ export const ${eventId}Event = {
 
     test('should correctly format title if already wrapped with _() but no inner quotes', async () => {
         mockFsStore[filePath] = originalEventContent();
-        const newTitle = "_('Existing Wrap No Quotes')"; // Example: _(myVariable)
-                                                       // My code actually makes this _('_(\\'Existing Wrap No Quotes\\')')
-                                                       // which is not ideal but consistent with the formatStringForI18nCode logic
-                                                       // Let's use a title that my function handles "correctly"
         const newTitleInput = "_('Title with inner quotes')";
         const updateData: Partial<EventUpdateRequest> = { title: newTitleInput };
 
@@ -195,7 +198,6 @@ export const ${eventId}Event = {
         const { data: writtenContent } = writeFileSyncCalls[0];
         assert.ok(writtenContent.includes(`title: _('Title with inner quotes')`), "Title with existing _() and inner quotes not handled correctly.");
     });
-
 
     test('should correctly format title with single quotes inside', async () => {
       mockFsStore[filePath] = originalEventContent();
@@ -271,8 +273,7 @@ export const ${eventId}Event = {
         const writeError = new Error('Disk full');
 
         // Sabotage writeFileSync for this test
-        const originalWriteFileSync = mockFileSystemController.writeFileSync;
-        mockFileSystemController.writeFileSync = sinon.stub().throws(writeError);
+        const writeFileSyncStub = sinon.stub(config.fileSystem, 'writeFileSync').throws(writeError);
 
         await assert.rejects(
             async () => eventManager.updateEvent(eventId, updateData),
@@ -282,8 +283,8 @@ export const ${eventId}Event = {
         assert.ok(showErrorNotificationSpy.calledOnceWith(sinon.match(/Failed to update event/)), 'Error notification for write failure not shown.');
         assert.ok(showErrorNotificationSpy.firstCall.args[0].includes(writeError.message), 'Error notification message mismatch for write failure.');
 
-        // Restore original writeFileSync for subsequent tests
-        mockFileSystemController.writeFileSync = originalWriteFileSync;
+        // Restore original writeFileSync
+        writeFileSyncStub.restore();
     });
   });
 

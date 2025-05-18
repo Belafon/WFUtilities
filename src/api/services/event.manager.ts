@@ -1,21 +1,19 @@
 import path from 'path';
 import { EventUpdateRequest, SetTimeRequest, TimeRange } from '../../types'; // Adjust path as necessary
 import { eventsDir, eventFilePostfix } from '../../Paths'; // Adjust path as necessary
-import { fileSystem } from '../adapters/fileSystem'; // Adjust path as necessary
 import { DefaultEditorAdapter, EditorAdapter } from '../adapters/editorAdapter'; // Adjust path as necessary
 import { TypeScriptCodeBuilder, TypeScriptObjectBuilder } from '../../typescriptObjectParser/ObjectParser'; // Adjust path as necessary
 import { CodeLiteral, ObjectToStringConverter } from '../../utils/objectToStringConverter'; // Adjust path as necessary
+import { config } from '../../WFServerConfig';
 
 /**
  * Event Manager Service
  * Handles business logic for event operations
  */
 export class EventManager {
-  private editorAdapter: EditorAdapter;
   private objectConverter: ObjectToStringConverter;
 
-  constructor(editorAdapter: EditorAdapter = new DefaultEditorAdapter()) {
-    this.editorAdapter = editorAdapter;
+  constructor() {
     this.objectConverter = new ObjectToStringConverter('  '); // Default indent unit: 2 spaces
   }
 
@@ -29,20 +27,20 @@ export class EventManager {
   public async updateEvent(eventId: string, eventData: EventUpdateRequest): Promise<void> {
     if (!eventId || eventId.trim() === '') {
       const errorMessage = 'Event ID cannot be empty.';
-      this.editorAdapter.showErrorNotification(errorMessage);
+      config.editorAdapter.showErrorNotification(errorMessage);
       throw new Error(errorMessage);
     }
 
     const eventFilePath = path.join(eventsDir(), `${eventId}${eventFilePostfix}`);
 
-    if (!fileSystem.existsSync(eventFilePath)) {
+    if (!config.fileSystem.existsSync(eventFilePath)) {
       const errorMessage = `Event file not found at ${eventFilePath}`;
-      this.editorAdapter.showErrorNotification(errorMessage);
+      config.editorAdapter.showErrorNotification(errorMessage);
       throw new Error(errorMessage);
     }
 
     try {
-      const originalContent = fileSystem.readFileSync(eventFilePath, 'utf-8');
+      const originalContent = config.fileSystem.readFileSync(eventFilePath, 'utf-8');
       const codeBuilder = new TypeScriptCodeBuilder(originalContent);
       const eventObjectName = `${eventId}Event`;
       let eventObjectBuilder: TypeScriptObjectBuilder | null = null;
@@ -54,7 +52,7 @@ export class EventManager {
 
       if (!eventObjectBuilder) {
         const errorMessage = `Could not find event object definition for '${eventObjectName}' in ${eventFilePath}`;
-        this.editorAdapter.showErrorNotification(errorMessage);
+        config.editorAdapter.showErrorNotification(errorMessage);
         throw new Error(errorMessage);
       }
 
@@ -79,13 +77,13 @@ export class EventManager {
       }
 
       const updatedContent = await codeBuilder.toString();
-      fileSystem.writeFileSync(eventFilePath, updatedContent, 'utf-8');
-      this.editorAdapter.showInformationNotification(`Event '${eventId}' updated successfully.`);
+      config.fileSystem.writeFileSync(eventFilePath, updatedContent, 'utf-8');
+      config.editorAdapter.showInformationNotification(`Event '${eventId}' updated successfully.`);
       console.log(`Event '${eventId}' updated successfully in ${eventFilePath}`);
 
     } catch (error) {
       const errorMessage = `Failed to update event '${eventId}': ${error instanceof Error ? error.message : String(error)}`;
-      this.editorAdapter.showErrorNotification(errorMessage);
+      config.editorAdapter.showErrorNotification(errorMessage);
       console.error(errorMessage, error);
       throw error;
     }
@@ -113,27 +111,27 @@ export class EventManager {
   public async deleteEvent(eventId: string): Promise<void> {
     if (!eventId || eventId.trim() === '') {
       const errorMessage = 'Event ID cannot be empty for deletion.';
-      this.editorAdapter.showErrorNotification(errorMessage);
+      config.editorAdapter.showErrorNotification(errorMessage);
       console.error(errorMessage);
       return; // No error throwing, just notify and log
     }
 
     const eventFilePath = path.join(eventsDir(), `${eventId}${eventFilePostfix}`);
 
-    if (!fileSystem.existsSync(eventFilePath)) {
+    if (!config.fileSystem.existsSync(eventFilePath)) {
       const errorMessage = `Event file to delete not found at ${eventFilePath}`;
-      this.editorAdapter.showErrorNotification(errorMessage);
+      config.editorAdapter.showErrorNotification(errorMessage);
       console.error(errorMessage);
       return;
     }
 
     try {
-      fileSystem.unlinkSync(eventFilePath);
-      this.editorAdapter.showInformationNotification(`Event file ${eventFilePath} deleted successfully.`);
+      config.fileSystem.unlinkSync(eventFilePath);
+      config.editorAdapter.showInformationNotification(`Event file ${eventFilePath} deleted successfully.`);
       console.log(`Event file ${eventFilePath} deleted successfully.`);
     } catch (error) {
       const errorMessageText = `Failed to delete event file ${eventFilePath}: ${error instanceof Error ? error.message : String(error)}`;
-      this.editorAdapter.showErrorNotification(errorMessageText);
+      config.editorAdapter.showErrorNotification(errorMessageText);
       console.error(`Error deleting event file ${eventFilePath}:`, error);
       // Optionally re-throw if the caller needs to handle it, or just log and notify
       // For consistency with PassageManager's deletePassage, we'll just log and notify.
@@ -147,22 +145,22 @@ export class EventManager {
   public async openEvent(eventId: string): Promise<void> {
     if (!eventId || eventId.trim() === '') {
       const errorMessage = 'Event ID cannot be empty for opening.';
-      this.editorAdapter.showErrorNotification(errorMessage);
+      config.editorAdapter.showErrorNotification(errorMessage);
       console.error(errorMessage);
       return;
     }
 
     const eventFilePath = path.join(eventsDir(), `${eventId}${eventFilePostfix}`);
 
-    if (!fileSystem.existsSync(eventFilePath)) {
+    if (!config.fileSystem.existsSync(eventFilePath)) {
       const errorMessage = `Event file to open not found at ${eventFilePath}`;
-      this.editorAdapter.showErrorNotification(errorMessage);
+      config.editorAdapter.showErrorNotification(errorMessage);
       console.error(errorMessage);
       return;
     }
 
     try {
-      await this.editorAdapter.openFile(eventFilePath);
+      await config.editorAdapter.openFile(eventFilePath);
       console.log(`Attempted to open event file: ${eventFilePath}`);
     } catch (error) {
       let detailMessage = '';
@@ -174,7 +172,7 @@ export class EventManager {
       
       const errorMessageText = `Failed to open event file ${eventFilePath}: ${detailMessage}`;
       
-      this.editorAdapter.showErrorNotification(errorMessageText);
+      config.editorAdapter.showErrorNotification(errorMessageText);
       console.error(`Error opening event file ${eventFilePath}:`, error); 
     }
   }
@@ -187,7 +185,7 @@ export class EventManager {
   public async setEventTime(eventId: string, timeRange: SetTimeRequest['timeRange']): Promise<void> {
     if (!timeRange || timeRange.start === undefined || timeRange.end === undefined) {
       const errorMessage = 'Invalid timeRange provided for setEventTime. Both start and end are required.';
-      this.editorAdapter.showErrorNotification(errorMessage);
+      config.editorAdapter.showErrorNotification(errorMessage);
       throw new Error(errorMessage);
     }
     const eventUpdateData = { timeRange } as EventUpdateRequest;

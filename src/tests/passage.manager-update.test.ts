@@ -6,11 +6,12 @@ import path from 'path'; // Using the standard 'path' module
 import { PassageManager } from '../api/services/passage.manager';
 import { PassageUpdateRequest, TPassageScreenBodyItemUpdateRequest } from '../types';
 import { EditorAdapter, DefaultEditorAdapter } from '../api/adapters/editorAdapter';
+import { config } from '../WFServerConfig'; // Import the config object
 
 // --- Modules to be Mocked ---
 import * as ActualPaths from '../Paths';
-import * as ActualFileSystemModule from '../api/adapters/fileSystem';
 import { IFileSystem } from '../api/adapters/fileSystem'; // For type usage
+import sinon from 'sinon';
 
 // --- Test Constants ---
 const mockWorkspaceRoot = '/test-workspace';
@@ -72,7 +73,9 @@ function applyGlobalMocks() {
   (ActualPaths as any).eventsDir = mockPathsConfiguration.eventsDir;
   (ActualPaths as any).passageFilePostfix = mockPathsConfiguration.passageFilePostfix;
   (ActualPaths as any).evnetPassagesFilePostfixWithoutFileType = mockPathsConfiguration.evnetPassagesFilePostfixWithoutFileType;
-  (ActualFileSystemModule as any).fileSystem = mockFileSystemController;
+  
+  // Set the mock file system in the config
+  config.setFileSystem(mockFileSystemController);
 }
 
 suite('PassageManager - updatePassage', () => {
@@ -105,8 +108,19 @@ suite('PassageManager - updatePassage', () => {
     writeFileSyncCalls = [];
     unlinkSyncCalls = [];
     applyGlobalMocks();
+    
     mockEditorAdapter = new DefaultEditorAdapter();
-    passageManager = new PassageManager(mockEditorAdapter);
+    // Set the mock editor adapter in the config
+    config.setEditorAdapter(mockEditorAdapter);
+    
+    // Create PassageManager without arguments - it will use config
+    passageManager = new PassageManager();
+  });
+
+  teardown(() => {
+    sinon.restore();
+    // Reset config to default values
+    config.reset();
   });
 
   const normalize = (str: string) => str.replace(/\s+/g, ' ').trim();

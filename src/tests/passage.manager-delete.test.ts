@@ -2,9 +2,8 @@ import { strict as assert } from 'assert';
 import * as sinon from 'sinon';
 import path from 'path';
 import * as ActualPaths from '../Paths'; // Assuming Paths.ts is in src/
-import { fileSystem } from '../api/adapters/fileSystem'; // Assuming fileSystem.ts is in src/api/adapters/
 import { passageManager } from '../api/services/passage.manager'; // Assuming passage.manager.ts is in src/api/services/
-import { EditorAdapter } from '../api/adapters/editorAdapter'; // Import EditorAdapter for stubbing
+import { config } from '../WFServerConfig'; // Import the config object
 
 // Mocks
 let unlinkSyncStub: sinon.SinonStub;
@@ -36,11 +35,12 @@ const getAlternativePassagePath = (eventId: string, characterId: string, passage
 suite('PassageManager - deletePassage', function() {
   // We need to set up stubs within each test since beforeEach/afterEach aren't working as expected
   function setupStubs() {
-    unlinkSyncStub = sinon.stub(fileSystem, 'unlinkSync');
-    existsSyncStub = sinon.stub(fileSystem, 'existsSync');
+    // Stub methods directly on the fileSystem that passageManager is using
+    unlinkSyncStub = sinon.stub(config.fileSystem, 'unlinkSync');
+    existsSyncStub = sinon.stub(config.fileSystem, 'existsSync');
     eventsDirStub = sinon.stub(ActualPaths, 'eventsDir').returns('./test_events_root_dir');
     
-    // Stub the editor adapter notification methods directly on the passageManager's editorAdapter instance
+    // Stub the editor adapter notification methods directly on passageManager's editorAdapter
     showInfoNotificationStub = sinon.stub(passageManager['editorAdapter'], 'showInformationNotification');
     showErrorNotificationStub = sinon.stub(passageManager['editorAdapter'], 'showErrorNotification');
     
@@ -50,6 +50,8 @@ suite('PassageManager - deletePassage', function() {
 
   function teardownStubs() {
     sinon.restore();
+    // Reset config to default values
+    config.reset();
   }
 
   test('should successfully delete a passage at the primary path', async function() {
@@ -197,7 +199,18 @@ suite('PassageManager - deletePassage', function() {
       assert.ok(unlinkSyncStub.calledOnceWith(primaryPath), 'unlinkSync should be called');
       assert.ok((console.error as sinon.SinonStub).calledWith(sinon.match(/Error deleting passage file/)), 'Error message should be logged');
       assert.ok(showErrorNotificationStub.calledOnce, 'Error notification should be shown');
-      assert.ok(showErrorNotificationStub.calledWith(sinon.match(/Failed to delete passage file:/)), 'Error notification should contain proper message');
+      
+      // When using Sinon, string errors are prefixed with "Sinon-provided"
+      const expectedErrorPrefix = "Failed to delete passage file:";
+      assert.ok(
+        showErrorNotificationStub.calledWith(sinon.match(expectedErrorPrefix)),
+        'Error notification should contain proper message prefix'
+      );
+      assert.ok(
+        showErrorNotificationStub.getCall(0).args[0].includes("Sinon-provided") || 
+        showErrorNotificationStub.getCall(0).args[0].includes(deletionErrorString),
+        `Error notification should contain the error string or Sinon prefix. Got: "${showErrorNotificationStub.firstCall?.args[0]}"`
+      );
     } finally {
       teardownStubs();
     }

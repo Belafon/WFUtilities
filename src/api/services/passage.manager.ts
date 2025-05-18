@@ -7,11 +7,11 @@ import {
   TLinkUpdateRequest,
 } from '../../types'; // Adjust path as necessary
 import { eventsDir, evnetPassagesFilePostfixWithoutFileType, passageFilePostfix } from '../../Paths';
-import { fileSystem } from '../adapters/fileSystem';
 import { DefaultEditorAdapter, EditorAdapter } from '../adapters/editorAdapter';
 import { TypeScriptCodeBuilder, TypeScriptObjectBuilder } from '../../typescriptObjectParser/ObjectParser';
 // Assuming CodeLiteral and ObjectToStringConverter are in this path or similar
 import { CodeLiteral, ObjectToStringConverter } from '../../utils/objectToStringConverter';
+import { config } from '../../WFServerConfig';
 
 
 // MODIFIED validatePassageId function
@@ -75,8 +75,8 @@ export class PassageManager {
     );
 
     let resolvedPassageFilePath = primaryPassageFilePath;
-    if (!fileSystem.existsSync(resolvedPassageFilePath)) {
-      if (fileSystem.existsSync(alternativePassageFilePath)) {
+    if (!config.fileSystem.existsSync(resolvedPassageFilePath)) {
+      if (config.fileSystem.existsSync(alternativePassageFilePath)) {
         resolvedPassageFilePath = alternativePassageFilePath;
       } else {
         const errorMessage = `Passage file not found at primary path ${primaryPassageFilePath} or alternative path ${alternativePassageFilePath}`;
@@ -85,7 +85,7 @@ export class PassageManager {
       }
     }
 
-    const originalContent = fileSystem.readFileSync(resolvedPassageFilePath, 'utf-8');
+    const originalContent = config.fileSystem.readFileSync(resolvedPassageFilePath, 'utf-8');
     const codeBuilder = new TypeScriptCodeBuilder(originalContent);
 
     let passageObjectBuilder: TypeScriptObjectBuilder | null = null;
@@ -150,7 +150,7 @@ export class PassageManager {
     }
 
     const updatedContent = await codeBuilder.toString();
-    fileSystem.writeFileSync(resolvedPassageFilePath, updatedContent, 'utf-8');
+    config.fileSystem.writeFileSync(resolvedPassageFilePath, updatedContent, 'utf-8');
   }
 
   private formatStringForI18nCode(value: string): string {
@@ -280,8 +280,8 @@ export class PassageManager {
 
     let resolvedPassageFilePath = primaryPassageFilePath;
 
-    if (!fileSystem.existsSync(resolvedPassageFilePath)) {
-      if (fileSystem.existsSync(alternativePassageFilePath)) {
+    if (!config.fileSystem.existsSync(resolvedPassageFilePath)) {
+      if (config.fileSystem.existsSync(alternativePassageFilePath)) {
         resolvedPassageFilePath = alternativePassageFilePath;
       } else {
         const errorMessage = `Passage file to delete not found at ${primaryPassageFilePath} or ${alternativePassageFilePath}`;
@@ -291,7 +291,7 @@ export class PassageManager {
     }
 
     try {
-      fileSystem.unlinkSync(resolvedPassageFilePath);
+      config.fileSystem.unlinkSync(resolvedPassageFilePath);
       this.editorAdapter.showInformationNotification(`Passage file ${resolvedPassageFilePath} deleted successfully.`);
       console.log(`Passage file ${resolvedPassageFilePath} deleted successfully.`);
     } catch (error) {
@@ -318,9 +318,9 @@ export class PassageManager {
 
     let resolvedPassageFilePath: string | null = null;
 
-    if (fileSystem.existsSync(primaryPassageFilePath)) {
+    if (config.fileSystem.existsSync(primaryPassageFilePath)) {
       resolvedPassageFilePath = primaryPassageFilePath;
-    } else if (fileSystem.existsSync(alternativePassageFilePath)) {
+    } else if (config.fileSystem.existsSync(alternativePassageFilePath)) {
       resolvedPassageFilePath = alternativePassageFilePath;
     }
 

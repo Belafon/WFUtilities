@@ -34,5 +34,3 @@ export class NodeFileSystemAdapter implements IFileSystem {
     fs.mkdirSync(path, options);
   }
 }
-
-export const fileSystem: IFileSystem = new NodeFileSystemAdapter();

@@ -6,6 +6,7 @@ import { EditorAdapter, DefaultEditorAdapter } from '../api/adapters/editorAdapt
 import { IFileSystem } from '../api/adapters/fileSystem';
 import * as ActualPaths from '../Paths';
 import { MapUpdateRequest, MapData } from '../types';
+import { config } from '../WFServerConfig'; // Import the config object
 
 // --- Test Constants ---
 const mockWorkspaceRoot = '/test-workspace-maps-feature';
@@ -77,6 +78,9 @@ function applyMapManagerGlobalMocks() {
   (ActualPaths as any).workspaceFolders = mockPathsConfiguration.workspaceFolders;
   (ActualPaths as any).mapsDir = mockPathsConfiguration.mapsDir;
   (ActualPaths as any).mapFileExtension = mockPathsConfiguration.mapFileExtension;
+  
+  // Set the mock file system in the config
+  config.setFileSystem(mockFileSystemController);
 }
 
 suite('MapManager Tests', () => {
@@ -110,14 +114,20 @@ suite('MapManager Tests', () => {
     showErrorNotificationSpy = sinon.spy(mockEditorAdapter, 'showErrorNotification');
     showInformationNotificationSpy = sinon.spy(mockEditorAdapter, 'showInformationNotification');
     
+    // Set the mock editor adapter in the config
+    config.setEditorAdapter(mockEditorAdapter);
+    
     consoleErrorSpy = sinon.spy(console, 'error');
     consoleLogSpy = sinon.spy(console, 'log');
 
-    mapManager = new MapManager(mockEditorAdapter, mockFileSystemController);
+    // Create MapManager without constructor arguments - it will use config
+    mapManager = new MapManager();
   });
 
   teardown(() => {
     sinon.restore();
+    // Reset config to default values
+    config.reset();
   });
 
   suite('updateMap', () => {
@@ -145,7 +155,7 @@ suite('MapManager Tests', () => {
     
     test('should handle error during maps directory creation', async () => {
         const mkdirError = new Error('Permission denied for mkdir');
-        const mkdirSyncStub = sinon.stub(mockFileSystemController, 'mkdirSync').throws(mkdirError);
+        const mkdirSyncStub = sinon.stub(config.fileSystem, 'mkdirSync').throws(mkdirError);
         
         const expectedNotificationMessage = `Failed to create maps directory ${getMapsDir()}: ${mkdirError.message}`;
 
@@ -168,7 +178,7 @@ suite('MapManager Tests', () => {
 
     test('should handle error during file write', async () => {
       const writeError = new Error('Disk is full');
-      const writeFileSyncStub = sinon.stub(mockFileSystemController, 'writeFileSync').throws(writeError);
+      const writeFileSyncStub = sinon.stub(config.fileSystem, 'writeFileSync').throws(writeError);
       mockDirsCreated.push(getMapsDir()); // Assume dir exists for this test
       
       const expectedNotificationMessage = `Failed to update map '${mapId}' at ${filePath}: ${writeError.message}`;
@@ -266,7 +276,7 @@ suite('MapManager Tests', () => {
     test('should handle error during directory read for listMaps', async () => {
       mockDirsCreated.push(mapsDirPath);
       const readError = new Error('Cannot access directory');
-      const readdirSyncStub = sinon.stub(mockFileSystemController, 'readdirSync').throws(readError);
+      const readdirSyncStub = sinon.stub(config.fileSystem, 'readdirSync').throws(readError);
       
       const expectedNotificationMessage = `Failed to list maps in directory ${mapsDirPath}: ${readError.message}`;
 

@@ -1,3 +1,4 @@
+
 import * as assert from 'assert';
 import path from 'path';
 import sinon from 'sinon';
@@ -5,10 +6,10 @@ import sinon from 'sinon';
 // --- SUT and Types ---
 import { EventManager } from '../api/services/event.manager'; // Adjust path
 import { EditorAdapter, DefaultEditorAdapter } from '../api/adapters/editorAdapter'; // Adjust path
+import { config } from '../WFServerConfig'; // Import the config object
 
 // --- Modules to be Mocked ---
 import * as ActualPaths from '../Paths'; // Adjust path
-import * as ActualFileSystemModule from '../api/adapters/fileSystem'; // Adjust path
 import { IFileSystem } from '../api/adapters/fileSystem'; // Adjust path
 
 // --- Test Constants ---
@@ -58,7 +59,9 @@ function applyGlobalMocks() {
   (ActualPaths as any).workspaceFolders = mockPathsConfiguration.workspaceFolders;
   (ActualPaths as any).eventsDir = mockPathsConfiguration.eventsDir;
   (ActualPaths as any).eventFilePostfix = mockPathsConfiguration.eventFilePostfix;
-  (ActualFileSystemModule as any).fileSystem = mockFileSystemController;
+  
+  // Set the mock file system in the config
+  config.setFileSystem(mockFileSystemController);
 }
 
 suite('EventManager - openEvent', () => {
@@ -86,15 +89,21 @@ suite('EventManager - openEvent', () => {
 
     // CHANGE: Use sinon.stub to replace the method and control its return value
     openFileStub = sinon.stub(mockEditorAdapter, 'openFile');
+    
+    // Set the mock editor adapter in the config
+    config.setEditorAdapter(mockEditorAdapter);
 
     consoleErrorSpy = sinon.spy(console, 'error');
     consoleLogSpy = sinon.spy(console, 'log');
 
-    eventManager = new EventManager(mockEditorAdapter);
+    // Create EventManager without arguments - it will use config
+    eventManager = new EventManager();
   });
 
   teardown(() => {
     sinon.restore(); // This will restore stubs as well
+    // Reset config to default
+    config.reset();
   });
 
   const eventId = 'openTestEvent';
