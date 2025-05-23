@@ -1,5 +1,6 @@
 import { EditorAdapter, DefaultEditorAdapter } from './api/adapters/editorAdapter';
 import { IFileSystem, NodeFileSystemAdapter } from './api/adapters/fileSystem';
+import { WorkspaceAdapter, DefaultWorkspaceAdapter } from './api/adapters/workspaceAdapter';
 import { logger } from './utils/logger';
 
 /**
@@ -8,6 +9,7 @@ import { logger } from './utils/logger';
 class WFServerConfig {
   private _editorAdapter: EditorAdapter = new DefaultEditorAdapter();
   private _fileSystem: IFileSystem = new NodeFileSystemAdapter();
+  private _workspaceAdapter: WorkspaceAdapter = new DefaultWorkspaceAdapter();
 
   /**
    * Get the current EditorAdapter implementation
@@ -50,12 +52,33 @@ class WFServerConfig {
   }
 
   /**
+   * Get the current WorkspaceAdapter implementation
+   */
+  public get workspaceAdapter(): WorkspaceAdapter {
+    return this._workspaceAdapter;
+  }
+
+  /**
+   * Set a custom WorkspaceAdapter implementation
+   * @param adapter - Custom implementation of WorkspaceAdapter
+   */
+  public setWorkspaceAdapter(adapter: WorkspaceAdapter): void {
+    if (!adapter) {
+      logger.error('Attempted to set WorkspaceAdapter to null or undefined');
+      throw new Error('WorkspaceAdapter cannot be null or undefined');
+    }
+    logger.info('WorkspaceAdapter implementation set');
+    this._workspaceAdapter = adapter;
+  }
+
+  /**
    * Reset all configurations to default values
    */
   public reset(): void {
     logger.info('WFServerConfig reset to default values');
     this._editorAdapter = new DefaultEditorAdapter();
     this._fileSystem = new NodeFileSystemAdapter();
+    this._workspaceAdapter = new DefaultWorkspaceAdapter();
   }
 }
 

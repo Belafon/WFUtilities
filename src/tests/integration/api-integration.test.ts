@@ -22,7 +22,7 @@ import {
   EventUpdateRequest,
   TimeRange,
   express as reExportedExpress
-} from '../index';
+} from '../../index';
 
 suite('WFUtilities Library - API Integration Tests', () => {
   

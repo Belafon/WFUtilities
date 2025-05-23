@@ -29,3 +29,43 @@
 2025-05-16 23:48:07 [[32minfo[39m]: Swagger documentation: http://localhost:3000/api-docs 
 2025-05-16 23:48:07 [[32minfo[39m]: Press Ctrl+C to stop the server 
 2025-05-16 23:49:35 [[32minfo[39m]: Shutting down server... 
+2025-05-23 22:38:00 [[32minfo[39m]: WorkspaceAdapter implementation set 
+2025-05-23 22:38:00 [[32minfo[39m]: FileSystem implementation set 
+2025-05-23 22:38:00 [[32minfo[39m]: EditorAdapter implementation set 
+2025-05-23 22:38:00 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-Zb6XXx/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:38:00 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-Zb6XXx/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:38:00 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-Zb6XXx/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 22:38:00 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-Zb6XXx/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 22:38:00 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-Zb6XXx/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:38:00 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-Zb6XXx/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 22:38:00 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-Zb6XXx/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:38:00 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-Zb6XXx/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:38:00 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-Zb6XXx/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:38:00 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-Zb6XXx/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:38:00 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-Zb6XXx/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:38:00 [[32minfo[39m]: WFServerConfig reset to default values 
+2025-05-23 22:45:20 [[32minfo[39m]: WorkspaceAdapter implementation set 
+2025-05-23 22:45:20 [[32minfo[39m]: FileSystem implementation set 
+2025-05-23 22:45:20 [[32minfo[39m]: EditorAdapter implementation set 
+2025-05-23 22:45:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-0AhqP3/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:45:20 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-0AhqP3/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:45:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-0AhqP3/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 22:45:20 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-0AhqP3/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 22:45:20 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-0AhqP3/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:45:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-0AhqP3/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 22:45:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-0AhqP3/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:45:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-0AhqP3/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:45:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-0AhqP3/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:45:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-0AhqP3/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:45:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-0AhqP3/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:45:20 [[32minfo[39m]: WFServerConfig reset to default values 
+2025-05-23 22:45:29 [[32minfo[39m]: WorkspaceAdapter implementation set 
+2025-05-23 22:45:29 [[32minfo[39m]: FileSystem implementation set 
+2025-05-23 22:45:29 [[32minfo[39m]: EditorAdapter implementation set 
+2025-05-23 22:45:29 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-efM3jq/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:45:29 [[32minfo[39m]: WFServerConfig reset to default values 
+2025-05-23 22:45:42 [[32minfo[39m]: WorkspaceAdapter implementation set 
+2025-05-23 22:45:42 [[32minfo[39m]: FileSystem implementation set 
+2025-05-23 22:45:42 [[32minfo[39m]: EditorAdapter implementation set 
+2025-05-23 22:45:42 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-yjdNAT/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:45:42 [[32minfo[39m]: WFServerConfig reset to default values 
