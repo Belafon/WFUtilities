@@ -1,6 +1,6 @@
-// src/config.ts
 import { EditorAdapter, DefaultEditorAdapter } from './api/adapters/editorAdapter';
 import { IFileSystem, NodeFileSystemAdapter } from './api/adapters/fileSystem';
+import { logger } from './utils/logger';
 
 /**
  * Global configuration for the WFNodeServer library
@@ -22,8 +22,10 @@ class WFServerConfig {
    */
   public setEditorAdapter(adapter: EditorAdapter): void {
     if (!adapter) {
+      logger.error('Attempted to set EditorAdapter to null or undefined');
       throw new Error('EditorAdapter cannot be null or undefined');
     }
+    logger.info('EditorAdapter implementation set');
     this._editorAdapter = adapter;
   }
 
@@ -40,8 +42,10 @@ class WFServerConfig {
    */
   public setFileSystem(fs: IFileSystem): void {
     if (!fs) {
+      logger.error('Attempted to set FileSystem implementation to null or undefined');
       throw new Error('FileSystem implementation cannot be null or undefined');
     }
+    logger.info('FileSystem implementation set');
     this._fileSystem = fs;
   }
 
@@ -49,6 +53,7 @@ class WFServerConfig {
    * Reset all configurations to default values
    */
   public reset(): void {
+    logger.info('WFServerConfig reset to default values');
     this._editorAdapter = new DefaultEditorAdapter();
     this._fileSystem = new NodeFileSystemAdapter();
   }

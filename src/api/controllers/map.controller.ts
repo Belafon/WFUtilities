@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { mapManager } from '../services/map.manager'; // Adjust path as necessary
 import { MapUpdateRequest } from '../../types'; // Adjust path as necessary
+import { logger } from '../../utils/logger';
 
 /**
  * @desc    Update or create a map
@@ -32,6 +33,7 @@ export const updateMapController = async (req: Request<{ mapId: string }>, res: 
       message: `Map ${mapId} updated successfully`,
     });
   } catch (error: any) {
+    logger.error(`Error in updateMapController for mapId ${req.params.mapId}: ${error.message}`, { error });
     console.error(`Error in updateMapController for mapId ${req.params.mapId}:`, error);
     // Differentiate known errors (e.g., from manager validation) vs. unexpected ones
     if (error.message && (error.message.includes('Map ID cannot be empty') || error.message.includes('Failed to create maps directory'))) {
@@ -73,6 +75,7 @@ export const getMapController = async (req: Request<{ mapId: string }>, res: Res
       });
     }
   } catch (error: any) {
+    logger.error(`Error in getMapController for mapId ${req.params.mapId}: ${error.message}`, { error });
     console.error(`Error in getMapController for mapId ${req.params.mapId}:`, error);
     if (error.message && error.message.includes('Failed to read or parse map')) {
         res.status(500).json({ success: false, error: error.message });
@@ -98,6 +101,7 @@ export const listMapsController = async (_req: Request, res: Response): Promise<
       data: mapIds, // Returns an array of map IDs
     });
   } catch (error: any) {
+    logger.error(`Error in listMapsController: ${error.message}`, { error });
     console.error('Error in listMapsController:', error);
     res.status(500).json({
       success: false,

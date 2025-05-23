@@ -4,15 +4,15 @@ import {
   deletePassage,
   openPassage
 } from '../controllers/passage.controller';
-import type { RequestHandler } from 'express';
+import {
+  validatePassageUpdate,
+  handleValidationErrors
+} from '../middlewares/validation';
 
 const router = Router();
 
-// Define type with correct params shape
-type PassageRequestHandler = RequestHandler<{passageId: string}>;
-
-router.put('/:passageId', updatePassage as PassageRequestHandler);
-router.delete('/:passageId', deletePassage as PassageRequestHandler);
-router.post('/:passageId/open', openPassage as PassageRequestHandler);
+router.put('/:passageId', validatePassageUpdate, handleValidationErrors, updatePassage);
+router.delete('/:passageId', deletePassage);
+router.post('/:passageId/open', openPassage);
 
 export default router;

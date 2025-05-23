@@ -1,0 +1,36 @@
+{
+  "title": "Test Map",
+  "width": 10,
+  "height": 10,
+  "data": [
+    [
+      "grass",
+      "grass",
+      "tree"
+    ],
+    [
+      "path",
+      "grass",
+      "rock"
+    ],
+    [
+      "water",
+      "water",
+      "bridge"
+    ]
+  ],
+  "locations": [
+    {
+      "i": 0,
+      "j": 1,
+      "locationId": "village"
+    }
+  ],
+  "maps": [
+    {
+      "i": 2,
+      "j": 2,
+      "mapId": "connected-map"
+    }
+  ]
+}

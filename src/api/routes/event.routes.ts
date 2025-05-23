@@ -5,16 +5,17 @@ import {
   openEvent,
   setEventTime
 } from '../controllers/event.controller';
-import type { RequestHandler } from 'express';
+import {
+  validateEventUpdate,
+  validateSetTime,
+  handleValidationErrors
+} from '../middlewares/validation';
 
 const router = Router();
 
-// Define type with correct params shape
-type EventRequestHandler = RequestHandler<{eventId: string}>;
-
-router.put('/:eventId', updateEvent as EventRequestHandler);
-router.delete('/:eventId', deleteEvent as EventRequestHandler);
-router.post('/:eventId/open', openEvent as EventRequestHandler);
-router.post('/:eventId/setTime', setEventTime as EventRequestHandler);
+router.put('/:eventId', validateEventUpdate, handleValidationErrors, updateEvent);
+router.delete('/:eventId', deleteEvent);
+router.post('/:eventId/open', openEvent);
+router.post('/:eventId/setTime', validateSetTime, handleValidationErrors, setEventTime);
 
 export default router;
