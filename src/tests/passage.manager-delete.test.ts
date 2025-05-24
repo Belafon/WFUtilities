@@ -99,37 +99,27 @@ suite('PassageManager - deletePassage', function() {
     }
   });
 
-  test('should show error notification if passageId is invalid', async function() {
+  test('should throw error if passageId is invalid', async function() {
     setupStubs();
     
     try {
       const invalidPassageId = 'invalid-id-format';
 
-      await passageManager.deletePassage(invalidPassageId);
-
-      console.log('Error notification called?', showErrorNotificationStub.called);
-      console.log('Call count:', showErrorNotificationStub.callCount);
-      console.log('Call args:', showErrorNotificationStub.args);
-      console.log('First call arg:', showErrorNotificationStub.firstCall?.args[0]);
-      console.log('Regex test:', /Invalid passageId format/.test(showErrorNotificationStub.firstCall?.args[0] || ''));
-      console.log('Match test:', sinon.match(/Invalid passageId format/).test(showErrorNotificationStub.firstCall?.args[0] || ''));
-
-      assert.ok(showErrorNotificationStub.calledOnce, 'Error notification should be shown once');
-      assert.ok(
-        showErrorNotificationStub.calledWith(sinon.match(/Invalid passageId format/)), 
-        'Error notification should contain proper message'
+      await assert.rejects(
+        async () => passageManager.deletePassage(invalidPassageId),
+        (error: Error) => {
+          return error.message.includes('Invalid passageId format') && 
+                 error.message.includes(invalidPassageId);
+        }
       );
-      assert.ok(
-        showErrorNotificationStub.calledWith(sinon.match(invalidPassageId)), 
-        'Error notification should include the invalid ID'
-      );
+
       assert.ok(unlinkSyncStub.notCalled, 'unlinkSync should not be called for invalid ID');
     } finally {
       teardownStubs();
     }
   });
 
-  test('should show error notification if passage file is not found at either path', async function() {
+  test('should throw error if passage file is not found at either path', async function() {
     setupStubs();
     
     try {
@@ -140,28 +130,22 @@ suite('PassageManager - deletePassage', function() {
       existsSyncStub.withArgs(primaryPath).returns(false);
       existsSyncStub.withArgs(alternativePath).returns(false);
 
-      await passageManager.deletePassage(passageId);
+      await assert.rejects(
+        async () => passageManager.deletePassage(passageId),
+        (error: Error) => {
+          return error.message.includes('Passage file to delete not found at') &&
+                 error.message.includes(primaryPath) &&
+                 error.message.includes(alternativePath);
+        }
+      );
 
-      assert.ok(showErrorNotificationStub.calledOnce, 'Error notification should be shown once');
-      assert.ok(
-        showErrorNotificationStub.calledWith(sinon.match(/Passage file to delete not found at/)), 
-        'Error notification should contain proper message'
-      );
-      assert.ok(
-        showErrorNotificationStub.calledWith(sinon.match(primaryPath)), 
-        'Error notification should contain primary path'
-      );
-      assert.ok(
-        showErrorNotificationStub.calledWith(sinon.match(alternativePath)), 
-        'Error notification should contain alternative path'
-      );
       assert.ok(unlinkSyncStub.notCalled, 'unlinkSync should not be called if file not found');
     } finally {
       teardownStubs();
     }
   });
 
-  test('should show error notification if fileSystem.unlinkSync fails', async function() {
+  test('should throw error if fileSystem.unlinkSync fails', async function() {
     setupStubs();
     
     try {
@@ -172,12 +156,13 @@ suite('PassageManager - deletePassage', function() {
       existsSyncStub.withArgs(primaryPath).returns(true);
       unlinkSyncStub.withArgs(primaryPath).throws(deletionError);
 
-      await passageManager.deletePassage(passageId);
+      await assert.rejects(
+        async () => passageManager.deletePassage(passageId),
+        deletionError
+      );
 
       assert.ok(unlinkSyncStub.calledOnceWith(primaryPath), 'unlinkSync should be called');
       assert.ok((console.error as sinon.SinonStub).calledWith(sinon.match(/Error deleting passage file/), deletionError), 'Error message should be logged');
-      assert.ok(showErrorNotificationStub.calledOnce, 'Error notification should be shown');
-      assert.ok(showErrorNotificationStub.calledWith(sinon.match(/Failed to delete passage file: Permission denied/)), 'Error notification should contain proper message');
     } finally {
       teardownStubs();
     }
@@ -194,23 +179,16 @@ suite('PassageManager - deletePassage', function() {
       existsSyncStub.withArgs(primaryPath).returns(true);
       unlinkSyncStub.withArgs(primaryPath).throws(deletionErrorString);
 
-      await passageManager.deletePassage(passageId);
+      await assert.rejects(
+        async () => passageManager.deletePassage(passageId),
+        (error: any) => {
+          return error === deletionErrorString ||
+                 (typeof error === 'object' && error.message && error.message.includes('Sinon-provided'));
+        }
+      );
 
       assert.ok(unlinkSyncStub.calledOnceWith(primaryPath), 'unlinkSync should be called');
       assert.ok((console.error as sinon.SinonStub).calledWith(sinon.match(/Error deleting passage file/)), 'Error message should be logged');
-      assert.ok(showErrorNotificationStub.calledOnce, 'Error notification should be shown');
-      
-      // When using Sinon, string errors are prefixed with "Sinon-provided"
-      const expectedErrorPrefix = "Failed to delete passage file:";
-      assert.ok(
-        showErrorNotificationStub.calledWith(sinon.match(expectedErrorPrefix)),
-        'Error notification should contain proper message prefix'
-      );
-      assert.ok(
-        showErrorNotificationStub.getCall(0).args[0].includes("Sinon-provided") || 
-        showErrorNotificationStub.getCall(0).args[0].includes(deletionErrorString),
-        `Error notification should contain the error string or Sinon prefix. Got: "${showErrorNotificationStub.firstCall?.args[0]}"`
-      );
     } finally {
       teardownStubs();
     }

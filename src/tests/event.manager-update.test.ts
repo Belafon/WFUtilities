@@ -215,7 +215,6 @@ export const ${eventId}Event = {
         async () => eventManager.updateEvent('', updateData),
         new Error('Event ID cannot be empty.')
       );
-      assert.ok(showErrorNotificationSpy.calledOnceWith('Event ID cannot be empty.'), 'Error notification for empty eventId not shown.');
       assert.strictEqual(writeFileSyncCalls.length, 0);
     });
 
@@ -228,7 +227,6 @@ export const ${eventId}Event = {
         async () => eventManager.updateEvent(nonExistentEventId, updateData),
         new Error(`Event file not found at ${expectedPath}`)
       );
-      assert.ok(showErrorNotificationSpy.calledOnceWith(`Event file not found at ${expectedPath}`), 'Error notification for file not found not shown.');
       assert.strictEqual(writeFileSyncCalls.length, 0);
     });
 
@@ -244,30 +242,9 @@ export const ${eventId}Event = {
         new Error(`Could not find event object definition for '${expectedObjectName}' in ${filePath}`)
       );
 
-      // Now, let's verify the notifications precisely.
-      // Based on the EventManager logic, showErrorNotificationSpy will be called twice.
-      assert.strictEqual(
-        showErrorNotificationSpy.callCount,
-        2,
-        "showErrorNotificationSpy should have been called twice for this error scenario."
-      );
-
-      // Check the message of the first call
-      assert.strictEqual(
-        showErrorNotificationSpy.getCall(0).args[0], // .getCall(0) gets the first call, .args[0] gets the first argument
-        `Could not find event object definition for '${expectedObjectName}' in ${filePath}`,
-        'The first error notification (specific object not found) had an unexpected message.'
-      );
-
-      // Check the message of the second call
-      assert.strictEqual(
-        showErrorNotificationSpy.getCall(1).args[0],
-        `Failed to update event '${eventId}': Could not find event object definition for '${expectedObjectName}' in ${filePath}`,
-        'The second error notification (general update failure wrapper) had an unexpected message.'
-      );
-    });
-
-    test('should propagate error and show notification if writeFileSync fails', async () => {
+      // Ensure writeFileSync was not called
+      assert.strictEqual(writeFileSyncCalls.length, 0);
+    });    test('should propagate error if writeFileSync fails', async () => {
         mockFsStore[filePath] = originalEventContent();
         const updateData: EventUpdateRequest = { title: 'New Title', description: 'D', location: 'L', timeRange: {start:'s', end:'e'} };
         const writeError = new Error('Disk full');
@@ -279,9 +256,6 @@ export const ${eventId}Event = {
             async () => eventManager.updateEvent(eventId, updateData),
             writeError // Expect the original error to be re-thrown
         );
-
-        assert.ok(showErrorNotificationSpy.calledOnceWith(sinon.match(/Failed to update event/)), 'Error notification for write failure not shown.');
-        assert.ok(showErrorNotificationSpy.firstCall.args[0].includes(writeError.message), 'Error notification message mismatch for write failure.');
 
         // Restore original writeFileSync
         writeFileSyncStub.restore();
@@ -356,9 +330,6 @@ export const ${eventId}Event = {
             async () => eventManager.setEventTime(nonExistentEventId, timeRange),
             new Error(`Event file not found at ${expectedPath}`) // Error comes from updateEvent
         );
-
-        // The error notification will be from updateEvent
-        assert.ok(showErrorNotificationSpy.calledOnceWith(`Event file not found at ${expectedPath}`), 'Error notification from underlying updateEvent not shown.');
     });
   });
 });

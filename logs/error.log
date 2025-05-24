@@ -22,3 +22,959 @@
 2025-05-23 22:45:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-0AhqP3/src/data/events/concurrent_test.event.ts {"error":{}}
 2025-05-23 22:45:29 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-efM3jq/src/data/events/test_kingdom.event.ts {"error":{}}
 2025-05-23 22:45:42 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-yjdNAT/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-PDUtZA/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-PDUtZA/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-PDUtZA/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-PDUtZA/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-PDUtZA/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-PDUtZA/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-PDUtZA/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-PDUtZA/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-PDUtZA/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-PDUtZA/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-PDUtZA/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Error in getMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Error in listMapsController: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Error in updateMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 22:47:40 [[31merror[39m]: Unexpected token 'j', "{"invalid": json}" is not valid JSON {"stack":"SyntaxError: Unexpected token 'j', \"{\"invalid\": json}\" is not valid JSON\n    at JSON.parse (<anonymous>)\n    at parse (/home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/types/json.js:77:19)\n    at /home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/read.js:123:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)\n    at invokeCallback (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:238:16)\n    at done (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:227:7)\n    at IncomingMessage.onEnd (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:287:7)\n    at IncomingMessage.emit (node:events:514:28)\n    at IncomingMessage.emit (node:domain:488:12)\n    at endReadableNT (node:internal/streams/readable:1589:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"}
+2025-05-23 22:47:52 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-NrZUhm/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:47:52 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-NrZUhm/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:47:52 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-NrZUhm/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 22:47:52 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-NrZUhm/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 22:47:52 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-NrZUhm/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:47:52 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-NrZUhm/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 22:47:52 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-NrZUhm/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:47:52 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-NrZUhm/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:47:52 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-NrZUhm/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:47:52 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-NrZUhm/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:47:52 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-NrZUhm/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:47:52 [[31merror[39m]: Error in getMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 22:47:52 [[31merror[39m]: Error in listMapsController: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 22:47:52 [[31merror[39m]: Error in updateMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 22:47:52 [[31merror[39m]: Unexpected token 'j', "{"invalid": json}" is not valid JSON {"stack":"SyntaxError: Unexpected token 'j', \"{\"invalid\": json}\" is not valid JSON\n    at JSON.parse (<anonymous>)\n    at parse (/home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/types/json.js:77:19)\n    at /home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/read.js:123:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)\n    at invokeCallback (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:238:16)\n    at done (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:227:7)\n    at IncomingMessage.onEnd (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:287:7)\n    at IncomingMessage.emit (node:events:514:28)\n    at IncomingMessage.emit (node:domain:488:12)\n    at endReadableNT (node:internal/streams/readable:1589:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"}
+2025-05-23 22:48:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-rEvsTH/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:48:53 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-rEvsTH/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:48:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-rEvsTH/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 22:48:53 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-rEvsTH/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 22:48:53 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-rEvsTH/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:48:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-rEvsTH/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 22:48:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-rEvsTH/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:48:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-rEvsTH/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:48:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-rEvsTH/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:48:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-rEvsTH/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:48:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-rEvsTH/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:48:53 [[31merror[39m]: Error in getMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 22:48:53 [[31merror[39m]: Error in listMapsController: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 22:48:53 [[31merror[39m]: Error in updateMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 22:48:53 [[31merror[39m]: Unexpected token 'j', "{"invalid": json}" is not valid JSON {"stack":"SyntaxError: Unexpected token 'j', \"{\"invalid\": json}\" is not valid JSON\n    at JSON.parse (<anonymous>)\n    at parse (/home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/types/json.js:77:19)\n    at /home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/read.js:123:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)\n    at invokeCallback (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:238:16)\n    at done (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:227:7)\n    at IncomingMessage.onEnd (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:287:7)\n    at IncomingMessage.emit (node:events:514:28)\n    at IncomingMessage.emit (node:domain:488:12)\n    at endReadableNT (node:internal/streams/readable:1589:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"}
+2025-05-23 22:49:38 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-pu3mke/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:49:38 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-pu3mke/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:49:38 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-pu3mke/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 22:49:38 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-pu3mke/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 22:49:38 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-pu3mke/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:49:38 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-pu3mke/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 22:49:38 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-pu3mke/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:49:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-pu3mke/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:49:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-pu3mke/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:49:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-pu3mke/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:49:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-pu3mke/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:49:39 [[31merror[39m]: Error in getMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 22:49:39 [[31merror[39m]: Error in listMapsController: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 22:49:39 [[31merror[39m]: Error in updateMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 22:49:39 [[31merror[39m]: Unexpected token 'j', "{"invalid": json}" is not valid JSON {"stack":"SyntaxError: Unexpected token 'j', \"{\"invalid\": json}\" is not valid JSON\n    at JSON.parse (<anonymous>)\n    at parse (/home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/types/json.js:77:19)\n    at /home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/read.js:123:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)\n    at invokeCallback (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:238:16)\n    at done (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:227:7)\n    at IncomingMessage.onEnd (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:287:7)\n    at IncomingMessage.emit (node:events:514:28)\n    at IncomingMessage.emit (node:domain:488:12)\n    at endReadableNT (node:internal/streams/readable:1589:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"}
+2025-05-23 22:50:13 [[31merror[39m]: Map ID cannot be empty. 
+2025-05-23 22:50:13 [[31merror[39m]: Failed to create maps directory /test-workspace-maps-feature/src/data/maps: Permission denied for mkdir 
+2025-05-23 22:50:13 [[31merror[39m]: Failed to update map 'treasureMap' at /test-workspace-maps-feature/src/data/maps/treasureMap.json: Disk is full 
+2025-05-23 22:50:13 [[31merror[39m]: Failed to read or parse map 'existingMap' from /test-workspace-maps-feature/src/data/maps/existingMap.json: Unexpected token 'h', "this is not"... is not valid JSON 
+2025-05-23 22:50:13 [[31merror[39m]: Failed to list maps in directory /test-workspace-maps-feature/src/data/maps: Cannot access directory 
+2025-05-23 22:50:13 [[31merror[39m]: Failed to create maps directory /test-workspace-maps-feature/src/data/maps: EACCES: permission denied, mkdir '/test-workspace-maps-feature/src/data/maps' 
+2025-05-23 22:50:13 [[31merror[39m]: Error in updateMapController for mapId test-map: EACCES: permission denied, mkdir '/test-workspace-maps-feature/src/data/maps' {"error":{"errno":-13,"code":"EACCES","syscall":"mkdir","path":"/test-workspace-maps-feature/src/data/maps"}}
+2025-05-23 22:50:13 [[31merror[39m]: Unexpected token 'j', "{"invalid": json}" is not valid JSON {"stack":"SyntaxError: Unexpected token 'j', \"{\"invalid\": json}\" is not valid JSON\n    at JSON.parse (<anonymous>)\n    at parse (/home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/types/json.js:77:19)\n    at /home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/read.js:123:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:238:16)\n    at done (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:227:7)\n    at IncomingMessage.onEnd (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:287:7)\n    at IncomingMessage.emit (node:events:519:28)\n    at IncomingMessage.emit (node:domain:488:12)\n    at endReadableNT (node:internal/streams/readable:1698:12)"}
+2025-05-23 22:50:13 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:50:13 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:50:13 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 22:50:13 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace-delete/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 22:50:13 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace-delete/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:50:13 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 22:50:13 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:50:13 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:50:13 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:50:13 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:50:13 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:51:15 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-bvACgY/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:51:15 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-bvACgY/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:51:15 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-bvACgY/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 22:51:15 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-bvACgY/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 22:51:15 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-bvACgY/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:51:15 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-bvACgY/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 22:51:15 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-bvACgY/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:51:15 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-bvACgY/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:51:15 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-bvACgY/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:51:15 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-bvACgY/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:51:15 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-bvACgY/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-dinJ8e/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_villageEvent' in /tmp/wf-event-test-dinJ8e/src/data/events/test_village.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-dinJ8e/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-dinJ8e/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-dinJ8e/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-dinJ8e/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-dinJ8e/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-dinJ8e/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-dinJ8e/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-dinJ8e/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-dinJ8e/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-dinJ8e/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-dinJ8e/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-dinJ8e/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:56:41 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-dinJ8e/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:57:08 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-TzrRFI/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:57:40 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-h0xkgS/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-EksxhE/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_villageEvent' in /tmp/wf-event-test-EksxhE/src/data/events/test_village.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-EksxhE/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-EksxhE/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-EksxhE/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-EksxhE/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-EksxhE/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-EksxhE/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-EksxhE/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-EksxhE/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-EksxhE/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-EksxhE/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-EksxhE/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-EksxhE/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:58:14 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-EksxhE/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-c3R37C/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_villageEvent' in /tmp/wf-event-test-c3R37C/src/data/events/test_village.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-c3R37C/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-c3R37C/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-c3R37C/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-c3R37C/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-c3R37C/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-c3R37C/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-c3R37C/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-c3R37C/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-c3R37C/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-c3R37C/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-c3R37C/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-c3R37C/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:58:39 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-c3R37C/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-rPil6S/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_villageEvent' in /tmp/wf-event-test-rPil6S/src/data/events/test_village.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-rPil6S/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-rPil6S/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-rPil6S/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-rPil6S/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-rPil6S/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-rPil6S/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-rPil6S/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-rPil6S/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-rPil6S/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-rPil6S/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-rPil6S/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-rPil6S/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 22:59:30 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-rPil6S/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-3la4To/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_villageEvent' in /tmp/wf-event-test-3la4To/src/data/events/test_village.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-3la4To/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-3la4To/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-3la4To/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-3la4To/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-3la4To/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-3la4To/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-3la4To/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-3la4To/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-3la4To/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-3la4To/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-3la4To/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-3la4To/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:02:24 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-3la4To/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-ZmBJN1/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_villageEvent' in /tmp/wf-event-test-ZmBJN1/src/data/events/test_village.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-ZmBJN1/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-ZmBJN1/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-ZmBJN1/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-ZmBJN1/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-ZmBJN1/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-ZmBJN1/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-ZmBJN1/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-ZmBJN1/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-ZmBJN1/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-ZmBJN1/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-ZmBJN1/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-ZmBJN1/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:06:34 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-ZmBJN1/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-g0ipHV/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_villageEvent' in /tmp/wf-event-test-g0ipHV/src/data/events/test_village.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-g0ipHV/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-g0ipHV/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-g0ipHV/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-g0ipHV/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-g0ipHV/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-g0ipHV/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-g0ipHV/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-g0ipHV/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-g0ipHV/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-g0ipHV/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-g0ipHV/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-g0ipHV/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:09:04 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-g0ipHV/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:09:23 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_villageEvent' in /tmp/wf-event-test-kv0xmV/src/data/events/test_village.event.ts {"error":{}}
+2025-05-23 23:09:28 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-b90CYI/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:09:31 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-Q0C6Yh/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-4wwGN8/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_villageEvent' in /tmp/wf-event-test-4wwGN8/src/data/events/test_village.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-4wwGN8/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-4wwGN8/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-4wwGN8/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-4wwGN8/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-4wwGN8/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-4wwGN8/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-4wwGN8/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-4wwGN8/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-4wwGN8/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-4wwGN8/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-4wwGN8/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-4wwGN8/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:10:20 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-4wwGN8/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-6cYiBP/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_villageEvent' in /tmp/wf-event-test-6cYiBP/src/data/events/test_village.event.ts {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-6cYiBP/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'special_charsEvent' in /tmp/wf-event-test-6cYiBP/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-6cYiBP/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-6cYiBP/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'time_testEvent' in /tmp/wf-event-test-6cYiBP/src/data/events/time_test.event.ts {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-6cYiBP/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'lifecycle_testEvent' in /tmp/wf-event-test-6cYiBP/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-6cYiBP/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-6cYiBP/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-6cYiBP/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-6cYiBP/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:10:53 [[31merror[39m]: Failed to update event: Could not find event object definition for 'concurrent_testEvent' in /tmp/wf-event-test-6cYiBP/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-23 23:10:54 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-6cYiBP/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:14:02 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-CvTnqU/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 23:14:23 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-XZkyLJ/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 23:14:37 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_villageEvent' in /tmp/wf-event-test-5CAgSy/src/data/events/test_village.event.ts {"error":{}}
+2025-05-23 23:19:04 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_kingdomEvent' in /tmp/wf-event-test-q0EbN5/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-23 23:19:56 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test_villageEvent' in /tmp/wf-event-test-JSmAhm/src/data/events/test_village.event.ts {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-uWNFt4/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-uWNFt4/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-uWNFt4/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-uWNFt4/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-uWNFt4/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Failed to update event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Failed to set event time range: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Failed to open event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Failed to delete event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Error in getMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Error in listMapsController: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Error in updateMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Unexpected token 'j', "{"invalid": json}" is not valid JSON {"stack":"SyntaxError: Unexpected token 'j', \"{\"invalid\": json}\" is not valid JSON\n    at JSON.parse (<anonymous>)\n    at parse (/home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/types/json.js:77:19)\n    at /home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/read.js:123:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)\n    at invokeCallback (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:238:16)\n    at done (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:227:7)\n    at IncomingMessage.onEnd (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:287:7)\n    at IncomingMessage.emit (node:events:514:28)\n    at IncomingMessage.emit (node:domain:488:12)\n    at endReadableNT (node:internal/streams/readable:1589:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"}
+2025-05-23 23:25:20 [[31merror[39m]: Failed to update event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Failed to update event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:25:20 [[31merror[39m]: Failed to set event time range: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:26:04 [[31merror[39m]: Failed to update event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:26:04 [[31merror[39m]: Failed to set event time range: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:26:04 [[31merror[39m]: Failed to open event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:26:04 [[31merror[39m]: Failed to delete event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:26:04 [[31merror[39m]: Error in getMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:26:04 [[31merror[39m]: Error in listMapsController: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:26:04 [[31merror[39m]: Error in updateMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:26:04 [[31merror[39m]: Unexpected token 'j', "{"invalid": json}" is not valid JSON {"stack":"SyntaxError: Unexpected token 'j', \"{\"invalid\": json}\" is not valid JSON\n    at JSON.parse (<anonymous>)\n    at parse (/home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/types/json.js:77:19)\n    at /home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/read.js:123:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:238:16)\n    at done (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:227:7)\n    at IncomingMessage.onEnd (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:287:7)\n    at IncomingMessage.emit (node:events:519:28)\n    at IncomingMessage.emit (node:domain:488:12)\n    at endReadableNT (node:internal/streams/readable:1698:12)"}
+2025-05-23 23:26:04 [[31merror[39m]: Failed to update event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:26:04 [[31merror[39m]: Failed to update event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:26:04 [[31merror[39m]: Failed to set event time range: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-NHVxOj/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-NHVxOj/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-NHVxOj/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-NHVxOj/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-NHVxOj/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Failed to update event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Failed to set event time range: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Failed to open event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Failed to delete event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Error in getMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Error in listMapsController: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Error in updateMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Unexpected token 'j', "{"invalid": json}" is not valid JSON {"stack":"SyntaxError: Unexpected token 'j', \"{\"invalid\": json}\" is not valid JSON\n    at JSON.parse (<anonymous>)\n    at parse (/home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/types/json.js:77:19)\n    at /home/belafon/Documents/projects/WFUtilities/node_modules/body-parser/lib/read.js:123:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)\n    at invokeCallback (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:238:16)\n    at done (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:227:7)\n    at IncomingMessage.onEnd (/home/belafon/Documents/projects/WFUtilities/node_modules/raw-body/index.js:287:7)\n    at IncomingMessage.emit (node:events:514:28)\n    at IncomingMessage.emit (node:domain:488:12)\n    at endReadableNT (node:internal/streams/readable:1589:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"}
+2025-05-23 23:28:06 [[31merror[39m]: Failed to update event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Failed to update event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:28:06 [[31merror[39m]: Failed to set event time range: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:28:26 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-KAVwFB/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:28:26 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-KAVwFB/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:28:26 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-KAVwFB/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:28:26 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:28:26 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-KAVwFB/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:28:26 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:28:27 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-KAVwFB/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:28:37 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:29:36 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-LaZ2QN/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:29:52 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-1diqmS/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:30:12 [[31merror[39m]: Failed to set event time range: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:30:18 [[31merror[39m]: Failed to open event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:30:23 [[31merror[39m]: Failed to update event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:30:48 [[31merror[39m]: Failed to set event time range: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:30:59 [[31merror[39m]: Failed to set event time range: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:31:07 [[31merror[39m]: Failed to open event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:31:19 [[31merror[39m]: Failed to delete event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:31:33 [[31merror[39m]: Error in listMapsController: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:31:36 [[31merror[39m]: Error in getMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:31:48 [[31merror[39m]: Error in getMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:32:01 [[31merror[39m]: Error in updateMapController for mapId test-map: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:32:18 [[31merror[39m]: Failed to update event: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:32:35 [[31merror[39m]: Failed to set event time range: Workspace path not configured. Please set one of the following environment variables:
+- WF_WORKSPACE_PATH: Path to your workspace folder
+- VSCODE_WORKSPACE: VS Code workspace path
+Or use config.setWorkspaceAdapter(new StaticWorkspaceAdapter("/your/path")) to set a custom path. {"error":{}}
+2025-05-23 23:47:39 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-My51tL/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:47:39 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-My51tL/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:47:39 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-My51tL/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:47:39 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:47:39 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-My51tL/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:47:39 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:47:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-tZfzq7/src/data/events/test-event.event.ts {"error":{}}
+2025-05-23 23:47:39 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-tZfzq7/src/data/events/test-event.event.ts {"error":{}}
+2025-05-23 23:47:39 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-tZfzq7/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-tZfzq7/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-23 23:47:39 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-23 23:47:39 [[31merror[39m]: Failed to update event: Could not find event object definition for 'json-testEvent' in /tmp/wf-api-test-tZfzq7/src/data/events/json-test.event.ts {"error":{}}
+2025-05-23 23:47:39 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'url-testEvent' in /tmp/wf-api-test-tZfzq7/src/data/events/url-test.event.ts {"error":{}}
+2025-05-23 23:47:52 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-s1TpUx/src/data/events/test-event.event.ts {"error":{}}
+2025-05-23 23:47:52 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-s1TpUx/src/data/events/test-event.event.ts {"error":{}}
+2025-05-23 23:47:52 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-s1TpUx/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-s1TpUx/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-23 23:47:52 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-23 23:47:52 [[31merror[39m]: Failed to update event: Could not find event object definition for 'json-testEvent' in /tmp/wf-api-test-s1TpUx/src/data/events/json-test.event.ts {"error":{}}
+2025-05-23 23:47:52 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'url-testEvent' in /tmp/wf-api-test-s1TpUx/src/data/events/url-test.event.ts {"error":{}}
+2025-05-23 23:48:27 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-76HVhN/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:48:27 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-76HVhN/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:48:27 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-76HVhN/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:48:27 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:48:27 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-76HVhN/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:48:27 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:48:28 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-6U1WAp/src/data/events/test-event.event.ts {"error":{}}
+2025-05-23 23:48:28 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-6U1WAp/src/data/events/test-event.event.ts {"error":{}}
+2025-05-23 23:48:28 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-6U1WAp/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-6U1WAp/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-23 23:48:28 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-23 23:48:28 [[31merror[39m]: Failed to update event: Could not find event object definition for 'json-testEvent' in /tmp/wf-api-test-6U1WAp/src/data/events/json-test.event.ts {"error":{}}
+2025-05-23 23:48:28 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'url-testEvent' in /tmp/wf-api-test-6U1WAp/src/data/events/url-test.event.ts {"error":{}}
+2025-05-23 23:48:40 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-puSwdb/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:48:40 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-puSwdb/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:48:40 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-puSwdb/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:48:40 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:48:40 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-puSwdb/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:48:40 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:51:10 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-5quWOi/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:51:10 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-5quWOi/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:51:10 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-5quWOi/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:51:10 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:51:10 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-5quWOi/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:51:10 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:56:28 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-13H3mW/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:56:28 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-13H3mW/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:56:28 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-13H3mW/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:56:28 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:56:28 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-13H3mW/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:56:28 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:57:26 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-KmK2RB/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:57:26 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-KmK2RB/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:57:26 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-KmK2RB/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:57:26 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:57:26 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-KmK2RB/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:57:26 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:57:51 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-fTp4fu/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:57:51 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-fTp4fu/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:57:51 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-fTp4fu/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:57:51 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:57:51 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-fTp4fu/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:57:51 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:58:55 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-O8Dv6S/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:58:55 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-O8Dv6S/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:58:55 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-O8Dv6S/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:58:55 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:58:55 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-O8Dv6S/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:58:55 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:59:50 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-DbPhvx/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:59:50 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-DbPhvx/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:59:50 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-DbPhvx/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:59:50 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:59:50 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-DbPhvx/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-23 23:59:50 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-23 23:59:50 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-g8k2Ob/src/data/events/test-event.event.ts {"error":{}}
+2025-05-23 23:59:50 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-g8k2Ob/src/data/events/test-event.event.ts {"error":{}}
+2025-05-23 23:59:50 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-g8k2Ob/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-g8k2Ob/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-23 23:59:50 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-23 23:59:50 [[31merror[39m]: Failed to update event: Could not find event object definition for 'json-testEvent' in /tmp/wf-api-test-g8k2Ob/src/data/events/json-test.event.ts {"error":{}}
+2025-05-23 23:59:50 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'url-testEvent' in /tmp/wf-api-test-g8k2Ob/src/data/events/url-test.event.ts {"error":{}}
+2025-05-24 00:00:34 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-24 00:01:30 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-24 00:01:54 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-ucuWEe/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:01:54 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-ucuWEe/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:01:54 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-ucuWEe/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:01:54 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-24 00:01:54 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-ucuWEe/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:01:54 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-24 00:02:57 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-UxSN3m/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:02:57 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-UxSN3m/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:02:57 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-UxSN3m/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:02:57 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-24 00:02:57 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-UxSN3m/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:02:57 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-24 00:02:57 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-GhmrJo/src/data/events/test-event.event.ts {"error":{}}
+2025-05-24 00:02:57 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-GhmrJo/src/data/events/test-event.event.ts {"error":{}}
+2025-05-24 00:02:57 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-GhmrJo/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-GhmrJo/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 00:02:57 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 00:02:57 [[31merror[39m]: Failed to update event: Could not find event object definition for 'json-testEvent' in /tmp/wf-api-test-GhmrJo/src/data/events/json-test.event.ts {"error":{}}
+2025-05-24 00:02:57 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'url-testEvent' in /tmp/wf-api-test-GhmrJo/src/data/events/url-test.event.ts {"error":{}}
+2025-05-24 00:03:08 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-j8XkHx/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:03:08 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-j8XkHx/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:03:08 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-j8XkHx/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:03:08 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-24 00:03:08 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-j8XkHx/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:03:08 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-24 00:38:52 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-V9WvE9/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:38:52 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-V9WvE9/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:38:52 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-V9WvE9/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:38:52 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-24 00:38:52 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-V9WvE9/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:39:01 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-24 00:39:21 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-YvKLbG/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:39:21 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-YvKLbG/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:39:21 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-YvKLbG/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:39:21 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-24 00:39:21 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-YvKLbG/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 00:39:21 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-Kb2geR/src/data/events/test-event.event.ts {"error":{}}
+2025-05-24 00:39:21 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-Kb2geR/src/data/events/test-event.event.ts {"error":{}}
+2025-05-24 00:39:21 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-Kb2geR/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-Kb2geR/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 00:39:21 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 00:39:22 [[31merror[39m]: Failed to update event: Could not find event object definition for 'json-testEvent' in /tmp/wf-api-test-Kb2geR/src/data/events/json-test.event.ts {"error":{}}
+2025-05-24 00:39:22 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'url-testEvent' in /tmp/wf-api-test-Kb2geR/src/data/events/url-test.event.ts {"error":{}}
+2025-05-24 00:53:18 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-24 00:53:32 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-24 00:53:40 [[31merror[39m]: Failed to open event: Editor crashed {"error":{}}
+2025-05-24 00:56:35 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 00:57:15 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-tstYPP/src/data/events/test-event.event.ts {"error":{}}
+2025-05-24 00:57:15 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-tstYPP/src/data/events/test-event.event.ts {"error":{}}
+2025-05-24 00:57:15 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-tstYPP/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-tstYPP/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 00:57:15 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 00:57:15 [[31merror[39m]: Failed to update event: Could not find event object definition for 'json-testEvent' in /tmp/wf-api-test-tstYPP/src/data/events/json-test.event.ts {"error":{}}
+2025-05-24 00:57:15 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'url-testEvent' in /tmp/wf-api-test-tstYPP/src/data/events/url-test.event.ts {"error":{}}
+2025-05-24 00:57:19 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-R40ByL/src/data/events/test-event.event.ts {"error":{}}
+2025-05-24 00:57:47 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-tKMAFw/src/data/events/test-event.event.ts {"error":{}}
+2025-05-24 01:06:07 [[31merror[39m]: Failed to update event: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-T0l0m7/src/data/events/test-event.event.ts {"error":{}}
+2025-05-24 01:06:07 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'test-eventEvent' in /tmp/wf-api-test-T0l0m7/src/data/events/test-event.event.ts {"error":{}}
+2025-05-24 01:06:07 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-T0l0m7/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-T0l0m7/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 01:06:07 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 01:06:07 [[31merror[39m]: Failed to update event: Could not find event object definition for 'json-testEvent' in /tmp/wf-api-test-T0l0m7/src/data/events/json-test.event.ts {"error":{}}
+2025-05-24 01:06:07 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'url-testEvent' in /tmp/wf-api-test-T0l0m7/src/data/events/url-test.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Map ID cannot be empty. 
+2025-05-24 01:07:09 [[31merror[39m]: Failed to create maps directory /test-workspace-maps-feature/src/data/maps: Permission denied for mkdir 
+2025-05-24 01:07:09 [[31merror[39m]: Failed to update map 'treasureMap' at /test-workspace-maps-feature/src/data/maps/treasureMap.json: Disk is full 
+2025-05-24 01:07:09 [[31merror[39m]: Failed to read or parse map 'existingMap' from /test-workspace-maps-feature/src/data/maps/existingMap.json: Unexpected token 'h', "this is not"... is not valid JSON 
+2025-05-24 01:07:09 [[31merror[39m]: Failed to list maps in directory /test-workspace-maps-feature/src/data/maps: Cannot access directory 
+2025-05-24 01:07:09 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/test-event.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace-delete/src/data/events/test-event.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace-delete/src/data/events/test-event.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace-delete/src/data/events/test-event.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /test-workspace-delete/src/data/events/event1/char1.passages/passage1.ts or alternative path /test-workspace-delete/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to create maps directory /test-workspace-maps-feature/src/data/maps: EACCES: permission denied, mkdir '/test-workspace-maps-feature/src/data/maps' 
+2025-05-24 01:07:09 [[31merror[39m]: Error in updateMapController for mapId test-map: EACCES: permission denied, mkdir '/test-workspace-maps-feature/src/data/maps' {"error":{"errno":-13,"code":"EACCES","syscall":"mkdir","path":"/test-workspace-maps-feature/src/data/maps"}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/json-test.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace-delete/src/data/events/url-test.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/test_village.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace-delete/src/data/events/delete_test.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace-delete/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace-delete/src/data/events/multi_delete_1.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace-delete/src/data/events/open_test.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace-delete/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 01:07:09 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace-delete/src/data/events/open_fail_test.event.ts {"error":{}}
+2025-05-24 01:07:10 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace-delete/src/data/events/time_test.event.ts {"error":{}}
+2025-05-24 01:07:10 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace-delete/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 01:07:10 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-24 01:07:10 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 01:07:10 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 01:07:10 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 01:07:10 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 01:07:10 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 01:12:27 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-4cHJQ0/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-4cHJQ0/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 01:12:27 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 01:12:27 [[31merror[39m]: Failed to update event: Could not find event object definition for 'json-testEvent' in /tmp/wf-api-test-4cHJQ0/src/data/events/json-test.event.ts {"error":{}}
+2025-05-24 01:12:27 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'url-testEvent' in /tmp/wf-api-test-4cHJQ0/src/data/events/url-test.event.ts {"error":{}}
+2025-05-24 10:32:35 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-Tlyeg0/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-Tlyeg0/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 10:32:35 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 10:32:35 [[31merror[39m]: Failed to update event: Could not find event object definition for 'json-testEvent' in /tmp/wf-api-test-Tlyeg0/src/data/events/json-test.event.ts {"error":{}}
+2025-05-24 10:32:35 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'url-testEvent' in /tmp/wf-api-test-Tlyeg0/src/data/events/url-test.event.ts {"error":{}}
+2025-05-24 10:33:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'json-testEvent' in /tmp/wf-api-test-ue0GnE/src/data/events/json-test.event.ts {"error":{}}
+2025-05-24 10:34:41 [[31merror[39m]: Failed to update event: Could not find event object definition for 'json-testEvent' in /tmp/wf-api-test-NmRyBz/src/data/events/json-test.event.ts {"error":{}}
+2025-05-24 10:36:17 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'url-testEvent' in /tmp/wf-api-test-iBrv0M/src/data/events/url-test.event.ts {"error":{}}
+2025-05-24 10:36:20 [[31merror[39m]: Failed to update event: Could not find event object definition for 'json-testEvent' in /tmp/wf-api-test-XRzALN/src/data/events/json-test.event.ts {"error":{}}
+2025-05-24 10:36:38 [[31merror[39m]: Failed to update event: Could not find event object definition for 'json-testEvent' in /tmp/wf-api-test-EVrvkR/src/data/events/json-test.event.ts {"error":{}}
+2025-05-24 10:38:13 [[31merror[39m]: Failed to set event time range: Could not find event object definition for 'url-testEvent' in /tmp/wf-api-test-ofrFuL/src/data/events/url-test.event.ts {"error":{}}
+2025-05-24 10:40:02 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 10:44:39 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 10:45:09 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 10:45:29 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-sV3OrW/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-sV3OrW/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 10:45:29 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 10:45:57 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-1Raw6x/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:45:57 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-1Raw6x/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:45:57 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-1Raw6x/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:45:57 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 10:45:57 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-1Raw6x/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:45:57 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-PMWA0D/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-PMWA0D/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 10:45:57 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 10:47:02 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-aTzxUd/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:47:02 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-aTzxUd/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:47:02 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-aTzxUd/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:47:02 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 10:47:02 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-aTzxUd/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:47:02 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-lhm2Iy/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-lhm2Iy/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 10:47:02 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 10:48:09 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-qcaqPw/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:48:09 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-qcaqPw/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:48:09 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-qcaqPw/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:48:09 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 10:48:09 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-qcaqPw/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:48:10 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-2HEQEB/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-2HEQEB/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 10:48:10 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 10:48:54 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-t1Mc0g/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:48:54 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-t1Mc0g/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:48:54 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-t1Mc0g/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:48:54 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 10:48:54 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-t1Mc0g/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:48:54 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-GBUic9/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-GBUic9/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 10:48:54 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 10:49:56 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-j64ik8/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:49:56 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-j64ik8/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:49:56 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-j64ik8/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:49:56 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 10:49:56 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-j64ik8/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:49:56 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-KM0uNz/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-KM0uNz/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 10:49:56 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 10:52:40 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-fGoF6i/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:52:40 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-fGoF6i/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:52:40 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-fGoF6i/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:52:40 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 10:52:40 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-fGoF6i/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:52:40 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-46oRn0/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-46oRn0/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 10:52:40 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 10:54:58 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-ggcryD/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:54:58 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-ggcryD/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:54:58 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-ggcryD/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:54:58 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 10:54:58 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-ggcryD/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:54:58 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-ZZfujO/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-ZZfujO/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 10:54:58 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 10:55:16 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-s0wz4o/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:55:16 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-s0wz4o/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:55:16 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-s0wz4o/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:55:16 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 10:55:16 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-s0wz4o/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 10:55:16 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-ngd9VN/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-ngd9VN/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 10:55:16 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 11:05:04 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-R4v0kB/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:05:04 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-R4v0kB/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:05:04 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-R4v0kB/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:05:04 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 11:05:04 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-R4v0kB/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:05:04 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-YZ1vOJ/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-YZ1vOJ/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 11:05:04 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 11:17:33 [[31merror[39m]: Map ID cannot be empty. 
+2025-05-24 11:17:33 [[31merror[39m]: Failed to create maps directory /test-workspace-maps-feature/src/data/maps: Permission denied for mkdir 
+2025-05-24 11:17:33 [[31merror[39m]: Failed to update map 'treasureMap' at /test-workspace-maps-feature/src/data/maps/treasureMap.json: Disk is full 
+2025-05-24 11:17:33 [[31merror[39m]: Failed to read or parse map 'existingMap' from /test-workspace-maps-feature/src/data/maps/existingMap.json: Unexpected token 'h', "this is not"... is not valid JSON 
+2025-05-24 11:17:33 [[31merror[39m]: Failed to list maps in directory /test-workspace-maps-feature/src/data/maps: Cannot access directory 
+2025-05-24 11:17:46 [[31merror[39m]: Map ID cannot be empty. 
+2025-05-24 11:17:46 [[31merror[39m]: Failed to create maps directory /test-workspace-maps-feature/src/data/maps: Permission denied for mkdir 
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update map 'treasureMap' at /test-workspace-maps-feature/src/data/maps/treasureMap.json: Disk is full 
+2025-05-24 11:17:46 [[31merror[39m]: Failed to read or parse map 'existingMap' from /test-workspace-maps-feature/src/data/maps/existingMap.json: Unexpected token 'h', "this is not"... is not valid JSON 
+2025-05-24 11:17:46 [[31merror[39m]: Failed to list maps in directory /test-workspace-maps-feature/src/data/maps: Cannot access directory 
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace-delete/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace-delete/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace-delete/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /test-workspace-delete/src/data/events/event1/char1.passages/passage1.ts or alternative path /test-workspace-delete/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to create maps directory /test-workspace-maps-feature/src/data/maps: EACCES: permission denied, mkdir '/test-workspace-maps-feature/src/data/maps' 
+2025-05-24 11:17:46 [[31merror[39m]: Error in updateMapController for mapId testMap: EACCES: permission denied, mkdir '/test-workspace-maps-feature/src/data/maps' {"error":{"errno":-13,"code":"EACCES","syscall":"mkdir","path":"/test-workspace-maps-feature/src/data/maps"}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/jsonTest.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace-delete/src/data/events/urlTest.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/test_village.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace-delete/src/data/events/delete_test.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace-delete/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace-delete/src/data/events/multi_delete_1.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace-delete/src/data/events/open_test.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace-delete/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace-delete/src/data/events/open_fail_test.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace-delete/src/data/events/time_test.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace-delete/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:17:46 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:18:22 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-ve281K/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:18:22 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-ve281K/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:18:22 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-ve281K/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:18:22 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 11:18:22 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-ve281K/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:18:22 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-biH6HG/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-biH6HG/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 11:18:22 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 11:21:13 [[31merror[39m]: Map ID cannot be empty. 
+2025-05-24 11:21:13 [[31merror[39m]: Failed to create maps directory /test-workspace-maps-feature/src/data/maps: Permission denied for mkdir 
+2025-05-24 11:21:13 [[31merror[39m]: Failed to update map 'treasureMap' at /test-workspace-maps-feature/src/data/maps/treasureMap.json: Disk is full 
+2025-05-24 11:21:13 [[31merror[39m]: Failed to read or parse map 'existingMap' from /test-workspace-maps-feature/src/data/maps/existingMap.json: Unexpected token 'h', "this is not"... is not valid JSON 
+2025-05-24 11:21:13 [[31merror[39m]: Failed to list maps in directory /test-workspace-maps-feature/src/data/maps: Cannot access directory 
+2025-05-24 11:21:13 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:21:13 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace-delete/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:21:13 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace-delete/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:21:13 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace-delete/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:21:13 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /test-workspace-delete/src/data/events/event1/char1.passages/passage1.ts or alternative path /test-workspace-delete/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 11:21:13 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 11:21:13 [[31merror[39m]: Failed to create maps directory /test-workspace-maps-feature/src/data/maps: EACCES: permission denied, mkdir '/test-workspace-maps-feature/src/data/maps' 
+2025-05-24 11:21:13 [[31merror[39m]: Error in updateMapController for mapId testMap: EACCES: permission denied, mkdir '/test-workspace-maps-feature/src/data/maps' {"error":{"errno":-13,"code":"EACCES","syscall":"mkdir","path":"/test-workspace-maps-feature/src/data/maps"}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/jsonTest.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace-delete/src/data/events/urlTest.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/test_village.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace-delete/src/data/events/delete_test.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace-delete/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace-delete/src/data/events/multi_delete_1.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace-delete/src/data/events/open_test.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace-delete/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace-delete/src/data/events/open_fail_test.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace-delete/src/data/events/time_test.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace-delete/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:21:14 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace-delete/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:21:26 [[31merror[39m]: Map ID cannot be empty. 
+2025-05-24 11:21:26 [[31merror[39m]: Failed to create maps directory /test-workspace-maps-feature/src/data/maps: Permission denied for mkdir 
+2025-05-24 11:21:26 [[31merror[39m]: Failed to update map 'treasureMap' at /test-workspace-maps-feature/src/data/maps/treasureMap.json: Disk is full 
+2025-05-24 11:21:26 [[31merror[39m]: Failed to read or parse map 'existingMap' from /test-workspace-maps-feature/src/data/maps/existingMap.json: Unexpected token 'h', "this is not"... is not valid JSON 
+2025-05-24 11:21:26 [[31merror[39m]: Failed to list maps in directory /test-workspace-maps-feature/src/data/maps: Cannot access directory 
+2025-05-24 11:24:18 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-B4kRb1/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:24:18 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-B4kRb1/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:24:18 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-B4kRb1/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:24:18 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 11:24:18 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-B4kRb1/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:24:18 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-1oSjAv/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-1oSjAv/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 11:24:18 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 11:26:26 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-FbumPD/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:26:26 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-FbumPD/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:26:26 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-FbumPD/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:26:26 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 11:26:26 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-FbumPD/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:26:26 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-nb6ot3/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-nb6ot3/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 11:26:26 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 11:26:26 [[31merror[39m]: Map ID cannot be empty. 
+2025-05-24 11:26:26 [[31merror[39m]: Failed to create maps directory /test-workspace-maps-feature/src/data/maps: Permission denied for mkdir 
+2025-05-24 11:26:26 [[31merror[39m]: Failed to update map 'treasureMap' at /test-workspace-maps-feature/src/data/maps/treasureMap.json: Disk is full 
+2025-05-24 11:26:26 [[31merror[39m]: Failed to read or parse map 'existingMap' from /test-workspace-maps-feature/src/data/maps/existingMap.json: Unexpected token 'h', "this is not"... is not valid JSON 
+2025-05-24 11:26:26 [[31merror[39m]: Failed to list maps in directory /test-workspace-maps-feature/src/data/maps: Cannot access directory 
+2025-05-24 11:26:57 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-Mdt85f/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:26:57 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-Mdt85f/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:26:57 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-Mdt85f/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:26:57 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 11:26:57 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-Mdt85f/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:27:07 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-o2ylbp/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:27:07 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-o2ylbp/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:27:07 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-o2ylbp/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:27:07 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 11:27:07 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-o2ylbp/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:27:07 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-WpR7Yf/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-WpR7Yf/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 11:27:07 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/test_village.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace/src/data/events/delete_test.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace/src/data/events/multi_delete_1.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace/src/data/events/open_test.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace/src/data/events/open_fail_test.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace/src/data/events/time_test.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /test-workspace/src/data/events/event1/char1.passages/passage1.ts or alternative path /test-workspace/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to create maps directory /test-workspace/src/data/maps: EACCES: permission denied, mkdir '/test-workspace/src/data/maps' 
+2025-05-24 11:30:15 [[31merror[39m]: Error in updateMapController for mapId testMap: EACCES: permission denied, mkdir '/test-workspace/src/data/maps' {"error":{"errno":-13,"code":"EACCES","syscall":"mkdir","path":"/test-workspace/src/data/maps"}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/jsonTest.event.ts {"error":{}}
+2025-05-24 11:30:15 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace/src/data/events/urlTest.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/test_kingdom.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/test_village.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/special_chars.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace/src/data/events/delete_test.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace/src/data/events/multi_delete_1.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace/src/data/events/open_test.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace/src/data/events/open_fail_test.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace/src/data/events/time_test.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/lifecycle_test.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/concurrent_test.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to open event: Event file to open not found at /test-workspace/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to delete event: Event file to delete not found at /test-workspace/src/data/events/testEvent.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /test-workspace/src/data/events/event1/char1.passages/passage1.ts or alternative path /test-workspace/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to create maps directory /test-workspace/src/data/maps: EACCES: permission denied, mkdir '/test-workspace/src/data/maps' 
+2025-05-24 11:30:20 [[31merror[39m]: Error in updateMapController for mapId testMap: EACCES: permission denied, mkdir '/test-workspace/src/data/maps' {"error":{"errno":-13,"code":"EACCES","syscall":"mkdir","path":"/test-workspace/src/data/maps"}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to update event: Event file not found at /test-workspace/src/data/events/jsonTest.event.ts {"error":{}}
+2025-05-24 11:30:20 [[31merror[39m]: Failed to set event time range: Event file not found at /test-workspace/src/data/events/urlTest.event.ts {"error":{}}
+2025-05-24 11:31:11 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-75cag8/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:31:11 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-75cag8/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:31:11 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-75cag8/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:31:11 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 11:31:11 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-75cag8/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:31:11 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-NlEemd/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-NlEemd/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 11:31:11 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 11:31:11 [[31merror[39m]: Map ID cannot be empty. 
+2025-05-24 11:31:11 [[31merror[39m]: Failed to create maps directory /test-workspace-maps-feature/src/data/maps: Permission denied for mkdir 
+2025-05-24 11:31:11 [[31merror[39m]: Failed to update map 'treasureMap' at /test-workspace-maps-feature/src/data/maps/treasureMap.json: Disk is full 
+2025-05-24 11:31:11 [[31merror[39m]: Failed to read or parse map 'existingMap' from /test-workspace-maps-feature/src/data/maps/existingMap.json: Unexpected token 'h', "this is not"... is not valid JSON 
+2025-05-24 11:31:11 [[31merror[39m]: Failed to list maps in directory /test-workspace-maps-feature/src/data/maps: Cannot access directory 
+2025-05-24 11:31:53 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-fabZ9H/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:31:53 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-fabZ9H/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:31:53 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-fabZ9H/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:31:53 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 11:31:53 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-fabZ9H/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:31:53 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-api-test-41t9GM/src/data/events/event1/char1.passages/passage1.ts or alternative path /tmp/wf-api-test-41t9GM/src/data/events/event1/char1/passages/passage1.ts {"error":{}}
+2025-05-24 11:31:53 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 11:31:53 [[31merror[39m]: Map ID cannot be empty. 
+2025-05-24 11:31:53 [[31merror[39m]: Failed to create maps directory /test-workspace-maps-feature/src/data/maps: Permission denied for mkdir 
+2025-05-24 11:31:53 [[31merror[39m]: Failed to update map 'treasureMap' at /test-workspace-maps-feature/src/data/maps/treasureMap.json: Disk is full 
+2025-05-24 11:31:53 [[31merror[39m]: Failed to read or parse map 'existingMap' from /test-workspace-maps-feature/src/data/maps/existingMap.json: Unexpected token 'h', "this is not"... is not valid JSON 
+2025-05-24 11:31:53 [[31merror[39m]: Failed to list maps in directory /test-workspace-maps-feature/src/data/maps: Cannot access directory 
+2025-05-24 11:43:58 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'intro' (tried patterns: introPassage, intro) in /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/intro.ts {"error":{}}
+2025-05-24 11:43:58 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'shop' (tried patterns: shopPassage, shop) in /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/shop.ts {"error":{}}
+2025-05-24 11:43:58 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'visit' (tried patterns: visitPassage, visit) in /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/thomas/passages/visit.ts {"error":{}}
+2025-05-24 11:43:58 [[31merror[39m]: Failed to update passage: Invalid passageId format: invalid-format {"error":{}}
+2025-05-24 11:43:58 [[31merror[39m]: Failed to update passage: Invalid passageId format: kingdom-id-test {"error":{}}
+2025-05-24 11:43:58 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/nonexistent.ts or alternative path /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie/passages/nonexistent.ts {"error":{}}
+2025-05-24 11:43:58 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'conditional' (tried patterns: conditionalPassage, conditional) in /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/conditional.ts {"error":{}}
+2025-05-24 11:43:58 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'special' (tried patterns: specialPassage, special) in /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/special.ts {"error":{}}
+2025-05-24 11:43:58 [[31merror[39m]: Failed to delete passage: Passage file to delete not found at /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/nonexistent.ts or /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie/passages/nonexistent.ts {"error":{}}
+2025-05-24 11:43:58 [[31merror[39m]: Failed to delete passage: Invalid passageId format: invalid-id. Expected format: eventId-characterId-passagePartId {"error":{}}
+2025-05-24 11:43:58 [[31merror[39m]: Failed to open passage: Passage file to open not found at primary path /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/nonexistent.ts or alternative path /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie/passages/nonexistent.ts {"error":{}}
+2025-05-24 11:43:58 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'lifecycle' (tried patterns: lifecyclePassage, lifecycle) in /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/lifecycle.ts {"error":{}}
+2025-05-24 11:43:58 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'screen1' (tried patterns: screen1Passage, screen1) in /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/screen1.ts {"error":{}}
+2025-05-24 11:43:58 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/demo.ts or alternative path /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie/passages/demo.ts {"error":{}}
+2025-05-24 11:43:58 [[31merror[39m]: Failed to update passage: Invalid passageId format: kingdom--intro {"error":{}}
+2025-05-24 11:43:59 [[31merror[39m]: Failed to update passage: Passage file not found at primary path /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.ts or alternative path /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie/passages/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.ts {"error":{}}
+2025-05-24 11:43:59 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'malformed' (tried patterns: malformedPassage, malformed) in /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/malformed.ts {"error":{}}
+2025-05-24 11:43:59 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'concurrent' (tried patterns: concurrentPassage, concurrent) in /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/concurrent.ts {"error":{}}
+2025-05-24 11:43:59 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'concurrent' (tried patterns: concurrentPassage, concurrent) in /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/concurrent.ts {"error":{}}
+2025-05-24 11:43:59 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'concurrent' (tried patterns: concurrentPassage, concurrent) in /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/concurrent.ts {"error":{}}
+2025-05-24 11:43:59 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'concurrent' (tried patterns: concurrentPassage, concurrent) in /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/concurrent.ts {"error":{}}
+2025-05-24 11:43:59 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'concurrent' (tried patterns: concurrentPassage, concurrent) in /tmp/wf-passage-test-LNUo3J/src/data/events/kingdom/annie.passages/concurrent.ts {"error":{}}
+2025-05-24 11:44:28 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'intro' (tried patterns: introPassage, intro) in /tmp/wf-passage-test-mikFhQ/src/data/events/kingdom/annie.passages/intro.ts {"error":{}}
+2025-05-24 11:46:55 [[31merror[39m]: Failed to update passage: Could not find passage definition (object or function return) for 'shop' (tried patterns: shopPassage, shop) in /tmp/wf-passage-test-dLdQxK/src/data/events/kingdom/annie.passages/shop.ts {"error":{}}
+2025-05-24 11:58:53 [[31merror[39m]: Failed to update event: Event file not found at /tmp/wf-event-test-iXtZqz/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:58:53 [[31merror[39m]: Failed to delete event: Event file to delete not found at /tmp/wf-event-test-iXtZqz/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:58:53 [[31merror[39m]: Failed to open event: Event file to open not found at /tmp/wf-event-test-iXtZqz/src/data/events/nonexistent.event.ts {"error":{}}
+2025-05-24 11:58:53 [[31merror[39m]: Failed to open event:  {"error":{}}
+2025-05-24 11:58:53 [[31merror[39m]: Failed to set event time range: Event file not found at /tmp/wf-event-test-iXtZqz/src/data/events/nonexistent.event.ts {"error":{}}

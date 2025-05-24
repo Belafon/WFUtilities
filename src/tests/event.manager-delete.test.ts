@@ -125,24 +125,26 @@ suite('EventManager - deleteEvent', () => {
     assert.ok(showErrorNotificationSpy.notCalled, 'Error notification should not have been shown.');
   });
 
-  test('should show error notification if eventId is empty', async () => {
-    await eventManager.deleteEvent('');
+  test('should throw error if eventId is empty', async () => {
+    await assert.rejects(
+      async () => eventManager.deleteEvent(''),
+      new Error('Event ID cannot be empty for deletion.')
+    );
 
     assert.strictEqual(unlinkSyncCalls.length, 0, 'unlinkSync should not have been called.');
-    assert.ok(showErrorNotificationSpy.calledOnceWith('Event ID cannot be empty for deletion.'), 'Error notification for empty eventId not shown or incorrect.');
-    assert.ok(consoleErrorSpy.calledWith('Event ID cannot be empty for deletion.'), 'Error log for empty eventId not present.');
   });
 
-  test('should show error notification if event file not found', async () => {
+  test('should throw error if event file not found', async () => {
     // Ensure file does NOT exist in mockFsStore
-    await eventManager.deleteEvent(eventId);
+    await assert.rejects(
+      async () => eventManager.deleteEvent(eventId),
+      new Error(`Event file to delete not found at ${filePath}`)
+    );
 
     assert.strictEqual(unlinkSyncCalls.length, 0, 'unlinkSync should not have been called.');
-    assert.ok(showErrorNotificationSpy.calledOnceWith(`Event file to delete not found at ${filePath}`), 'Error notification for file not found not shown or incorrect.');
-    assert.ok(consoleErrorSpy.calledWith(`Event file to delete not found at ${filePath}`), 'Error log for file not found not present.');
   });
 
-  test('should show error notification if fileSystem.unlinkSync fails', async () => {
+  test('should throw error if fileSystem.unlinkSync fails', async () => {
     mockFsStore[filePath] = "event content"; // File exists initially
     const unlinkError = new Error('Permission Denied');
 
@@ -150,11 +152,12 @@ suite('EventManager - deleteEvent', () => {
     const originalUnlinkSync = config.fileSystem.unlinkSync;
     const unlinkSyncStub = sinon.stub(config.fileSystem, 'unlinkSync').throws(unlinkError);
 
-    await eventManager.deleteEvent(eventId);
+    await assert.rejects(
+      async () => eventManager.deleteEvent(eventId),
+      unlinkError
+    );
 
     assert.ok(unlinkSyncStub.calledOnceWith(filePath), 'Mocked unlinkSync should have been called.');
-    const expectedErrorMessage = `Failed to delete event file ${filePath}: ${unlinkError.message}`;
-    assert.ok(showErrorNotificationSpy.calledOnceWith(expectedErrorMessage), 'Error notification for unlinkSync failure not shown or incorrect.');
     assert.ok(consoleErrorSpy.calledWith(sinon.match(`Error deleting event file ${filePath}`), unlinkError), 'Error log for unlinkSync failure not present or incorrect.');
 
     // Restore the stub
@@ -168,24 +171,16 @@ suite('EventManager - deleteEvent', () => {
     // Stub unlinkSync to throw the string (Sinon will wrap it in an Error)
     const unlinkSyncStub = sinon.stub(config.fileSystem, 'unlinkSync').throws(unlinkErrorString);
 
-    await eventManager.deleteEvent(eventId);
-
-    // The message in the Error object thrown by Sinon will include a "Sinon-provided" prefix
-    const sinonGeneratedErrorMessage = `Sinon-provided ${unlinkErrorString}`;
-    const expectedNotificationMessage = `Failed to delete event file ${filePath}: ${sinonGeneratedErrorMessage}`;
-
-    assert.ok(
-      showErrorNotificationSpy.calledOnceWith(expectedNotificationMessage),
-      `Error notification for non-Error unlinkSync failure not shown or incorrect.
-         Expected: "${expectedNotificationMessage}"
-         Got: "${showErrorNotificationSpy.firstCall?.args[0]}"`
+    await assert.rejects(
+      async () => eventManager.deleteEvent(eventId),
+      (error: Error) => error.message.includes('Sinon-provided Disk quota exceeded')
     );
 
     // For console.error, test that it received both parts (first string argument and second error argument)
     assert.ok(
       consoleErrorSpy.calledWith(
         sinon.match(`Error deleting event file ${filePath}`), // Matches the first argument (string prefix)
-        sinon.match.has("message", sinonGeneratedErrorMessage) // Check for the specific error message
+        sinon.match.has("message", `Sinon-provided ${unlinkErrorString}`) // Check for the specific error message
       ),
       `Error log for non-Error unlinkSync failure not present or incorrect.
          Console error args: ${JSON.stringify(consoleErrorSpy.firstCall?.args)}`

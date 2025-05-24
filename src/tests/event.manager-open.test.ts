@@ -122,33 +122,49 @@ suite('EventManager - openEvent', () => {
     assert.ok(showInformationNotificationSpy.notCalled, 'Information notification should not be shown for open.');
   });
 
-  test('should show error notification if eventId is empty', async () => {
-    await eventManager.openEvent('');
+  test('should throw error if eventId is empty', async () => {
+    let thrownError: Error | null = null;
+    try {
+      await eventManager.openEvent('');
+    } catch (error) {
+      thrownError = error as Error;
+    }
 
+    assert.ok(thrownError, 'Expected an error to be thrown for empty eventId.');
+    assert.strictEqual(thrownError?.message, 'Event ID cannot be empty for opening.', 'Thrown error message incorrect.');
     assert.ok(openFileStub.notCalled, 'editorAdapter.openFile should not have been called.');
-    assert.ok(showErrorNotificationSpy.calledOnceWith('Event ID cannot be empty for opening.'), 'Error notification for empty eventId not shown or incorrect.');
-    assert.ok(consoleErrorSpy.calledWith('Event ID cannot be empty for opening.'), 'Error log for empty eventId not present.');
   });
 
-  test('should show error notification if event file not found', async () => {
-    await eventManager.openEvent(eventId);
+  test('should throw error if event file not found', async () => {
+    let thrownError: Error | null = null;
+    try {
+      await eventManager.openEvent(eventId);
+    } catch (error) {
+      thrownError = error as Error;
+    }
 
+    assert.ok(thrownError, 'Expected an error to be thrown for file not found.');
+    assert.strictEqual(thrownError?.message, `Event file to open not found at ${filePath}`, 'Thrown error message incorrect.');
     assert.ok(openFileStub.notCalled, 'editorAdapter.openFile should not have been called.');
-    assert.ok(showErrorNotificationSpy.calledOnceWith(`Event file to open not found at ${filePath}`), 'Error notification for file not found not shown or incorrect.');
-    assert.ok(consoleErrorSpy.calledWith(`Event file to open not found at ${filePath}`), 'Error log for file not found not present.');
+    assert.ok(consoleErrorSpy.notCalled, 'console.error should not be called for file not found case.');
   });
 
-  test('should show error notification if editorAdapter.openFile fails', async () => {
+  test('should throw error if editorAdapter.openFile fails', async () => {
     mockFsStore[filePath] = "event content";
     const openError = new Error('Editor crashed');
     // Make the stub return a Promise that rejects with the error
     openFileStub.rejects(openError); // .rejects() is a shorthand for .returns(Promise.reject(...))
 
-    await eventManager.openEvent(eventId);
+    let thrownError: Error | null = null;
+    try {
+      await eventManager.openEvent(eventId);
+    } catch (error) {
+      thrownError = error as Error;
+    }
 
+    assert.ok(thrownError, 'Expected an error to be thrown when openFile fails.');
+    assert.strictEqual(thrownError, openError, 'Thrown error should be the same as the original error.');
     assert.ok(openFileStub.calledOnceWith(filePath), 'editorAdapter.openFile should have been called.');
-    const expectedErrorMessage = `Failed to open event file ${filePath}: ${openError.message}`;
-    assert.ok(showErrorNotificationSpy.calledOnceWith(expectedErrorMessage), 'Error notification for openFile failure not shown or incorrect.');
     assert.ok(consoleErrorSpy.calledWith(sinon.match(`Error opening event file ${filePath}`), openError), 'Error log for openFile failure not present or incorrect.');
   });
 
@@ -158,22 +174,19 @@ suite('EventManager - openEvent', () => {
 
     openFileStub.rejects(openErrorString); // Sinon creates an Error obj: {name: "...", message: ""}
 
-    await eventManager.openEvent(eventId);
+    let thrownError: Error | null = null;
+    try {
+      await eventManager.openEvent(eventId);
+    } catch (error) {
+      thrownError = error as Error;
+    }
 
+    assert.ok(thrownError, 'Expected an error to be thrown when openFile fails with non-Error object.');
+    
     // EventManager will now use error.name, so this should match
-    const expectedNotificationMessage = `Failed to open event file ${filePath}: ${openErrorString}`;
+    const expectedErrorMessage = `Failed to open event file ${filePath}: ${openErrorString}`;
 
-    assert.ok(
-      showErrorNotificationSpy.calledOnce,
-      "showErrorNotificationSpy should have been called once"
-    );
-    assert.strictEqual(
-      showErrorNotificationSpy.firstCall.args[0],
-      expectedNotificationMessage,
-      `Error notification message mismatch.
-         Expected: "${expectedNotificationMessage}"
-         Actual:   "${showErrorNotificationSpy.firstCall.args[0]}"`
-    );
+    assert.ok(openFileStub.calledOnceWith(filePath), 'editorAdapter.openFile should have been called.');
 
     // console.error in EventManager logs the actual error object/string rejected by the promise
     // In this case, Sinon rejects with an Error object whose 'name' is our string.

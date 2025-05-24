@@ -11,7 +11,11 @@ suite('PassageManager Notifications', function() {
     
     try {
       const invalidPassageId = 'invalid-id';
-      await passageManager.deletePassage(invalidPassageId);
+      // Call the function and expect it to throw
+      await assert.rejects(
+        async () => await passageManager.deletePassage(invalidPassageId),
+        (error: Error) => error.message.includes('Invalid passageId format')
+      );
       
       assert.ok(showErrorNotificationStub.called, 'Error notification should be called');
       assert.ok(showErrorNotificationStub.getCall(0).args[0].includes('Invalid passageId format'), 

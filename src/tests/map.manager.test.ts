@@ -147,7 +147,7 @@ suite('MapManager Tests', () => {
     test('should throw error if mapId is empty', async () => {
       await assert.rejects(
         mapManager.updateMap('', sampleMapData),
-        /Map ID cannot be empty/
+        (error: Error) => error.message.includes('Map ID cannot be empty')
       );
       assert.ok(showErrorNotificationSpy.calledOnceWith('Map ID cannot be empty.'), 'Error notification for empty mapId incorrect.');
       assert.ok(consoleErrorSpy.calledWith('Map ID cannot be empty.'), 'Error log for empty mapId incorrect.');
@@ -162,7 +162,7 @@ suite('MapManager Tests', () => {
         await assert.rejects(
           mapManager.updateMap(mapId, sampleMapData),
           // Assert that the thrown error has the message of the original mkdirError
-          { message: mkdirError.message }
+          (error: Error) => error.message === mkdirError.message
         );
         
         assert.ok(showErrorNotificationSpy.calledOnceWith(expectedNotificationMessage), 
@@ -186,7 +186,7 @@ suite('MapManager Tests', () => {
       await assert.rejects(
         mapManager.updateMap(mapId, sampleMapData),
         // Assert that the thrown error has the message of the original writeError
-        { message: writeError.message }
+        (error: Error) => error.message === writeError.message
       );
       
       assert.ok(showErrorNotificationSpy.calledOnceWith(expectedNotificationMessage), 
@@ -229,9 +229,7 @@ suite('MapManager Tests', () => {
       // The error message is specifically about JSON parsing, not the prefixed manager message
       await assert.rejects(
         mapManager.getMap(mapId),
-        { 
-          message: /is not valid JSON/
-        }
+        (error: Error) => error.message.includes('is not valid JSON')
       );
       
       const expectedNotificationMessage = `Failed to read or parse map '${mapId}' from ${filePath}:`;
@@ -283,7 +281,7 @@ suite('MapManager Tests', () => {
       await assert.rejects(
         mapManager.listMaps(),
         // Assert that the thrown error has the message of the original readError
-        { message: readError.message }
+        (error: Error) => error.message === readError.message
       );
       
       assert.ok(showErrorNotificationSpy.calledOnceWith(expectedNotificationMessage), 

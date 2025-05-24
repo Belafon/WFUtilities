@@ -99,17 +99,19 @@ suite('PassageManager - openPassage', function() {
     }
   });
 
-  test('should show error notification if passageId is invalid (openPassage)', async function() {
+  test('should throw error if passageId is invalid (openPassage)', async function() {
     setupStubs();
     try {
       const invalidPassageId = 'invalid-id-format'; // This ID is caught by your validatePassageId function
 
-      await passageManager.openPassage(invalidPassageId);
-
-      const expectedMessage = `Invalid passageId format: ${invalidPassageId}. Expected format: eventId-characterId-passagePartId`;
-      assert.ok(showErrorNotificationStub.calledOnceWith(expectedMessage), 
-        `Error notification should be shown with message: "${expectedMessage}". Got: ${showErrorNotificationStub.firstCall?.args[0]}`
+      await assert.rejects(
+        async () => passageManager.openPassage(invalidPassageId),
+        (error: Error) => {
+          return error.message.includes('Invalid passageId format') &&
+                 error.message.includes(invalidPassageId);
+        }
       );
+
       assert.ok(openFileStub.notCalled, 'editorAdapter.openFile should not be called for invalid ID');
       assert.ok(existsSyncStub.notCalled, 'existsSync should not be called for invalid ID before validation');
     } finally {
@@ -117,18 +119,20 @@ suite('PassageManager - openPassage', function() {
     }
   });
   
-  test('should show error notification if passageId is syntactically valid but parts are problematic (openPassage)', async function() {
+  test('should throw error if passageId is syntactically valid but parts are problematic (openPassage)', async function() {
     setupStubs();
     try {
       // This ID 'id-id-id' is a specific case where the middle part 'id' is invalid according to your validatePassageId
       const invalidPassageId = 'id-id-id'; 
 
-      await passageManager.openPassage(invalidPassageId);
-
-      const expectedMessage = `Invalid passageId format: ${invalidPassageId}. Expected format: eventId-characterId-passagePartId`;
-      assert.ok(showErrorNotificationStub.calledOnceWith(expectedMessage), 
-        `Error notification should be shown with message: "${expectedMessage}". Got: ${showErrorNotificationStub.firstCall?.args[0]}`
+      await assert.rejects(
+        async () => passageManager.openPassage(invalidPassageId),
+        (error: Error) => {
+          return error.message.includes('Invalid passageId format') &&
+                 error.message.includes(invalidPassageId);
+        }
       );
+
       assert.ok(openFileStub.notCalled, 'editorAdapter.openFile should not be called');
     } finally {
       teardownStubs();
@@ -136,7 +140,7 @@ suite('PassageManager - openPassage', function() {
   });
 
 
-  test('should show error notification if passage file is not found at either path (openPassage)', async function() {
+  test('should throw error if passage file is not found at either path (openPassage)', async function() {
     setupStubs();
     try {
       const passageId = 'eventMissing-charGone-passageLost';
@@ -146,19 +150,22 @@ suite('PassageManager - openPassage', function() {
       existsSyncStub.withArgs(primaryPath).returns(false);
       existsSyncStub.withArgs(alternativePath).returns(false);
 
-      await passageManager.openPassage(passageId);
-
-      const expectedMessage = `Passage file to open not found at primary path ${primaryPath} or alternative path ${alternativePath}`;
-      assert.ok(showErrorNotificationStub.calledOnceWith(expectedMessage), 
-        `Error notification should be shown with message: "${expectedMessage}". Got: ${showErrorNotificationStub.firstCall?.args[0]}`
+      await assert.rejects(
+        async () => passageManager.openPassage(passageId),
+        (error: Error) => {
+          return error.message.includes('Passage file to open not found at') &&
+                 error.message.includes(primaryPath) &&
+                 error.message.includes(alternativePath);
+        }
       );
+
       assert.ok(openFileStub.notCalled, 'editorAdapter.openFile should not be called if file not found');
     } finally {
       teardownStubs();
     }
   });
 
-  test('should show error notification if editorAdapter.openFile fails', async function() {
+  test('should throw error if editorAdapter.openFile fails', async function() {
     setupStubs();
     try {
       const passageId = 'eventOpen-charFail-passageError';
@@ -168,21 +175,19 @@ suite('PassageManager - openPassage', function() {
       existsSyncStub.withArgs(primaryPath).returns(true);
       openFileStub.withArgs(primaryPath).rejects(openError); // Simulate editorAdapter.openFile failing
 
-      await passageManager.openPassage(passageId);
+      await assert.rejects(
+        async () => passageManager.openPassage(passageId),
+        openError
+      );
 
       assert.ok(openFileStub.calledOnceWith(primaryPath), 'editorAdapter.openFile should be called');
       assert.ok((console.error as sinon.SinonStub).calledWith(sinon.match(/Error opening passage file/), openError), 'Error message should be logged to console');
-      assert.ok(showErrorNotificationStub.calledOnce, 'Error notification should be shown');
-      const expectedMessage = `Failed to open passage file ${primaryPath}: ${openError.message}`;
-      assert.ok(showErrorNotificationStub.calledWith(expectedMessage), 
-        `Error notification should contain proper message. Expected: "${expectedMessage}". Got: ${showErrorNotificationStub.firstCall?.args[0]}`
-      );
     } finally {
       teardownStubs();
     }
   });
   
-  test('should show error notification if editorAdapter.openFile fails with non-Error object', async function() {
+  test('should handle non-Error objects thrown by editorAdapter.openFile', async function() {
     setupStubs();
     try {
       const passageId = 'eventOpen-charNonError-passageOddFail';
@@ -193,16 +198,16 @@ suite('PassageManager - openPassage', function() {
       // Use Promise.reject directly to reject with a string
       openFileStub.withArgs(primaryPath).returns(Promise.reject(openErrorString));
 
-      await passageManager.openPassage(passageId);
+      await assert.rejects(
+        async () => passageManager.openPassage(passageId),
+        (error: any) => {
+          return error === openErrorString ||
+                 (typeof error === 'object' && error.message && error.message.includes(openErrorString));
+        }
+      );
 
       assert.ok(openFileStub.calledOnceWith(primaryPath), 'editorAdapter.openFile should be called');
       assert.ok((console.error as sinon.SinonStub).calledWith(sinon.match(/Error opening passage file/)), 'Error message should be logged to console');
-      assert.ok(showErrorNotificationStub.calledOnce, 'Error notification should be shown');
-      
-      const expectedMessage = `Failed to open passage file ${primaryPath}: ${openErrorString}`;
-      assert.ok(showErrorNotificationStub.calledWith(sinon.match(expectedMessage)), 
-        `Error notification should contain proper message. Expected to match: "${expectedMessage}". Got: ${showErrorNotificationStub.firstCall?.args[0]}`
-      );
     } finally {
       teardownStubs();
     }

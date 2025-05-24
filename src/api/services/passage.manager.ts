@@ -268,7 +268,7 @@ export class PassageManager {
     if (!parts) {
       const errorMessage = `Invalid passageId format: ${passageId}. Expected format: eventId-characterId-passagePartId`;
       this.editorAdapter.showErrorNotification(errorMessage);
-      return;
+      throw new Error(errorMessage);
     }
     const [eventId, characterId, passagePartId] = parts;
 
@@ -286,7 +286,7 @@ export class PassageManager {
       } else {
         const errorMessage = `Passage file to delete not found at ${primaryPassageFilePath} or ${alternativePassageFilePath}`;
         this.editorAdapter.showErrorNotification(errorMessage);
-        return;
+        throw new Error(errorMessage);
       }
     }
 
@@ -298,6 +298,7 @@ export class PassageManager {
       console.error(`Error deleting passage file ${resolvedPassageFilePath}:`, error);
       const errorMessage = `Failed to delete passage file: ${error instanceof Error ? error.message : String(error)}`;
       this.editorAdapter.showErrorNotification(errorMessage);
+      throw error;
     }
   }
 
@@ -306,7 +307,7 @@ export class PassageManager {
     if (!parts) {
       const errorMessage = `Invalid passageId format: ${passageId}. Expected format: eventId-characterId-passagePartId`;
       this.editorAdapter.showErrorNotification(errorMessage);
-      return;
+      throw new Error(errorMessage);
     }
     const [eventId, characterId, passagePartId] = parts;
 
@@ -327,7 +328,7 @@ export class PassageManager {
     if (!resolvedPassageFilePath) {
       const errorMessage = `Passage file to open not found at primary path ${primaryPassageFilePath} or alternative path ${alternativePassageFilePath}`;
       this.editorAdapter.showErrorNotification(errorMessage);
-      return;
+      throw new Error(errorMessage);
     }
 
     try {
@@ -337,6 +338,7 @@ export class PassageManager {
       console.error(`Error opening passage file ${resolvedPassageFilePath}:`, error);
       const errorMessage = `Failed to open passage file ${resolvedPassageFilePath}: ${error instanceof Error ? error.message : String(error)}`;
       this.editorAdapter.showErrorNotification(errorMessage);
+      throw error;
     }
   }
 }

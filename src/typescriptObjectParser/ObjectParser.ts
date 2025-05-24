@@ -1952,6 +1952,8 @@ export class TypeScriptCodeBuilder {
 				}
 			}
 			if (openBraceIndex === -1) { options.onNotFound?.(); return; }
+
+			// Find the matching closing brace
 			let braceDepth = 1;
 			let closeBraceIndex = -1;
 			for (let i = openBraceIndex + 1; i < variableGroup.tokens.length; i++) {
@@ -1959,18 +1961,63 @@ export class TypeScriptCodeBuilder {
 				if (token.name === '{') braceDepth++;
 				else if (token.name === '}') {
 					braceDepth--;
-					if (braceDepth === 0) { closeBraceIndex = i; break; }
+					if (braceDepth === 0) {
+						closeBraceIndex = i;
+						break;
+					}
 				}
 			}
-			if (closeBraceIndex === -1) { options.onNotFound?.(); return; }
-			const openBraceToken = variableGroup.tokens[openBraceIndex];
-			const closeBraceToken = variableGroup.tokens[closeBraceIndex];
-			objectLiteralGroup = {
-				type: 'ObjectLiteral', start: openBraceToken.start, end: closeBraceToken.end,
-				tokens: variableGroup.tokens.slice(openBraceIndex, closeBraceIndex + 1),
-				children: [], metadata: {}
-			};
+
+			// If we can't find the closing brace in the current tokens, 
+			// we need to look in the original source
+			if (closeBraceIndex === -1) {
+				// The object literal extends beyond the variableGroup tokens
+				// We need to find it in the source directly
+				const openBraceToken = variableGroup.tokens[openBraceIndex];
+				let searchPos = openBraceToken.end;
+				let braceDepth = 1;
+				let closeBracePos = -1;
+
+				while (searchPos < this.originalText.length && braceDepth > 0) {
+					const char = this.originalText[searchPos];
+					if (char === '{') braceDepth++;
+					else if (char === '}') {
+						braceDepth--;
+						if (braceDepth === 0) {
+							closeBracePos = searchPos + 1; // Include the closing brace
+							break;
+						}
+					}
+					searchPos++;
+				}
+
+				if (closeBracePos === -1) {
+					options.onNotFound?.();
+					return;
+				}
+
+				objectLiteralGroup = {
+					type: 'ObjectLiteral',
+					start: openBraceToken.start,
+					end: closeBracePos,
+					tokens: [], // We don't need the internal tokens for this use case
+					children: [],
+					metadata: {}
+				};
+			} else {
+				const openBraceToken = variableGroup.tokens[openBraceIndex];
+				const closeBraceToken = variableGroup.tokens[closeBraceIndex];
+				objectLiteralGroup = {
+					type: 'ObjectLiteral',
+					start: openBraceToken.start,
+					end: closeBraceToken.end,
+					tokens: variableGroup.tokens.slice(openBraceIndex, closeBraceIndex + 1),
+					children: [],
+					metadata: {}
+				};
+			}
 		}
+
 		if (objectLiteralGroup) {
 			const objectBuilder = new TypeScriptObjectBuilder(this, objectLiteralGroup, this.originalText);
 			options.onFound(objectBuilder);
@@ -2270,9 +2317,16 @@ export class TypeScriptCodeBuilder {
 								else if (tokensAfterAssignment[k].name === '=>' && parenDepthForArrowParams === 0) {
 									arrowSymbolIndex = k;
 									break;
-								} else if (tokensAfterAssignment[k].name === '=' && tokensAfterAssignment[k + 1]?.name === '>' && parenDepthForArrowParams === 0) {
-									arrowSymbolIndex = k + 1; // point to '>'
-									break;
+								} else if (tokensAfterAssignment[k].name === '=' && parenDepthForArrowParams === 0) {
+									// Look ahead for '>' potentially skipping whitespace
+									let nextActualTokenIndex = k + 1;
+									while (nextActualTokenIndex < tokensAfterAssignment.length && tokensAfterAssignment[nextActualTokenIndex].type === 'whitespace') {
+										nextActualTokenIndex++;
+									}
+									if (nextActualTokenIndex < tokensAfterAssignment.length && tokensAfterAssignment[nextActualTokenIndex].name === '>') {
+										arrowSymbolIndex = nextActualTokenIndex; // Point to the '>' token
+										break;
+									}
 								}
 							}
 						}

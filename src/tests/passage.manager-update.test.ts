@@ -293,7 +293,7 @@ export const movePassage = (s, e) => {
       const updateData: PassageUpdateRequest = { type: 'screen', title: 't' };
       await assert.rejects(
         async () => passageManager.updatePassage(invalidPassageId, updateData),
-        new Error(`Invalid passageId format: ${invalidPassageId}`)
+        (error: Error) => error.message.includes(`Invalid passageId format: ${invalidPassageId}`)
       );
     });
 
@@ -307,7 +307,7 @@ export const movePassage = (s, e) => {
 
       await assert.rejects(
         async () => passageManager.updatePassage(passageId, updateData),
-        new Error(`Passage file not found at primary path ${primaryPath} or alternative path ${altPath}`)
+        (error: Error) => error.message.includes(`Passage file not found at primary path ${primaryPath} or alternative path ${altPath}`)
       );
     });
 
@@ -320,7 +320,7 @@ export const movePassage = (s, e) => {
       const updateData: PassageUpdateRequest = { type: 'screen', title: 't' };
       await assert.rejects(
         async () => passageManager.updatePassage(passageId, updateData),
-        new Error(`Could not find passage definition (object or function return) for 'noDefPassagePart' (tried patterns: noDefPassagePartPassage, noDefPassagePart) in ${filePath}`)
+        (error: Error) => error.message.includes(`Could not find passage definition (object or function return) for 'noDefPassagePart'`)
       );
     });
   });

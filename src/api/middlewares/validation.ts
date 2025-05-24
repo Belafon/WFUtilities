@@ -12,14 +12,16 @@ const timeFormatRegex = /^\d{1,2}\.\d{1,2}\.\s\d{1,2}:\d{2}$/;
  * Validation rules for event update requests
  */
 export const validateEventUpdate = [
-  body('title').notEmpty().withMessage('Title is required'),
-  body('description').notEmpty().withMessage('Description is required'),
-  body('location').notEmpty().withMessage('Location is required'),
+  body('title').optional().notEmpty().withMessage('Title cannot be empty if provided'),
+  body('description').optional().notEmpty().withMessage('Description cannot be empty if provided'),
+  body('location').optional().notEmpty().withMessage('Location cannot be empty if provided'),
   body('timeRange.start')
-    .notEmpty().withMessage('Start time is required')
+    .optional()
+    .notEmpty().withMessage('Start time cannot be empty if provided')
     .matches(timeFormatRegex).withMessage('Start time must be in format "D.M. H:mm"'),
   body('timeRange.end')
-    .notEmpty().withMessage('End time is required')
+    .optional()
+    .notEmpty().withMessage('End time cannot be empty if provided')
     .matches(timeFormatRegex).withMessage('End time must be in format "D.M. H:mm"'),
 ];
 

@@ -27,8 +27,11 @@ suite('Error Handling Investigation', function() {
       const stringError = "String error message";
       unlinkSyncStub.throws(stringError);
       
-      // Call the function
-      await passageManager.deletePassage(passageId);
+      // Call the function and expect it to throw
+      await assert.rejects(
+        async () => await passageManager.deletePassage(passageId),
+        (error: Error) => error.message.includes('String error message')
+      );
       
       // Print what was actually called
       console.log('Console.error was called?', consoleErrorStub.called);

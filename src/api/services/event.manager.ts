@@ -112,8 +112,7 @@ export class EventManager {
     if (!eventId || eventId.trim() === '') {
       const errorMessage = 'Event ID cannot be empty for deletion.';
       config.editorAdapter.showErrorNotification(errorMessage);
-      console.error(errorMessage);
-      return; // No error throwing, just notify and log
+      throw new Error(errorMessage);
     }
 
     const eventFilePath = path.join(eventsDir(), `${eventId}${eventFilePostfix}`);
@@ -121,8 +120,7 @@ export class EventManager {
     if (!config.fileSystem.existsSync(eventFilePath)) {
       const errorMessage = `Event file to delete not found at ${eventFilePath}`;
       config.editorAdapter.showErrorNotification(errorMessage);
-      console.error(errorMessage);
-      return;
+      throw new Error(errorMessage);
     }
 
     try {
@@ -133,8 +131,7 @@ export class EventManager {
       const errorMessageText = `Failed to delete event file ${eventFilePath}: ${error instanceof Error ? error.message : String(error)}`;
       config.editorAdapter.showErrorNotification(errorMessageText);
       console.error(`Error deleting event file ${eventFilePath}:`, error);
-      // Optionally re-throw if the caller needs to handle it, or just log and notify
-      // For consistency with PassageManager's deletePassage, we'll just log and notify.
+      throw error;
     }
   }
 
@@ -146,8 +143,7 @@ export class EventManager {
     if (!eventId || eventId.trim() === '') {
       const errorMessage = 'Event ID cannot be empty for opening.';
       config.editorAdapter.showErrorNotification(errorMessage);
-      console.error(errorMessage);
-      return;
+      throw new Error(errorMessage);
     }
 
     const eventFilePath = path.join(eventsDir(), `${eventId}${eventFilePostfix}`);
@@ -155,8 +151,7 @@ export class EventManager {
     if (!config.fileSystem.existsSync(eventFilePath)) {
       const errorMessage = `Event file to open not found at ${eventFilePath}`;
       config.editorAdapter.showErrorNotification(errorMessage);
-      console.error(errorMessage);
-      return;
+      throw new Error(errorMessage);
     }
 
     try {
@@ -173,7 +168,8 @@ export class EventManager {
       const errorMessageText = `Failed to open event file ${eventFilePath}: ${detailMessage}`;
       
       config.editorAdapter.showErrorNotification(errorMessageText);
-      console.error(`Error opening event file ${eventFilePath}:`, error); 
+      console.error(`Error opening event file ${eventFilePath}:`, error);
+      throw error;
     }
   }
 

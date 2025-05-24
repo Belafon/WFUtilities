@@ -13,8 +13,8 @@ export const updatePassage = async (req: Request<{ passageId: string }>, res: Re
     const { passageId } = req.params;
     const passageData = req.body as PassageUpdateRequest;
     
-    // For testing/demo purposes, if workspace doesn't exist, return success
-    if (process.env.NODE_ENV === 'test') {
+    // For testing/demo purposes
+    if (process.env.NODE_ENV === 'test' && req.query.demo === 'true') {
       res.status(200).json({
         success: true,
         message: `Passage ${passageId} updated successfully (demo mode)`,
@@ -30,6 +30,15 @@ export const updatePassage = async (req: Request<{ passageId: string }>, res: Re
     });
   } catch (error: any) {
     logger.error(`Failed to update passage: ${error.message}`, { error });
+    
+    // Handle validation errors with 400 status
+    if (error.message.includes('Invalid passageId format')) {
+      res.status(400).json({
+        success: false,
+        error: error.message,
+      });
+      return;
+    }
     
     if (error.message.includes('not found') || error.message.includes('ENOENT')) {
       res.status(404).json({

@@ -22,10 +22,10 @@ export interface TimeRange {
  * @property {TimeRange} timeRange - The time range for the event
  */
 export interface EventUpdateRequest {
-  title: string;
-  description: string;
-  location: string;
-  timeRange: TimeRange;
+  title?: string;
+  description?: string;
+  location?: string;
+  timeRange?: TimeRange;
 }
 
 /**
