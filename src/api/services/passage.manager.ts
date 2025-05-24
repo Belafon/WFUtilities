@@ -8,7 +8,7 @@ import {
 } from '../../types'; // Adjust path as necessary
 import { eventsDir, evnetPassagesFilePostfixWithoutFileType, passageFilePostfix } from '../../Paths';
 import { DefaultEditorAdapter, EditorAdapter } from '../adapters/editorAdapter';
-import { TypeScriptCodeBuilder, TypeScriptObjectBuilder } from '../../typescriptObjectParser/ObjectParser';
+import { TokenGroup, TypeScriptCodeBuilder, TypeScriptObjectBuilder } from '../../typescriptObjectParser/ObjectParser';
 // Assuming CodeLiteral and ObjectToStringConverter are in this path or similar
 import { CodeLiteral, ObjectToStringConverter } from '../../utils/objectToStringConverter';
 import { config } from '../../WFServerConfig';
@@ -36,12 +36,16 @@ function validatePassageId(passageId: string): [string, string, string] | null {
  * Handles business logic for passage operations
  */
 export class PassageManager {
-  private editorAdapter: EditorAdapter;
+  private _editorAdapter?: EditorAdapter;
   private objectConverter: ObjectToStringConverter;
 
-  constructor(editorAdapter: EditorAdapter = new DefaultEditorAdapter()) {
-    this.editorAdapter = editorAdapter;
+  constructor(editorAdapter?: EditorAdapter) {
+    this._editorAdapter = editorAdapter;
     this.objectConverter = new ObjectToStringConverter('  '); // Configure desired indent
+  }
+
+  private get editorAdapter(): EditorAdapter {
+    return this._editorAdapter || config.editorAdapter;
   }
 
   public async updatePassage(passageId: string, passageData: PassageUpdateRequest): Promise<void> {
@@ -90,30 +94,83 @@ export class PassageManager {
 
     let passageObjectBuilder: TypeScriptObjectBuilder | null = null;
 
-    const funcNamePattern = `${passagePartId}Passage`;
-    const varNamePattern = passagePartId;
+    // Try multiple patterns to find the passage
+    const patterns = [
+      `${passagePartId}Passage`,
+      passagePartId,
+      `${passagePartId}`,
+      // Also try without 'Passage' suffix for cases like 'intro' -> 'introPassage'
+      `${passagePartId.replace(/Passage$/, '')}Passage`,
+    ];
 
-    codeBuilder.findReturnObjectInFunction(funcNamePattern, {
-      onFound: (objBuilder: TypeScriptObjectBuilder) => { passageObjectBuilder = objBuilder; },
-      onNotFound: () => { }
-    });
+    // First try to find as a function returning an object
+    for (const pattern of patterns) {
+      if (passageObjectBuilder) break;
 
-    if (!passageObjectBuilder) {
-      codeBuilder.findObject(funcNamePattern, {
-        onFound: (objBuilder: TypeScriptObjectBuilder) => { passageObjectBuilder = objBuilder; },
+      codeBuilder.findReturnObjectInFunction(pattern, {
+        onFound: (objBuilder: TypeScriptObjectBuilder) => {
+          passageObjectBuilder = objBuilder;
+        },
         onNotFound: () => { }
       });
     }
 
+    // If not found as function, try as a direct object
     if (!passageObjectBuilder) {
-      codeBuilder.findObject(varNamePattern, {
-        onFound: (objBuilder: TypeScriptObjectBuilder) => { passageObjectBuilder = objBuilder; },
-        onNotFound: () => { }
-      });
+      for (const pattern of patterns) {
+        if (passageObjectBuilder) break;
+
+        codeBuilder.findObject(pattern, {
+          onFound: (objBuilder: TypeScriptObjectBuilder) => {
+            passageObjectBuilder = objBuilder;
+          },
+          onNotFound: () => { }
+        });
+      }
+    }
+
+    // Also try to find by searching for the return object directly in the content
+    if (!passageObjectBuilder && originalContent.includes(`id: '${passagePartId}'`)) {
+      // This is a fallback - create a simple regex-based search
+      const objectMatch = originalContent.match(/return\s*{[^}]*id:\s*['"]([^'"]+)['"]/);
+      if (objectMatch && objectMatch[1] === passagePartId) {
+        // Found a return statement with the correct id
+        // Try to extract the object bounds
+        const returnIndex = originalContent.indexOf('return');
+        if (returnIndex !== -1) {
+          const afterReturn = originalContent.substring(returnIndex);
+          const openBraceIndex = afterReturn.indexOf('{');
+          if (openBraceIndex !== -1) {
+            // Count braces to find the matching closing brace
+            let braceCount = 0;
+            let i = openBraceIndex;
+            for (; i < afterReturn.length; i++) {
+              if (afterReturn[i] === '{') braceCount++;
+              else if (afterReturn[i] === '}') {
+                braceCount--;
+                if (braceCount === 0) break;
+              }
+            }
+
+            if (braceCount === 0) {
+              // Create a mock object group for the found object
+              const objectGroup: TokenGroup = {
+                type: 'ObjectLiteral',
+                start: returnIndex + openBraceIndex,
+                end: returnIndex + i + 1,
+                tokens: [],
+                children: [],
+                metadata: {}
+              };
+              passageObjectBuilder = new TypeScriptObjectBuilder(codeBuilder, objectGroup, originalContent);
+            }
+          }
+        }
+      }
     }
 
     if (!passageObjectBuilder) {
-      const errorMessage = `Could not find passage definition (object or function return) for '${passagePartId}' (tried patterns: ${funcNamePattern}, ${varNamePattern}) in ${resolvedPassageFilePath}`;
+      const errorMessage = `Could not find passage definition (object or function return) for '${passagePartId}' (tried patterns: ${patterns.join(', ')}) in ${resolvedPassageFilePath}`;
       this.editorAdapter.showErrorNotification(errorMessage);
       throw new Error(errorMessage);
     }
@@ -158,7 +215,7 @@ export class PassageManager {
     if (trimmedValue.startsWith("_(") && trimmedValue.endsWith(")")) {
       const inner = trimmedValue.substring(2, trimmedValue.length - 1).trim();
       if ((inner.startsWith("'") && inner.endsWith("'")) || (inner.startsWith('"') && inner.endsWith('"'))) {
-        return trimmedValue; 
+        return trimmedValue;
       }
     }
     if ((trimmedValue.startsWith("'") && trimmedValue.endsWith("'")) || (trimmedValue.startsWith('"') && trimmedValue.endsWith('"'))) {
@@ -222,12 +279,12 @@ export class PassageManager {
     if (link.cost !== undefined) {
       builtLink.cost = this.buildLinkCostObjectStructure(link.cost);
     }
-    
+
     // Clean up undefined properties
     for (const key in builtLink) {
-        if (builtLink[key] === undefined) {
-            delete builtLink[key];
-        }
+      if (builtLink[key] === undefined) {
+        delete builtLink[key];
+      }
     }
     return builtLink;
   }
@@ -238,7 +295,7 @@ export class PassageManager {
       if (unit === 'min') return new CodeLiteral(`DeltaTime.fromMin(${cost.value})`);
       if (unit === 'hour') return new CodeLiteral(`DeltaTime.fromHours(${cost.value})`);
       if (unit === 'day') return new CodeLiteral(`DeltaTime.fromDays(${cost.value})`);
-      
+
       console.warn(`Unknown DeltaTime unit for cost: ${cost.unit}. Falling back to object representation.`);
       // For the object fallback, ObjectToStringConverter will handle quoting string values.
       return { value: cost.value, unit: cost.unit }; // unit is raw string
