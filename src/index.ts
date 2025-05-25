@@ -18,6 +18,7 @@ export * from './api/services/passage.manager';
 // Export adapters
 export * from './api/adapters/editorAdapter';
 export * from './api/adapters/fileSystem';
+export * from './api/adapters/workspaceAdapter';
 
 // Export utilities
 export * from './utils/logger';

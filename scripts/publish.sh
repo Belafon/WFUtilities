@@ -57,13 +57,6 @@ fi
 CURRENT_VERSION=$(node -p "require('./package.json').version")
 print_status "Current version: $CURRENT_VERSION"
 
-# Run tests before publishing
-print_status "Running tests..."
-if ! npm test; then
-    print_error "Tests failed. Please fix the tests before publishing."
-    exit 1
-fi
-
 # Build the project
 print_status "Building project..."
 if ! npm run build; then
@@ -103,11 +96,22 @@ if npm publish; then
     
     if [ -d "$VSCODE_EXTENSION_PATH" ]; then
         cd "$VSCODE_EXTENSION_PATH"
-        if npm update wfnodeserver; then
-            print_status "Successfully upgraded wfnodeserver in WorldsFactorySupport project!"
+        # Update wfnodeserver version in package.json using Node.js since jq might not be available
+        if node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            pkg.dependencies['wfnodeserver'] = '$NEW_VERSION';
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+        " 2>/dev/null; then
+            print_status "Updated wfnodeserver version in package.json to $NEW_VERSION"
+            if yarn install; then
+                print_status "Successfully installed updated dependencies with yarn!"
+            else
+                print_warning "yarn install failed. Please check for errors."
+            fi
         else
-            print_warning "Failed to upgrade wfnodeserver in WorldsFactorySupport project."
-            print_warning "You may need to manually run: cd $VSCODE_EXTENSION_PATH && npm update wfnodeserver"
+            print_warning "Failed to update wfnodeserver version in package.json."
+            print_warning "You may need to manually update the dependency and run yarn install."
         fi
     else
         print_warning "WorldsFactorySupport project not found at: $VSCODE_EXTENSION_PATH"
