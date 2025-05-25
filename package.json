@@ -17,6 +17,9 @@
     "example:basic": "yarn ts-node examples/library-usage.ts",
     "example:advanced": "yarn ts-node examples/advanced-usage.ts",
     "link-local": "./scripts/link-library.sh",
+    "publish:patch": "./scripts/publish.sh patch",
+    "publish:minor": "./scripts/publish.sh minor",
+    "publish:major": "./scripts/publish.sh major",
     "prepublishOnly": "yarn test && yarn build"
   },
   "devDependencies": {
