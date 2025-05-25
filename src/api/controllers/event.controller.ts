@@ -87,12 +87,14 @@ export const deleteEvent = async (req: Request<{ eventId: string }>, res: Respon
 };
 
 export const openEvent = async (req: Request<{ eventId: string }>, res: Response): Promise<void> => {
+  logger.info(`Opening event ${req.params.eventId} in VS Code`);
   try {
     const { eventId } = req.params;
 
     // For testing/demo purposes, check for specific demo mode flag
     const isDemoMode = req.query.demo === 'true' || req.headers['x-demo-mode'] === 'true';
     if (isDemoMode) {
+      logger.info(`Demo mode: Event ${eventId} opened in VS Code (no actual action taken)`);
       res.status(200).json({
         success: true,
         message: `Event ${eventId} opened in VS Code (demo mode)`,

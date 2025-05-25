@@ -1,10 +1,11 @@
 import path from 'path';
 import { EventUpdateRequest, SetTimeRequest, TimeRange } from '../../types'; // Adjust path as necessary
-import { eventsDir, eventFilePostfix } from '../../Paths'; // Adjust path as necessary
+import { eventsDir, eventFilePostfix, getEventFilePath } from '../../Paths'; // Adjust path as necessary
 import { DefaultEditorAdapter, EditorAdapter } from '../adapters/editorAdapter'; // Adjust path as necessary
 import { TypeScriptCodeBuilder, TypeScriptObjectBuilder } from '../../typescriptObjectParser/ObjectParser'; // Adjust path as necessary
 import { CodeLiteral, ObjectToStringConverter } from '../../utils/objectToStringConverter'; // Adjust path as necessary
 import { config } from '../../WFServerConfig';
+import { logger } from '../../utils/logger';
 
 /**
  * Event Manager Service
@@ -31,7 +32,7 @@ export class EventManager {
       throw new Error(errorMessage);
     }
 
-    const eventFilePath = path.join(eventsDir(), `${eventId}${eventFilePostfix}`);
+    const eventFilePath = getEventFilePath(eventId);
 
     if (!config.fileSystem.existsSync(eventFilePath)) {
       const errorMessage = `Event file not found at ${eventFilePath}`;
@@ -115,7 +116,7 @@ export class EventManager {
       throw new Error(errorMessage);
     }
 
-    const eventFilePath = path.join(eventsDir(), `${eventId}${eventFilePostfix}`);
+    const eventFilePath = getEventFilePath(eventId);
 
     if (!config.fileSystem.existsSync(eventFilePath)) {
       const errorMessage = `Event file to delete not found at ${eventFilePath}`;
@@ -140,24 +141,30 @@ export class EventManager {
    * @param eventId The ID of the event to open.
    */
   public async openEvent(eventId: string): Promise<void> {
+    logger.info(`Attempting to open event with ID: ${eventId}`);
     if (!eventId || eventId.trim() === '') {
+      logger.error('Event ID cannot be empty for opening.');
       const errorMessage = 'Event ID cannot be empty for opening.';
       config.editorAdapter.showErrorNotification(errorMessage);
       throw new Error(errorMessage);
     }
 
-    const eventFilePath = path.join(eventsDir(), `${eventId}${eventFilePostfix}`);
+    const eventFilePath = getEventFilePath(eventId);
+    logger.info(`Event file path resolved to: ${eventFilePath}`);
 
     if (!config.fileSystem.existsSync(eventFilePath)) {
       const errorMessage = `Event file to open not found at ${eventFilePath}`;
       config.editorAdapter.showErrorNotification(errorMessage);
+      logger.error(errorMessage);
       throw new Error(errorMessage);
     }
 
     try {
       await config.editorAdapter.openFile(eventFilePath);
+      logger.info(`Event file ${eventFilePath} opened successfully.`);
       console.log(`Attempted to open event file: ${eventFilePath}`);
     } catch (error) {
+      logger.error(`Failed to open event file ${eventFilePath}:`, error);
       let detailMessage = '';
       if (error instanceof Error) {
         detailMessage = (error as Error).message || (error as any).name || String(error); // Prioritize message, then name, then full string
@@ -169,8 +176,10 @@ export class EventManager {
       
       config.editorAdapter.showErrorNotification(errorMessageText);
       console.error(`Error opening event file ${eventFilePath}:`, error);
+      logger.error(`Error opening event file ${eventFilePath}:`, error);
       throw error;
     }
+    logger.info(`Event file ${eventFilePath} opened successfully.`);
   }
 
   /**

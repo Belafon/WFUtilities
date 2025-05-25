@@ -76,7 +76,7 @@ suite('EventManager - openEvent', () => {
 
   const getEventsDir = () => mockPathsConfiguration.eventsDir();
   const getEventFilePath = (eventId: string) => {
-    return path.join(getEventsDir(), `${eventId}${mockPathsConfiguration.eventFilePostfix}`);
+    return path.join(getEventsDir(), eventId, `${eventId}${mockPathsConfiguration.eventFilePostfix}`);
   };
 
   setup(() => {

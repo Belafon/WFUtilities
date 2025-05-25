@@ -16,6 +16,20 @@ import { DefaultEditorAdapter } from '../api/adapters/editorAdapter';
 let testWorkspaceRoot: string;
 let testEventsDir: string;
 
+// Helper function to get the correct event file path with new directory structure
+const getTestEventFilePath = (eventId: string): string => {
+    const eventSubDir = path.join(testEventsDir, eventId);
+    return path.join(eventSubDir, `${eventId}.event.ts`);
+};
+
+// Helper function to ensure event directory exists
+const ensureEventDirExists = (eventId: string): void => {
+    const eventSubDir = path.join(testEventsDir, eventId);
+    if (!fs.existsSync(eventSubDir)) {
+        fs.mkdirSync(eventSubDir, { recursive: true });
+    }
+};
+
 // Create realistic test event file content
 const createTestEventFileContent = (eventId: string, options: {
     title?: string;
@@ -103,9 +117,15 @@ suite('EventManager Integration Tests', () => {
     setup(() => {
         // Clean events directory before each test
         if (fs.existsSync(testEventsDir)) {
-            const files = fs.readdirSync(testEventsDir);
-            files.forEach(file => {
-                fs.unlinkSync(path.join(testEventsDir, file));
+            const items = fs.readdirSync(testEventsDir);
+            items.forEach(item => {
+                const itemPath = path.join(testEventsDir, item);
+                const stat = fs.statSync(itemPath);
+                if (stat.isDirectory()) {
+                    fs.rmSync(itemPath, { recursive: true, force: true });
+                } else {
+                    fs.unlinkSync(itemPath);
+                }
             });
         }
 
@@ -117,7 +137,10 @@ suite('EventManager Integration Tests', () => {
     suite('PUT /api/event/:eventId - Update Event', () => {
         test('should successfully update an existing event', async () => {
             const eventId = 'test_kingdom';
-            const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+            const eventFilePath = getTestEventFilePath(eventId);
+
+            // Ensure event directory exists
+            ensureEventDirExists(eventId);
 
             // Create initial event file
             const initialContent = createTestEventFileContent(eventId, {
@@ -164,7 +187,10 @@ suite('EventManager Integration Tests', () => {
 
         test('should handle partial updates correctly', async () => {
             const eventId = 'test_village';
-            const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+            const eventFilePath = getTestEventFilePath(eventId);
+
+            // Ensure event directory exists
+            ensureEventDirExists(eventId);
 
             // Create initial event file
             const initialContent = createTestEventFileContent(eventId, {
@@ -222,7 +248,10 @@ suite('EventManager Integration Tests', () => {
 
         test('should handle title with special characters correctly', async () => {
             const eventId = 'special_chars';
-            const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+            const eventFilePath = getTestEventFilePath(eventId);
+
+            // Ensure event directory exists
+            ensureEventDirExists(eventId);
 
             const initialContent = createTestEventFileContent(eventId);
             fs.writeFileSync(eventFilePath, initialContent, 'utf-8');
@@ -252,7 +281,10 @@ suite('EventManager Integration Tests', () => {
     suite('DELETE /api/event/:eventId - Delete Event', () => {
         test('should successfully delete an existing event', async () => {
             const eventId = 'delete_test';
-            const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+            const eventFilePath = getTestEventFilePath(eventId);
+
+            // Ensure event directory exists
+            ensureEventDirExists(eventId);
 
             // Create event file to delete
             const eventContent = createTestEventFileContent(eventId);
@@ -288,7 +320,8 @@ suite('EventManager Integration Tests', () => {
 
             // Create multiple event files
             eventIds.forEach(eventId => {
-                const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+                const eventFilePath = getTestEventFilePath(eventId);
+                ensureEventDirExists(eventId);
                 const eventContent = createTestEventFileContent(eventId);
                 fs.writeFileSync(eventFilePath, eventContent, 'utf-8');
             });
@@ -302,7 +335,7 @@ suite('EventManager Integration Tests', () => {
                 assert.strictEqual(response.body.success, true);
 
                 // Verify file is deleted
-                const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+                const eventFilePath = getTestEventFilePath(eventId);
                 assert.ok(!fs.existsSync(eventFilePath), `Event file ${eventId} should be deleted`);
             }
         });
@@ -311,7 +344,10 @@ suite('EventManager Integration Tests', () => {
     suite('POST /api/event/:eventId/open - Open Event', () => {
         test('should successfully open an existing event file', async () => {
             const eventId = 'open_test';
-            const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+            const eventFilePath = getTestEventFilePath(eventId);
+
+            // Ensure event directory exists
+            ensureEventDirExists(eventId);
 
             // Create event file
             const eventContent = createTestEventFileContent(eventId);
@@ -345,7 +381,10 @@ suite('EventManager Integration Tests', () => {
 
         test('should handle editor failures gracefully', async () => {
             const eventId = 'open_fail_test';
-            const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+            const eventFilePath = getTestEventFilePath(eventId);
+
+            // Ensure event directory exists
+            ensureEventDirExists(eventId);
 
             // Create event file
             const eventContent = createTestEventFileContent(eventId);
@@ -375,7 +414,10 @@ suite('EventManager Integration Tests', () => {
     suite('POST /api/event/:eventId/setTime - Set Event Time', () => {
         test('should successfully set time range for existing event', async () => {
             const eventId = 'time_test';
-            const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+            const eventFilePath = getTestEventFilePath(eventId);
+
+            // Ensure event directory exists
+            ensureEventDirExists(eventId);
 
             // Create initial event file
             const initialContent = createTestEventFileContent(eventId, {
@@ -414,7 +456,10 @@ suite('EventManager Integration Tests', () => {
 
         test('should return 400 for invalid time range data', async () => {
             const eventId = 'invalid_time_test';
-            const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+            const eventFilePath = getTestEventFilePath(eventId);
+
+            // Ensure event directory exists
+            ensureEventDirExists(eventId);
 
             // Create event file
             const eventContent = createTestEventFileContent(eventId);
@@ -459,7 +504,10 @@ suite('EventManager Integration Tests', () => {
     suite('Complex Integration Scenarios', () => {
         test('should handle complete event lifecycle', async () => {
             const eventId = 'lifecycle_test';
-            const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+            const eventFilePath = getTestEventFilePath(eventId);
+
+            // Ensure event directory exists
+            ensureEventDirExists(eventId);
 
             // 1. Create initial event file
             const initialContent = createTestEventFileContent(eventId, {
@@ -529,9 +577,10 @@ suite('EventManager Integration Tests', () => {
 
         test('should handle concurrent operations safely', async () => {
             const eventId = 'concurrent_test';
-            const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+            const eventFilePath = getTestEventFilePath(eventId);
 
             // Create initial event file
+            ensureEventDirExists(eventId);
             const initialContent = createTestEventFileContent(eventId);
             fs.writeFileSync(eventFilePath, initialContent, 'utf-8');
 

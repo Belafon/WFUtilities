@@ -23,9 +23,45 @@ import path from 'path';
 
 import { errorHandler } from './api/middlewares/errorHandler';
 import routes from './api/routes';
+import { logger } from './utils/logger';
 
 // Initialize express app
 const app = express();
+
+// HTTP request logging middleware
+app.use((req, res, next) => {
+  const start = Date.now();
+  const { method, url, ip } = req;
+  const userAgent = req.get('User-Agent') || 'unknown';
+  
+  // Log the incoming request
+  logger.info(`${method} ${url}`, {
+    ip,
+    userAgent,
+    timestamp: new Date().toISOString()
+  });
+  
+  // Override res.end to capture response details
+  const originalEnd = res.end.bind(res);
+  res.end = function(...args: any[]) {
+    const duration = Date.now() - start;
+    const { statusCode } = res;
+    
+    // Log the response
+    logger.info(`${method} ${url} - ${statusCode}`, {
+      ip,
+      statusCode,
+      duration: `${duration}ms`,
+      contentLength: res.get('Content-Length') || 0,
+      timestamp: new Date().toISOString()
+    });
+    
+    // Call the original end method
+    return originalEnd(...args);
+  };
+  
+  next();
+});
 
 // Basic middleware
 app.use(express.json());
@@ -267,6 +303,9 @@ app.get('/api-docs', swaggerUi.setup(swaggerDocs));
 
 // API routes
 app.use('/api', routes);
+
+// Also mount routes directly for backward compatibility
+app.use('/', routes);
 
 // Error handling middleware
 app.use(errorHandler);

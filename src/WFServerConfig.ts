@@ -1,7 +1,8 @@
 import { EditorAdapter, DefaultEditorAdapter } from './api/adapters/editorAdapter';
 import { IFileSystem, NodeFileSystemAdapter } from './api/adapters/fileSystem';
 import { WorkspaceAdapter, DefaultWorkspaceAdapter } from './api/adapters/workspaceAdapter';
-import { logger } from './utils/logger';
+import { LoggerAdapter, DefaultLoggerAdapter } from './api/adapters/loggerAdapter';
+import { logger, setLogger } from './utils/logger';
 
 /**
  * Global configuration for the WFNodeServer library
@@ -10,6 +11,7 @@ class WFServerConfig {
   private _editorAdapter: EditorAdapter = new DefaultEditorAdapter();
   private _fileSystem: IFileSystem = new NodeFileSystemAdapter();
   private _workspaceAdapter: WorkspaceAdapter = new DefaultWorkspaceAdapter();
+  private _loggerAdapter: LoggerAdapter = new DefaultLoggerAdapter();
 
   /**
    * Get the current EditorAdapter implementation
@@ -72,6 +74,27 @@ class WFServerConfig {
   }
 
   /**
+   * Get the current LoggerAdapter implementation
+   */
+  public get loggerAdapter(): LoggerAdapter {
+    return this._loggerAdapter;
+  }
+
+  /**
+   * Set a custom LoggerAdapter implementation
+   * @param adapter - Custom implementation of LoggerAdapter
+   */
+  public setLoggerAdapter(adapter: LoggerAdapter): void {
+    if (!adapter) {
+      logger.error('Attempted to set LoggerAdapter to null or undefined');
+      throw new Error('LoggerAdapter cannot be null or undefined');
+    }
+    logger.info('LoggerAdapter implementation set');
+    this._loggerAdapter = adapter;
+    setLogger(adapter);
+  }
+
+  /**
    * Reset all configurations to default values
    */
   public reset(): void {
@@ -79,6 +102,7 @@ class WFServerConfig {
     this._editorAdapter = new DefaultEditorAdapter();
     this._fileSystem = new NodeFileSystemAdapter();
     this._workspaceAdapter = new DefaultWorkspaceAdapter();
+    this._loggerAdapter = new DefaultLoggerAdapter();
   }
 }
 

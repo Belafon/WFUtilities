@@ -23,6 +23,16 @@ export const eventFilePostfixWithoutFileType = '.event';
 
 export const eventsDir = () => path.join(workspaceFolders(), 'src', 'data', 'events');
 
+/**
+ * Gets the full path to an event file based on the event ID.
+ * Creates a path structure like: /src/data/events/{eventId}/{eventId}.event.ts
+ * @param eventId The ID of the event
+ * @returns The full path to the event file
+ */
+export const getEventFilePath = (eventId: string): string => {
+  return path.join(eventsDir(), eventId, `${eventId}${eventFilePostfix}`);
+};
+
 export const passageFilePostfix = '.ts';
 
 export const racesFilePath = () => path.join(workspaceFolders(), 'src', 'data', 'races', 'races.ts');
