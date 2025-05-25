@@ -59,14 +59,14 @@ print_status "Current version: $CURRENT_VERSION"
 
 # Run tests before publishing
 print_status "Running tests..."
-if ! yarn test; then
+if ! npm test; then
     print_error "Tests failed. Please fix the tests before publishing."
     exit 1
 fi
 
 # Build the project
 print_status "Building project..."
-if ! yarn build; then
+if ! npm run build; then
     print_error "Build failed. Please fix the build errors before publishing."
     exit 1
 fi
@@ -104,11 +104,11 @@ if npm publish; then
     
     if [ -d "$VSCODE_EXTENSION_PATH" ]; then
         cd "$VSCODE_EXTENSION_PATH"
-        if yarn upgrade wfnodeserver; then
+        if npm update wfnodeserver; then
             print_status "Successfully upgraded wfnodeserver in WorldsFactorySupport project!"
         else
             print_warning "Failed to upgrade wfnodeserver in WorldsFactorySupport project."
-            print_warning "You may need to manually run: cd $VSCODE_EXTENSION_PATH && yarn upgrade wfnodeserver"
+            print_warning "You may need to manually run: cd $VSCODE_EXTENSION_PATH && npm update wfnodeserver"
         fi
     else
         print_warning "WorldsFactorySupport project not found at: $VSCODE_EXTENSION_PATH"

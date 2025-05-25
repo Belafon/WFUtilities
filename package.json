@@ -9,18 +9,19 @@
     "start": "node dist/server.js",
     "dev": "yarn ts-node src/server.ts",
     "dev:watch": "yarn nodemon --watch 'src/**/*.ts' --exec 'yarn ts-node' src/server.ts",
-    "build": "yarn tsc && yarn copy-files",
+    "build": "npm run tsc && npm run copy-files",
+    "tsc": "npx tsc",
     "copy-files": "mkdir -p dist/api/swagger && cp src/api/swagger/openapi.yaml dist/api/swagger/",
-    "test": "yarn mocha -r ts-node/register --ui tdd src/tests/**/*.test.ts",
+    "test": "npx mocha -r ts-node/register --ui tdd src/tests/**/*.test.ts",
     "test:watch": "yarn mocha -r ts-node/register --ui tdd --watch --watch-files src/**/*.ts src/tests/**/*.test.ts",
-    "prepare": "yarn build",
+    "prepare": "npm run build",
     "example:basic": "yarn ts-node examples/library-usage.ts",
     "example:advanced": "yarn ts-node examples/advanced-usage.ts",
     "link-local": "./scripts/link-library.sh",
     "publish:patch": "./scripts/publish.sh patch",
     "publish:minor": "./scripts/publish.sh minor",
     "publish:major": "./scripts/publish.sh major",
-    "prepublishOnly": "yarn test && yarn build"
+    "prepublishOnly": "npm test && npm run build"
   },
   "devDependencies": {
     "@types/compression": "^1.7.5",
