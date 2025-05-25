@@ -92,7 +92,6 @@ if npm publish; then
     
     # Push git changes and tags
     print_status "Pushing git changes and tags..."
-    git push origin main
     git push origin --tags
     
     print_status "🎉 Publish complete!"
