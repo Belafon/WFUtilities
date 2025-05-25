@@ -13,10 +13,17 @@ export const updateMapController = async (req: Request<{ mapId: string }>, res: 
     const { mapId } = req.params;
     const mapData = req.body as MapUpdateRequest;
 
-    if (!mapId || mapId.trim() === '') {
-        res.status(400).json({ success: false, error: 'Map ID cannot be empty.' });
-        return;
+    // Check for demo mode
+    const isDemoMode = req.query.demo === 'true' || req.header('x-demo-mode') === 'true';
+    
+    if (isDemoMode) {
+      res.status(200).json({
+        success: true,
+        message: `Map ${mapId} updated successfully (demo mode)`,
+      });
+      return;
     }
+    
     // Basic validation for mapData
     if (!mapData || typeof mapData.title !== 'string' || typeof mapData.width !== 'number' || 
         typeof mapData.height !== 'number' || !Array.isArray(mapData.data) ||
@@ -56,9 +63,23 @@ export const getMapController = async (req: Request<{ mapId: string }>, res: Res
   try {
     const { mapId } = req.params;
 
-    if (!mapId || mapId.trim() === '') {
-        res.status(400).json({ success: false, error: 'Map ID cannot be empty.' });
-        return;
+    // Check for demo mode
+    const isDemoMode = req.query.demo === 'true' || req.header('x-demo-mode') === 'true';
+    
+    if (isDemoMode) {
+      res.status(200).json({
+        success: true,
+        message: `Map retrieval successful (demo mode)`,
+        data: {
+          title: 'Demo Map',
+          width: 10,
+          height: 10,
+          data: [],
+          locations: [],
+          maps: []
+        }
+      });
+      return;
     }
 
     const mapData = await mapManager.getMap(mapId);
@@ -93,8 +114,20 @@ export const getMapController = async (req: Request<{ mapId: string }>, res: Res
  * @route   GET /api/maps
  * @access  Public
  */
-export const listMapsController = async (_req: Request, res: Response): Promise<void> => {
+export const listMapsController = async (req: Request, res: Response): Promise<void> => {
   try {
+    // Check for demo mode
+    const isDemoMode = req.query.demo === 'true' || req.header('x-demo-mode') === 'true';
+    
+    if (isDemoMode) {
+      res.status(200).json({
+        success: true,
+        message: 'Map list retrieved successfully (demo mode)',
+        data: ['demo_map_1', 'demo_map_2']
+      });
+      return;
+    }
+    
     const mapIds = await mapManager.listMaps();
     res.status(200).json({
       success: true,

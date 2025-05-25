@@ -76,7 +76,7 @@ export class MapManager {
       config.editorAdapter.showErrorNotification(errorMessage);
       logger.error(errorMessage);
       console.error(errorMessage, err);
-      throw err;
+      throw new Error(errorMessage);
     }
   }
 

@@ -186,19 +186,41 @@ suite('Map API Integration Tests', () => {
         test('should return 400 for empty mapId', async () => {
             const mapData = createTestMapFileContent('test');
 
+            // Test with missing mapId - Express will return 404 for missing route parameter
             const response = await request(app)
                 .put('/api/map/')
                 .send(mapData)
-                .expect(404); // Express will return 404 for missing route parameter
-
-            // Also test with whitespace-only mapId
-            const response2 = await request(app)
-                .put('/api/map/   ')
-                .send(mapData)
                 .expect(404);
+
+            // Test whitespace-only mapIds using URL encoding to ensure whitespace is preserved
+            // (Raw spaces in URLs might be stripped or handled inconsistently)
+            
+            // Test with multiple spaces
+            const response2 = await request(app)
+                .put('/api/map/%20%20%20') // URL-encoded spaces
+                .send(mapData)
+                .expect(400);
 
             assert.strictEqual(response2.body.success, false);
             assert.ok(response2.body.error.includes('Map ID cannot be empty'));
+
+            // Test with single space
+            const response3 = await request(app)
+                .put('/api/map/%20') // Single URL-encoded space
+                .send(mapData)
+                .expect(400);
+
+            assert.strictEqual(response3.body.success, false);
+            assert.ok(response3.body.error.includes('Map ID cannot be empty'));
+
+            // Test with tab character
+            const response4 = await request(app)
+                .put('/api/map/%09') // URL-encoded tab
+                .send(mapData)
+                .expect(400);
+
+            assert.strictEqual(response4.body.success, false);
+            assert.ok(response4.body.error.includes('Map ID cannot be empty'));
         });
 
         test('should return 400 for invalid map data', async () => {
@@ -305,12 +327,32 @@ suite('Map API Integration Tests', () => {
         });
 
         test('should return 400 for empty mapId', async () => {
+            // Test whitespace-only mapIds using URL encoding to ensure whitespace is preserved
+            // (Raw spaces in URLs might be stripped or handled inconsistently)
+            
+            // Test with multiple spaces
             const response = await request(app)
-                .get('/api/map/   ')
+                .get('/api/map/%20%20%20') // URL-encoded spaces
                 .expect(400);
 
             assert.strictEqual(response.body.success, false);
             assert.ok(response.body.error.includes('Map ID cannot be empty'));
+
+            // Test with single space
+            const response2 = await request(app)
+                .get('/api/map/%20') // Single URL-encoded space
+                .expect(400);
+
+            assert.strictEqual(response2.body.success, false);
+            assert.ok(response2.body.error.includes('Map ID cannot be empty'));
+
+            // Test with tab character
+            const response3 = await request(app)
+                .get('/api/map/%09') // URL-encoded tab
+                .expect(400);
+
+            assert.strictEqual(response3.body.success, false);
+            assert.ok(response3.body.error.includes('Map ID cannot be empty'));
         });
 
         test('should handle corrupted map file gracefully', async () => {
@@ -332,7 +374,7 @@ suite('Map API Integration Tests', () => {
     suite('GET /api/map - List Maps', () => {
         test('should return empty array when no maps exist', async () => {
             const response = await request(app)
-                .get('/api/map')
+                .get('/api/map') // Note: no trailing slash for list endpoint
                 .expect(200);
 
             assert.strictEqual(response.body.success, true);
@@ -379,7 +421,7 @@ suite('Map API Integration Tests', () => {
             }
 
             const response = await request(app)
-                .get('/api/map')
+                .get('/api/map') // List endpoint - no trailing slash
                 .expect(200);
 
             assert.strictEqual(response.body.success, true);
@@ -598,6 +640,30 @@ suite('Map API Integration Tests', () => {
 
             // Should either succeed or fail gracefully
             assert.ok(response.status >= 200 && response.status < 600);
+        });
+
+        test('should handle map IDs with special characters', async () => {
+            // Test valid map IDs that contain URL-safe special characters
+            const specialMapIds = ['map-with-hyphens', 'map_with_underscores', 'map123', 'MAP_UPPER'];
+            
+            for (const mapId of specialMapIds) {
+                const mapData = createTestMapFileContent(mapId);
+                
+                const response = await request(app)
+                    .put(`/api/map/${mapId}`)
+                    .send(mapData)
+                    .expect(200);
+                
+                assert.strictEqual(response.body.success, true);
+                
+                // Verify it can be retrieved
+                const getResponse = await request(app)
+                    .get(`/api/map/${mapId}`)
+                    .expect(200);
+                
+                assert.strictEqual(getResponse.body.success, true);
+                assert.strictEqual(getResponse.body.data.title, 'Test Map');
+            }
         });
 
         test('should handle maps with zero dimensions gracefully', async () => {
