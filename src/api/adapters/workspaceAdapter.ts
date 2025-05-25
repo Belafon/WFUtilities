@@ -22,19 +22,6 @@ export interface WorkspaceAdapter {
  */
 export class DefaultWorkspaceAdapter implements WorkspaceAdapter {
   getWorkspaceFolderPath(): string {
-    // Try environment variable first
-    const envPath = process.env.WF_WORKSPACE_PATH;
-    if (envPath) {
-      return envPath;
-    }
-    
-    // Try common workspace environment variables
-    const vscodeWorkspace = process.env.VSCODE_WORKSPACE;
-    if (vscodeWorkspace) {
-      return vscodeWorkspace;
-    }
-    
-    // No workspace path found - throw error
     throw new Error(
       'Workspace path not configured. Please set one of the following environment variables:\n' +
       '- WF_WORKSPACE_PATH: Path to your workspace folder\n' +
