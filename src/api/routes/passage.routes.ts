@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import {
-  updatePassage,
-  deletePassage,
-  openPassage
+  updateScreenPassage,
+  deleteScreenPassage,
+  openScreenPassage,
+  setScreenPassageTime
 } from '../controllers/passage.controller';
 import {
   validatePassageUpdate,
@@ -11,8 +12,9 @@ import {
 
 const router = Router();
 
-router.put('/:passageId', validatePassageUpdate, handleValidationErrors, updatePassage);
-router.delete('/:passageId', deletePassage);
-router.post('/:passageId/open', openPassage);
+router.put('/:passageId', validatePassageUpdate, handleValidationErrors, updateScreenPassage);
+router.delete('/:passageId', deleteScreenPassage);
+router.post('/:passageId/open', openScreenPassage);
+router.post('/:passageId/setTime', setScreenPassageTime);
 
 export default router;

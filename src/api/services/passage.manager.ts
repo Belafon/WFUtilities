@@ -57,37 +57,7 @@ export class PassageManager {
     }
     const [eventId, characterId, passagePartId] = parts;
 
-    const primaryPassageParentDir = path.join(
-      eventsDir(),
-      eventId,
-      `${characterId}${evnetPassagesFilePostfixWithoutFileType}`
-    );
-    const primaryPassageFilePath = path.join(
-      primaryPassageParentDir,
-      `${passagePartId}${passageFilePostfix}`
-    );
-
-    const alternativePassageParentDir = path.join(
-      eventsDir(),
-      eventId,
-      characterId,
-      'passages'
-    );
-    const alternativePassageFilePath = path.join(
-      alternativePassageParentDir,
-      `${passagePartId}${passageFilePostfix}`
-    );
-
-    let resolvedPassageFilePath = primaryPassageFilePath;
-    if (!config.fileSystem.existsSync(resolvedPassageFilePath)) {
-      if (config.fileSystem.existsSync(alternativePassageFilePath)) {
-        resolvedPassageFilePath = alternativePassageFilePath;
-      } else {
-        const errorMessage = `Passage file not found at primary path ${primaryPassageFilePath} or alternative path ${alternativePassageFilePath}`;
-        this.editorAdapter.showErrorNotification(errorMessage);
-        throw new Error(errorMessage);
-      }
-    }
+    const resolvedPassageFilePath = this.resolvePassageFilePath(eventId, characterId, passagePartId, 'update');
 
     const originalContent = config.fileSystem.readFileSync(resolvedPassageFilePath, 'utf-8');
     const codeBuilder = new TypeScriptCodeBuilder(originalContent);
@@ -329,23 +299,7 @@ export class PassageManager {
     }
     const [eventId, characterId, passagePartId] = parts;
 
-    const primaryPassageParentDir = path.join(eventsDir(), eventId, `${characterId}${evnetPassagesFilePostfixWithoutFileType}`);
-    const primaryPassageFilePath = path.join(primaryPassageParentDir, `${passagePartId}${passageFilePostfix}`);
-
-    const alternativePassageParentDir = path.join(eventsDir(), eventId, characterId, 'passages');
-    const alternativePassageFilePath = path.join(alternativePassageParentDir, `${passagePartId}${passageFilePostfix}`);
-
-    let resolvedPassageFilePath = primaryPassageFilePath;
-
-    if (!config.fileSystem.existsSync(resolvedPassageFilePath)) {
-      if (config.fileSystem.existsSync(alternativePassageFilePath)) {
-        resolvedPassageFilePath = alternativePassageFilePath;
-      } else {
-        const errorMessage = `Passage file to delete not found at ${primaryPassageFilePath} or ${alternativePassageFilePath}`;
-        this.editorAdapter.showErrorNotification(errorMessage);
-        throw new Error(errorMessage);
-      }
-    }
+    const resolvedPassageFilePath = this.resolvePassageFilePath(eventId, characterId, passagePartId, 'delete');
 
     try {
       config.fileSystem.unlinkSync(resolvedPassageFilePath);
@@ -368,25 +322,7 @@ export class PassageManager {
     }
     const [eventId, characterId, passagePartId] = parts;
 
-    const primaryPassageParentDir = path.join(eventsDir(), eventId, `${characterId}${evnetPassagesFilePostfixWithoutFileType}`);
-    const primaryPassageFilePath = path.join(primaryPassageParentDir, `${passagePartId}${passageFilePostfix}`);
-
-    const alternativePassageParentDir = path.join(eventsDir(), eventId, characterId, 'passages');
-    const alternativePassageFilePath = path.join(alternativePassageParentDir, `${passagePartId}${passageFilePostfix}`);
-
-    let resolvedPassageFilePath: string | null = null;
-
-    if (config.fileSystem.existsSync(primaryPassageFilePath)) {
-      resolvedPassageFilePath = primaryPassageFilePath;
-    } else if (config.fileSystem.existsSync(alternativePassageFilePath)) {
-      resolvedPassageFilePath = alternativePassageFilePath;
-    }
-
-    if (!resolvedPassageFilePath) {
-      const errorMessage = `Passage file to open not found at primary path ${primaryPassageFilePath} or alternative path ${alternativePassageFilePath}`;
-      this.editorAdapter.showErrorNotification(errorMessage);
-      throw new Error(errorMessage);
-    }
+    const resolvedPassageFilePath = this.resolvePassageFilePath(eventId, characterId, passagePartId, 'open');
 
     try {
       await this.editorAdapter.openFile(resolvedPassageFilePath);
@@ -397,6 +333,63 @@ export class PassageManager {
       this.editorAdapter.showErrorNotification(errorMessage);
       throw error;
     }
+  }
+
+  private resolvePassageFilePath(eventId: string, characterId: string, passagePartId: string, context: 'update' | 'delete' | 'open' = 'update'): string {
+    const primaryPassageParentDir = path.join(
+      eventsDir(),
+      eventId,
+      `${characterId}${evnetPassagesFilePostfixWithoutFileType}`
+    );
+    const alternativePassageParentDir = path.join(
+      eventsDir(),
+      eventId,
+      characterId,
+      'passages'
+    );
+
+    // Try different file paths in order of preference
+    const possiblePaths = [
+      // Primary location with regular .ts extension
+      path.join(primaryPassageParentDir, `${passagePartId}${passageFilePostfix}`),
+      // Primary location with .screen.ts extension
+      path.join(primaryPassageParentDir, `${passagePartId}.screen.ts`),
+      // Alternative location with regular .ts extension
+      path.join(alternativePassageParentDir, `${passagePartId}${passageFilePostfix}`),
+      // Alternative location with .screen.ts extension
+      path.join(alternativePassageParentDir, `${passagePartId}.screen.ts`)
+    ];
+
+    for (const filePath of possiblePaths) {
+      if (config.fileSystem.existsSync(filePath)) {
+        return filePath;
+      }
+    }
+
+    // If no file found, create appropriate error message based on context
+    let errorMessage: string;
+    if (context === 'update') {
+      // Format expected by update tests: "Passage file not found at primary path {path} or alternative path {path}"
+      const primaryPath = possiblePaths[0]; // First path is primary location with .ts
+      const altPath = possiblePaths[2]; // Third path is alternative location with .ts
+      errorMessage = `Passage file not found at primary path ${primaryPath} or alternative path ${altPath}`;
+    } else if (context === 'delete') {
+      // Format expected by delete tests: "Passage file to delete not found at"
+      const primaryPath = possiblePaths[0];
+      const altPath = possiblePaths[2];
+      errorMessage = `Passage file to delete not found at ${primaryPath} or ${altPath}`;
+    } else if (context === 'open') {
+      // Format expected by open tests: "Passage file to open not found at"
+      const primaryPath = possiblePaths[0];
+      const altPath = possiblePaths[2];
+      errorMessage = `Passage file to open not found at ${primaryPath} or ${altPath}`;
+    } else {
+      // Default format for other contexts or new screen-specific operations
+      errorMessage = `Screen passage file not found. Tried paths:\n${possiblePaths.join('\n')}`;
+    }
+    
+    this.editorAdapter.showErrorNotification(errorMessage);
+    throw new Error(errorMessage);
   }
 }
 

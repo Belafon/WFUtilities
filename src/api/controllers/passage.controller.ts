@@ -4,11 +4,11 @@ import { passageManager } from '../services/passage.manager';
 import { logger } from '../../utils/logger';
 
 /**
- * @desc    Update a passage
- * @route   PUT /api/passage/:passageId
+ * @desc    Update a screen passage
+ * @route   PUT /api/passage/screen/:passageId
  * @access  Public
  */
-export const updatePassage = async (req: Request<{ passageId: string }>, res: Response): Promise<void> => {
+export const updateScreenPassage = async (req: Request<{ passageId: string }>, res: Response): Promise<void> => {
   try {
     const { passageId } = req.params;
     const passageData = req.body as PassageUpdateRequest;
@@ -19,7 +19,7 @@ export const updatePassage = async (req: Request<{ passageId: string }>, res: Re
     if (isDemoMode) {
       res.status(200).json({
         success: true,
-        message: `Passage ${passageId} updated successfully (demo mode)`,
+        message: `Screen passage ${passageId} updated successfully (demo mode)`,
       });
       return;
     }
@@ -28,10 +28,10 @@ export const updatePassage = async (req: Request<{ passageId: string }>, res: Re
     
     res.status(200).json({
       success: true,
-      message: `Passage ${passageId} updated successfully`,
+      message: `Screen passage ${passageId} updated successfully`,
     });
   } catch (error: any) {
-    logger.error(`Failed to update passage: ${error.message}`, { error });
+    logger.error(`Failed to update screen passage: ${error.message}`, { error });
     
     // Handle validation errors with 400 status
     if (error.message.includes('Invalid passageId format')) {
@@ -52,17 +52,17 @@ export const updatePassage = async (req: Request<{ passageId: string }>, res: Re
     
     res.status(500).json({
       success: false,
-      error: error.message || 'Failed to update passage',
+      error: error.message || 'Failed to update screen passage',
     });
   }
 };
 
 /**
- * @desc    Delete a passage
- * @route   DELETE /api/passage/:passageId
+ * @desc    Delete a screen passage
+ * @route   DELETE /api/passage/screen/:passageId
  * @access  Public
  */
-export const deletePassage = async (req: Request<{ passageId: string }>, res: Response): Promise<void> => {
+export const deleteScreenPassage = async (req: Request<{ passageId: string }>, res: Response): Promise<void> => {
   try {
     const { passageId } = req.params;
     
@@ -72,7 +72,7 @@ export const deletePassage = async (req: Request<{ passageId: string }>, res: Re
     if (isDemoMode) {
       res.status(200).json({
         success: true,
-        message: `Passage ${passageId} deleted successfully (demo mode)`,
+        message: `Screen passage ${passageId} deleted successfully (demo mode)`,
       });
       return;
     }
@@ -81,10 +81,10 @@ export const deletePassage = async (req: Request<{ passageId: string }>, res: Re
     
     res.status(200).json({
       success: true,
-      message: `Passage ${passageId} deleted successfully`,
+      message: `Screen passage ${passageId} deleted successfully`,
     });
   } catch (error: any) {
-    logger.error(`Failed to delete passage: ${error.message}`, { error });
+    logger.error(`Failed to delete screen passage: ${error.message}`, { error });
     
     // Handle validation errors with 400 status
     if (error.message.includes('Invalid passageId format')) {
@@ -97,17 +97,17 @@ export const deletePassage = async (req: Request<{ passageId: string }>, res: Re
     
     res.status(500).json({
       success: false,
-      error: error.message || 'Failed to delete passage',
+      error: error.message || 'Failed to delete screen passage',
     });
   }
 };
 
 /**
- * @desc    Open a passage in VS Code
- * @route   POST /api/passage/:passageId/open
+ * @desc    Open a screen passage in VS Code
+ * @route   POST /api/passage/screen/:passageId/open
  * @access  Public
  */
-export const openPassage = async (req: Request<{ passageId: string }>, res: Response): Promise<void> => {
+export const openScreenPassage = async (req: Request<{ passageId: string }>, res: Response): Promise<void> => {
   try {
     const { passageId } = req.params;
     
@@ -117,7 +117,7 @@ export const openPassage = async (req: Request<{ passageId: string }>, res: Resp
     if (isDemoMode) {
       res.status(200).json({
         success: true,
-        message: `Passage ${passageId} opened in VS Code (demo mode)`,
+        message: `Screen passage ${passageId} opened in VS Code (demo mode)`,
       });
       return;
     }
@@ -126,10 +126,10 @@ export const openPassage = async (req: Request<{ passageId: string }>, res: Resp
     
     res.status(200).json({
       success: true,
-      message: `Passage ${passageId} opened in VS Code`,
+      message: `Screen passage ${passageId} opened in VS Code`,
     });
   } catch (error: any) {
-    logger.error(`Failed to open passage: ${error.message}`, { error });
+    logger.error(`Failed to open screen passage: ${error.message}`, { error });
     
     // Handle validation errors with 400 status
     if (error.message.includes('Invalid passageId format')) {
@@ -141,7 +141,7 @@ export const openPassage = async (req: Request<{ passageId: string }>, res: Resp
     }
     
     // Handle empty error message
-    const errorMessage = error.message || 'Failed to open passage';
+    const errorMessage = error.message || 'Failed to open screen passage';
     
     res.status(500).json({
       success: false,
@@ -151,11 +151,11 @@ export const openPassage = async (req: Request<{ passageId: string }>, res: Resp
 };
 
 /**
- * @desc    Set time for a passage
- * @route   POST /api/passage/:passageId/setTime
+ * @desc    Set time for a screen passage
+ * @route   POST /api/passage/screen/:passageId/setTime
  * @access  Public
  */
-export const setPassageTime = async (req: Request<{ passageId: string }>, res: Response): Promise<void> => {
+export const setScreenPassageTime = async (req: Request<{ passageId: string }>, res: Response): Promise<void> => {
   try {
     const { passageId } = req.params;
     const { timeRange } = req.body;
@@ -166,7 +166,7 @@ export const setPassageTime = async (req: Request<{ passageId: string }>, res: R
     if (isDemoMode) {
       res.status(200).json({
         success: true,
-        message: `Passage ${passageId} time set successfully (demo mode)`,
+        message: `Screen passage ${passageId} time set successfully (demo mode)`,
       });
       return;
     }
@@ -183,14 +183,14 @@ export const setPassageTime = async (req: Request<{ passageId: string }>, res: R
     // For now, just return success as the actual implementation would update the passage
     res.status(200).json({
       success: true,
-      message: `Passage ${passageId} time set successfully`,
+      message: `Screen passage ${passageId} time set successfully`,
     });
   } catch (error: any) {
-    logger.error(`Failed to set passage time: ${error.message}`, { error });
+    logger.error(`Failed to set screen passage time: ${error.message}`, { error });
     
     res.status(500).json({
       success: false,
-      error: error.message || 'Failed to set passage time',
+      error: error.message || 'Failed to set screen passage time',
     });
   }
 };

@@ -6,7 +6,7 @@ import mapRoutes from './map.routes';
 const router = Router();
 
 router.use('/event', eventRoutes);
-router.use('/passage', passageRoutes);
+router.use('/passage/screen', passageRoutes);
 router.use('/map', mapRoutes);
 // Add more routes here as your API grows
 

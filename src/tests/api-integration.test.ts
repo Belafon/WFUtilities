@@ -191,7 +191,7 @@ suite('WFUtilities Library - API Integration Tests', () => {
       };
 
       request(wfApp)
-        .put(`/api/passage/${passageId}`)
+        .put(`/api/passage/screen/${passageId}`)
         .send(passageData)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -209,7 +209,7 @@ suite('WFUtilities Library - API Integration Tests', () => {
       };
 
       request(wfApp)
-        .put(`/api/passage/${invalidPassageId}`)
+        .put(`/api/passage/screen/${invalidPassageId}`)
         .send(passageData)
         .expect(400)
         .expect('Content-Type', /json/)
@@ -317,7 +317,7 @@ suite('WFUtilities Library - API Integration Tests', () => {
 
     test('should return 404 for non-existent passage', (done) => {
       request(wfApp)
-        .get('/api/passage/non-existent-passage')
+        .get('/api/passage/screen/non-existent-passage')
         .expect(404)
         .end(done);
     });

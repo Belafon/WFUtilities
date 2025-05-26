@@ -168,7 +168,7 @@ suite('PassageManager Integration Tests', () => {
         config.setEditorAdapter(editorAdapter);
     });
 
-    suite('PUT /api/passage/:passageId - Update Passage', () => {
+    suite('PUT /api/passage/screen/:passageId - Update Passage', () => {
         test('should successfully update a screen passage', async () => {
             const passageId = 'kingdom-annie-intro';
             const [eventId, characterId, passagePartId] = passageId.split('-');
@@ -210,7 +210,7 @@ suite('PassageManager Integration Tests', () => {
 
             // Make HTTP request
             const response = await request(app)
-                .put(`/api/passage/${passageId}`)
+                .put(`/api/passage/screen/${passageId}`)
                 .send(updateData)
                 .expect(200);
 
@@ -256,7 +256,7 @@ suite('PassageManager Integration Tests', () => {
             };
 
             const response = await request(app)
-                .put(`/api/passage/${passageId}`)
+                .put(`/api/passage/screen/${passageId}`)
                 .send(updateData)
                 .expect(200);
 
@@ -291,7 +291,7 @@ suite('PassageManager Integration Tests', () => {
             };
 
             const response = await request(app)
-                .put(`/api/passage/${passageId}`)
+                .put(`/api/passage/screen/${passageId}`)
                 .send(updateData)
                 .expect(200);
 
@@ -336,7 +336,7 @@ suite('PassageManager Integration Tests', () => {
             };
 
             const response = await request(app)
-                .put(`/api/passage/${passageId}`)
+                .put(`/api/passage/screen/${passageId}`)
                 .send(updateData)
                 .expect(200);
 
@@ -372,7 +372,7 @@ suite('PassageManager Integration Tests', () => {
             };
 
             const response = await request(app)
-                .put(`/api/passage/${passageId}`)
+                .put(`/api/passage/screen/${passageId}`)
                 .send(updateData)
                 .expect(200);
 
@@ -384,7 +384,7 @@ suite('PassageManager Integration Tests', () => {
 
         test('should return 400 for invalid passage ID format', async () => {
             const response = await request(app)
-                .put('/api/passage/invalid-format')
+                .put('/api/passage/screen/invalid-format')
                 .send({
                     type: 'screen',
                     title: 'Test'
@@ -397,7 +397,7 @@ suite('PassageManager Integration Tests', () => {
 
         test('should return 404 for non-existent passage', async () => {
             const response = await request(app)
-                .put('/api/passage/kingdom-annie-nonexistent')
+                .put('/api/passage/screen/kingdom-annie-nonexistent')
                 .send({
                     type: 'screen',
                     title: 'Test'
@@ -439,7 +439,7 @@ suite('PassageManager Integration Tests', () => {
             };
 
             const response = await request(app)
-                .put(`/api/passage/${passageId}`)
+                .put(`/api/passage/screen/${passageId}`)
                 .send(updateData)
                 .expect(200);
 
@@ -478,7 +478,7 @@ suite('PassageManager Integration Tests', () => {
             };
 
             const response = await request(app)
-                .put(`/api/passage/${passageId}`)
+                .put(`/api/passage/screen/${passageId}`)
                 .send(updateData)
                 .expect(200);
 
@@ -491,7 +491,7 @@ suite('PassageManager Integration Tests', () => {
         });
     });
 
-    suite('DELETE /api/passage/:passageId - Delete Passage', () => {
+    suite('DELETE /api/passage/screen/:passageId - Delete Passage', () => {
         test('should successfully delete an existing passage', async () => {
             const passageId = 'kingdom-annie-delete';
             const [eventId, characterId, passagePartId] = passageId.split('-');
@@ -509,7 +509,7 @@ suite('PassageManager Integration Tests', () => {
 
             // Make delete request
             const response = await request(app)
-                .delete(`/api/passage/${passageId}`)
+                .delete(`/api/passage/screen/${passageId}`)
                 .expect(200);
 
             // Verify response
@@ -535,7 +535,7 @@ suite('PassageManager Integration Tests', () => {
             assert.ok(fs.existsSync(passageFilePath), 'Passage file should exist before deletion');
 
             const response = await request(app)
-                .delete(`/api/passage/${passageId}`)
+                .delete(`/api/passage/screen/${passageId}`)
                 .expect(200);
 
             assert.strictEqual(response.body.success, true);
@@ -544,7 +544,7 @@ suite('PassageManager Integration Tests', () => {
 
         test('should return error for non-existent passage', async () => {
             const response = await request(app)
-                .delete('/api/passage/kingdom-annie-nonexistent')
+                .delete('/api/passage/screen/kingdom-annie-nonexistent')
                 .expect(500);
 
             assert.strictEqual(response.body.success, false);
@@ -553,7 +553,7 @@ suite('PassageManager Integration Tests', () => {
 
         test('should return error for invalid passage ID format', async () => {
             const response = await request(app)
-                .delete('/api/passage/invalid-id')
+                .delete('/api/passage/screen/invalid-id')
                 .expect(400);
 
             assert.strictEqual(response.body.success, false);
@@ -561,7 +561,7 @@ suite('PassageManager Integration Tests', () => {
         });
     });
 
-    suite('POST /api/passage/:passageId/open - Open Passage', () => {
+    suite('POST /api/passage/screen/:passageId/open - Open Passage', () => {
         test('should successfully open an existing passage file', async () => {
             const passageId = 'kingdom-annie-open';
             const [eventId, characterId, passagePartId] = passageId.split('-');
@@ -574,7 +574,7 @@ suite('PassageManager Integration Tests', () => {
             fs.writeFileSync(passageFilePath, content, 'utf-8');
 
             const response = await request(app)
-                .post(`/api/passage/${passageId}/open`)
+                .post(`/api/passage/screen/${passageId}/open`)
                 .expect(200);
 
             assert.strictEqual(response.body.success, true);
@@ -597,7 +597,7 @@ suite('PassageManager Integration Tests', () => {
             fs.writeFileSync(passageFilePath, content, 'utf-8');
 
             const response = await request(app)
-                .post(`/api/passage/${passageId}/open`)
+                .post(`/api/passage/screen/${passageId}/open`)
                 .expect(200);
 
             assert.strictEqual(response.body.success, true);
@@ -607,7 +607,7 @@ suite('PassageManager Integration Tests', () => {
 
         test('should return error for non-existent passage', async () => {
             const response = await request(app)
-                .post('/api/passage/kingdom-annie-nonexistent/open')
+                .post('/api/passage/screen/kingdom-annie-nonexistent/open')
                 .expect(500);
 
             assert.strictEqual(response.body.success, false);
@@ -631,7 +631,7 @@ suite('PassageManager Integration Tests', () => {
             openFileStub.rejects(new Error('VS Code not running'));
 
             const response = await request(app)
-                .post(`/api/passage/${passageId}/open`)
+                .post(`/api/passage/screen/${passageId}/open`)
                 .expect(500);
 
             assert.strictEqual(response.body.success, false);
@@ -679,7 +679,7 @@ suite('PassageManager Integration Tests', () => {
             };
 
             let response = await request(app)
-                .put(`/api/passage/${passageId}`)
+                .put(`/api/passage/screen/${passageId}`)
                 .send(updateData)
                 .expect(200);
 
@@ -687,7 +687,7 @@ suite('PassageManager Integration Tests', () => {
 
             // 3. Open the passage
             response = await request(app)
-                .post(`/api/passage/${passageId}/open`)
+                .post(`/api/passage/screen/${passageId}/open`)
                 .expect(200);
 
             assert.strictEqual(response.body.success, true);
@@ -702,7 +702,7 @@ suite('PassageManager Integration Tests', () => {
 
             // 5. Delete the passage
             response = await request(app)
-                .delete(`/api/passage/${passageId}`)
+                .delete(`/api/passage/screen/${passageId}`)
                 .expect(200);
 
             assert.strictEqual(response.body.success, true);
@@ -750,21 +750,21 @@ suite('PassageManager Integration Tests', () => {
 
             // Update screen passage
             let response = await request(app)
-                .put(`/api/passage/${eventId}-${characterId}-screen1`)
+                .put(`/api/passage/screen/${eventId}-${characterId}-screen1`)
                 .send(screenUpdate)
                 .expect(200);
             assert.strictEqual(response.body.success, true);
 
             // Update linear passage
             response = await request(app)
-                .put(`/api/passage/${eventId}-${characterId}-linear1`)
+                .put(`/api/passage/screen/${eventId}-${characterId}-linear1`)
                 .send(linearUpdate)
                 .expect(200);
             assert.strictEqual(response.body.success, true);
 
             // Update transition passage
             response = await request(app)
-                .put(`/api/passage/${eventId}-${characterId}-transition1`)
+                .put(`/api/passage/screen/${eventId}-${characterId}-transition1`)
                 .send(transitionUpdate)
                 .expect(200);
             assert.strictEqual(response.body.success, true);
@@ -785,7 +785,7 @@ suite('PassageManager Integration Tests', () => {
         test('should return demo responses when demo flag is set', async () => {
             // Update operation in demo mode
             let response = await request(app)
-                .put('/api/passage/kingdom-annie-demo?demo=true')
+                .put('/api/passage/screen/kingdom-annie-demo?demo=true')
                 .send({
                     type: 'screen',
                     title: 'Demo Title'
@@ -804,7 +804,7 @@ suite('PassageManager Integration Tests', () => {
     suite('Edge Cases and Error Handling', () => {
         test('should handle passage ID with empty parts', async () => {
             const response = await request(app)
-                .put('/api/passage/kingdom--intro')
+                .put('/api/passage/screen/kingdom--intro')
                 .send({
                     type: 'screen',
                     title: 'Test'
@@ -820,7 +820,7 @@ suite('PassageManager Integration Tests', () => {
             const passageId = `kingdom-annie-${longId}`;
 
             const response = await request(app)
-                .put(`/api/passage/${passageId}`)
+                .put(`/api/passage/screen/${passageId}`)
                 .send({
                     type: 'screen',
                     title: 'Test'
@@ -849,7 +849,7 @@ suite('PassageManager Integration Tests', () => {
             };
 
             const response = await request(app)
-                .put(`/api/passage/${passageId}`)
+                .put(`/api/passage/screen/${passageId}`)
                 .send(updateData)
                 .expect(500);
 
@@ -879,7 +879,7 @@ suite('PassageManager Integration Tests', () => {
 
                 updatePromises.push(
                     request(app)
-                        .put(`/api/passage/${passageId}`)
+                        .put(`/api/passage/screen/${passageId}`)
                         .send(updateData)
                 );
             }

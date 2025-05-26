@@ -254,9 +254,9 @@ const swaggerOptions = {
           }
         }
       },
-      '/api/passage/{passageId}': {
+      '/api/passage/screen/{passageId}': {
         put: {
-          summary: 'Update passage details',
+          summary: 'Update screen passage details',
           parameters: [
             {
               name: 'passageId',
@@ -279,6 +279,63 @@ const swaggerOptions = {
                     }
                   }
                 }
+              }
+            }
+          },
+          responses: {
+            '200': { $ref: '#/components/responses/Success' },
+            '404': { $ref: '#/components/responses/NotFound' }
+          }
+        },
+        delete: {
+          summary: 'Delete a screen passage',
+          parameters: [
+            {
+              name: 'passageId',
+              in: 'path',
+              required: true,
+              schema: { type: 'string' }
+            }
+          ],
+          responses: {
+            '200': { $ref: '#/components/responses/Success' },
+            '404': { $ref: '#/components/responses/NotFound' }
+          }
+        }
+      },
+      '/api/passage/screen/{passageId}/open': {
+        post: {
+          summary: 'Open a screen passage file in VS Code',
+          parameters: [
+            {
+              name: 'passageId',
+              in: 'path',
+              required: true,
+              schema: { type: 'string' }
+            }
+          ],
+          responses: {
+            '200': { $ref: '#/components/responses/Success' },
+            '404': { $ref: '#/components/responses/NotFound' }
+          }
+        }
+      },
+      '/api/passage/screen/{passageId}/setTime': {
+        post: {
+          summary: 'Set time for a screen passage',
+          parameters: [
+            {
+              name: 'passageId',
+              in: 'path',
+              required: true,
+              schema: { type: 'string' }
+            }
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/SetTimeRequest' }
               }
             }
           },
