@@ -6,8 +6,9 @@ const swaggerUi = require('swagger-ui-express');
 // Initialize express app
 const app = express();
 
-// Basic middleware
-app.use(express.json());
+// Basic middleware with increased body size limits for large map data
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cors());
 
 // Basic Swagger document
