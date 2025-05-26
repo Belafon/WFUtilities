@@ -1,6 +1,6 @@
 {
   "name": "wfnodeserver",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "Node server library for WorldsFactory",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
