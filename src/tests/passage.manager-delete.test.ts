@@ -133,9 +133,9 @@ suite('PassageManager - deletePassage', function() {
       await assert.rejects(
         async () => passageManager.deletePassage(passageId),
         (error: Error) => {
-          return error.message.includes('Passage file to delete not found at') &&
-                 error.message.includes(primaryPath) &&
-                 error.message.includes(alternativePath);
+          return error.message.includes('Passage file not found for passageId') &&
+                 error.message.includes('passageMissing') &&
+                 error.message.includes('Tried paths:');
         }
       );
 

@@ -348,14 +348,30 @@ export class PassageManager {
       `${characterId}${eventPassagesFilePostfixWithoutFileType}`
     );
 
-    const possiblePaths = [
-      path.join(primaryPassageParentDir, `${passagePartId}${passageFilePostfixScreen}`),
-      path.join(primaryPassageParentDir, `${passagePartId}${passageFilePostfixTransition}`),
-      path.join(primaryPassageParentDir, `${passagePartId}${passageFilePostfixLinear}`),
-      path.join(primaryPassageParentDir, `${passagePartId}${passageFilePostfix}`),
-    ];
+    const alternativePassageParentDir = path.join(
+      eventsDir(),
+      eventId,
+      characterId,
+      'passages'
+    );
 
-    for (const filePath of possiblePaths) {
+    const extensions = [passageFilePostfixScreen, passageFilePostfixTransition, passageFilePostfixLinear, passageFilePostfix];
+    
+    const possiblePaths: string[] = [];
+
+    // Check primary directory with all extensions
+    for (const extension of extensions) {
+      const filePath = path.join(primaryPassageParentDir, `${passagePartId}${extension}`);
+      possiblePaths.push(filePath);
+      if (config.fileSystem.existsSync(filePath)) {
+        return filePath;
+      }
+    }
+
+    // Check alternative directory with all extensions
+    for (const extension of extensions) {
+      const filePath = path.join(alternativePassageParentDir, `${passagePartId}${extension}`);
+      possiblePaths.push(filePath);
       if (config.fileSystem.existsSync(filePath)) {
         return filePath;
       }
