@@ -153,9 +153,9 @@ suite('PassageManager - openPassage', function() {
       await assert.rejects(
         async () => passageManager.openScreenPassage(passageId),
         (error: Error) => {
-          return error.message.includes('Passage file not found for passageId') &&
-                 error.message.includes('passageLost') &&
-                 error.message.includes('Tried paths:');
+          return error.message.includes('Passage file to open not found at') &&
+                 error.message.includes(primaryPath) &&
+                 error.message.includes(alternativePath);
         }
       );
 

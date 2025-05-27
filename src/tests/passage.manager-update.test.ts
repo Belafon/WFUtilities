@@ -307,9 +307,7 @@ export const movePassage = (s, e) => {
 
       await assert.rejects(
         async () => passageManager.updatePassage(passageId, updateData),
-        (error: Error) => error.message.includes('Passage file not found for passageId') &&
-                       error.message.includes('char') &&
-                       error.message.includes('Tried paths:')
+        (error: Error) => error.message.includes(`Passage file not found at primary path ${primaryPath} or alternative path ${altPath}`)
       );
     });
 
