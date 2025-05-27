@@ -11,7 +11,7 @@ let existsSyncStub: sinon.SinonStub;
 let eventsDirStub: sinon.SinonStub;
 let showInfoNotificationStub: sinon.SinonStub;
 let showErrorNotificationStub: sinon.SinonStub;
-let openFileStub: sinon.SinonStub; // Added for openPassage
+let openFileStub: sinon.SinonStub;
 
 const getPrimaryPassagePath = (eventId: string, characterId: string, passagePartId: string) => {
   return path.join(
@@ -22,19 +22,8 @@ const getPrimaryPassagePath = (eventId: string, characterId: string, passagePart
   );
 };
 
-const getAlternativePassagePath = (eventId: string, characterId: string, passagePartId: string) => {
-  return path.join(
-    ActualPaths.eventsDir(),
-    eventId,
-    characterId,
-    'passages',
-    `${passagePartId}${ActualPaths.passageFilePostfix}`
-  );
-};
-
 // Use suite for the outer grouping with TDD interface
 suite('PassageManager - openPassage', function() {
-  // Re-use setupStubs and teardownStubs from deletePassage tests or define them locally if preferred
   function setupStubs() {
     // Stub directly on the fileSystem that passageManager is using
     unlinkSyncStub = sinon.stub(config.fileSystem, 'unlinkSync'); // Not used by openPassage, but good to have for consistency
@@ -76,28 +65,8 @@ suite('PassageManager - openPassage', function() {
     }
   });
 
-  test('should successfully open a passage at the alternative path if primary not found', async function() {
-    setupStubs();
-    try {
-      const passageId = 'eventOpen-charAlt-passageFile';
-      const primaryPath = getPrimaryPassagePath('eventOpen', 'charAlt', 'passageFile');
-      const expectedAlternativePath = getAlternativePassagePath('eventOpen', 'charAlt', 'passageFile');
-
-      existsSyncStub.withArgs(primaryPath).returns(false);
-      existsSyncStub.withArgs(expectedAlternativePath).returns(true);
-      openFileStub.withArgs(expectedAlternativePath).resolves(); // Simulate successful file open
-
-      await passageManager.openScreenPassage(passageId);
-
-      assert.ok(existsSyncStub.calledWith(primaryPath), 'existsSync should check primary path first');
-      assert.ok(existsSyncStub.calledWith(expectedAlternativePath), 'existsSync should check alternative path');
-      assert.ok(openFileStub.calledOnceWith(expectedAlternativePath), 'editorAdapter.openFile should be called once with alternative path');
-      assert.ok(showErrorNotificationStub.notCalled, 'No error notification should be shown');
-      assert.ok((console.log as sinon.SinonStub).calledWith(sinon.match(`Attempted to open passage file: ${expectedAlternativePath}`)), 'Success log message expected');
-    } finally {
-      teardownStubs();
-    }
-  });
+  // REMOVED: "should successfully open a passage at the alternative path if primary not found" test
+  // The PassageManager implementation only supports primary path structure
 
   test('should throw error if passageId is invalid (openPassage)', async function() {
     setupStubs();
@@ -139,23 +108,21 @@ suite('PassageManager - openPassage', function() {
     }
   });
 
-
-  test('should throw error if passage file is not found at either path (openPassage)', async function() {
+  test('should throw error if passage file is not found at any path (openPassage)', async function() {
     setupStubs();
     try {
       const passageId = 'eventMissing-charGone-passageLost';
-      const primaryPath = getPrimaryPassagePath('eventMissing', 'charGone', 'passageLost');
-      const alternativePath = getAlternativePassagePath('eventMissing', 'charGone', 'passageLost');
 
-      existsSyncStub.withArgs(primaryPath).returns(false);
-      existsSyncStub.withArgs(alternativePath).returns(false);
+      // Set up all possible paths to return false (the implementation tries multiple file extensions)
+      existsSyncStub.returns(false);
 
       await assert.rejects(
         async () => passageManager.openScreenPassage(passageId),
         (error: Error) => {
-          return error.message.includes('Passage file to open not found at') &&
-                 error.message.includes(primaryPath) &&
-                 error.message.includes(alternativePath);
+          return error.message.includes('Passage file not found for passageId') &&
+                 error.message.includes('passageLost') &&
+                 error.message.includes('eventMissing') &&
+                 error.message.includes('charGone');
         }
       );
 

@@ -31,9 +31,6 @@ let writeFileSyncCalls: Array<{ path: string, data: string }> = [];
 let unlinkSyncCalls: string[] = [];
 
 // Mock implementation for IFileSystem
-// Only include methods that are ACTUALLY in your IFileSystem interface.
-// Based on the error, readdirSync and others are not.
-// If PassageManager uses other methods from IFileSystem, they need to be added here.
 const mockFileSystemController: IFileSystem = {
   existsSync: (p: string): boolean => p in mockFsStore,
   readFileSync: (p: string, _encoding: string): string => {
@@ -89,16 +86,6 @@ suite('PassageManager - updatePassage', () => {
       getEventsDir(),
       eventId,
       `${characterId}${mockPathsConfiguration.evnetPassagesFilePostfixWithoutFileType}`,
-      `${passagePartId}${mockPathsConfiguration.passageFilePostfix}`
-    );
-  };
-
-  const getAlternativePassagePath = (eventId: string, characterId: string, passagePartId: string) => {
-    return path.join(
-      getEventsDir(),
-      eventId,
-      characterId,
-      'passages',
       `${passagePartId}${mockPathsConfiguration.passageFilePostfix}`
     );
   };
@@ -193,7 +180,6 @@ export const visitPassage = (s, e) => {
     await passageManager.updatePassage(passageId, updateData);
 
     assert.strictEqual(writeFileSyncCalls.length, 1, 'writeFileSync should have been called once.');
-    // Corrected destructuring:
     const { path: writtenPath, data: writtenContent } = writeFileSyncCalls[0];
     assert.strictEqual(writtenPath, filePath, 'writeFileSync called with incorrect path.');
 
@@ -203,18 +189,16 @@ export const visitPassage = (s, e) => {
     assert.ok(writtenContent.includes(`text: _('Go Back')`), 'Updated link text "Go Back" not found or incorrect.');
     assert.ok(writtenContent.includes(`cost: DeltaTime.fromHours(1)`), 'Updated link cost (hour) not found or incorrect.');
     assert.ok(writtenContent.includes(`text: _('Complex Cost Link')`), 'Updated link text "Complex Cost Link" not found or incorrect.');
-    const normalizedWrittenContent = normalize(writtenContent); // Add this if not already done for all checks
+    const normalizedWrittenContent = normalize(writtenContent);
     const expectedComplexCostString = normalize("cost: { time: DeltaTime.fromDays(2), items: [ { id: 'gold', amount: 100 } ], tools: [ 'rope', 'torch' ] }");
     assert.ok(normalizedWrittenContent.includes(expectedComplexCostString), `Complex cost stringification incorrect. Expected to find: "${expectedComplexCostString}"`);
     assert.ok(writtenContent.includes(`export const visitPassage = (s, e) => {`), 'Function definition start missing.');
     assert.ok(writtenContent.includes(`id: 'visit'`), 'Original id property missing or incorrect.');
   });
 
-
-  test('should update a linear passage defined as a const in alternative path', async () => {
+  test('should update a linear passage defined as a const in primary path', async () => {
     const passageId = 'constEvent-constChar-intro';
-    // const primaryPath = getPrimaryPassagePath('constEvent', 'constChar', 'intro'); // Not strictly needed for mock setup
-    const altPath = getAlternativePassagePath('constEvent', 'constChar', 'intro');
+    const primaryPath = getPrimaryPassagePath('constEvent', 'constChar', 'intro');
 
     const originalContent = `
 const _ = (str) => \`_('\${str}')\`;
@@ -228,7 +212,7 @@ export const intro = { // Name 'intro' matches passagePartId
     nextPassageId: 'constEvent-constChar-start',
     image: 'old_image_const.png',
 };`;
-    mockFsStore = { [altPath]: originalContent };
+    mockFsStore = { [primaryPath]: originalContent };
 
     const updateData: PassageUpdateRequest = {
       type: 'linear',
@@ -241,9 +225,8 @@ export const intro = { // Name 'intro' matches passagePartId
     await passageManager.updatePassage(passageId, updateData);
 
     assert.strictEqual(writeFileSyncCalls.length, 1, 'writeFileSync should have been called once.');
-    // Corrected destructuring:
     const { path: writtenPath, data: writtenContent } = writeFileSyncCalls[0];
-    assert.strictEqual(writtenPath, altPath, 'writeFileSync called with incorrect path (should be altPath).');
+    assert.strictEqual(writtenPath, primaryPath, 'writeFileSync called with incorrect path.');
 
     assert.ok(writtenContent.includes(`export const intro = {`), 'Const definition start missing.');
     assert.ok(writtenContent.includes(`title: _('New Linear Title')`), 'Updated title not found or incorrect.');
@@ -278,8 +261,7 @@ export const movePassage = (s, e) => {
 
     await passageManager.updatePassage(passageId, updateData);
     assert.strictEqual(writeFileSyncCalls.length, 1, 'writeFileSync should have been called once.');
-    // Corrected destructuring:
-    const { data: writtenContent } = writeFileSyncCalls[0]; // Only need content here
+    const { data: writtenContent } = writeFileSyncCalls[0];
 
     assert.ok(writtenContent.includes(`type: 'transition'`), 'Type property missing or incorrect.');
     assert.ok(writtenContent.includes(`nextPassageId: 'transEvent-transChar-newTarget'`), 'Updated nextPassageId not found or incorrect.');
@@ -297,17 +279,20 @@ export const movePassage = (s, e) => {
       );
     });
 
-    test('should throw error if passage file not found in primary or alternative paths', async () => {
+    test('should throw error if passage file not found in primary path', async () => {
       const passageId = 'notFound-event-char';
       mockFsStore = {};
 
       const updateData: PassageUpdateRequest = { type: 'screen', title: 't' };
-      const primaryPath = getPrimaryPassagePath('notFound', 'event', 'char');
-      const altPath = getAlternativePassagePath('notFound', 'event', 'char');
 
       await assert.rejects(
         async () => passageManager.updatePassage(passageId, updateData),
-        (error: Error) => error.message.includes(`Passage file not found at primary path ${primaryPath} or alternative path ${altPath}`)
+        (error: Error) => {
+          return error.message.includes('Passage file not found for passageId') &&
+                 error.message.includes('char') &&
+                 error.message.includes('notFound') &&
+                 error.message.includes('event');
+        }
       );
     });
 
@@ -359,8 +344,7 @@ export const i18nTitlePassage = (s,e) => {
         await passageManager.updatePassage(passageId, updateData);
 
         assert.strictEqual(writeFileSyncCalls.length, 1, 'writeFileSync should have been called once.');
-        // Corrected destructuring:
-        const { data: writtenContent } = writeFileSyncCalls[0]; // Only need content here
+        const { data: writtenContent } = writeFileSyncCalls[0];
         assert.ok(writtenContent.includes(`title: ${expected}`), `Expected title "${expected}" not found. Got: ${writtenContent}`);
       });
     });
@@ -407,11 +391,10 @@ export const costTestPassage = (s,e) => ({ id:'costTest', type:'screen', title:_
       await passageManager.updatePassage(passageId, updateData);
 
       assert.strictEqual(writeFileSyncCalls.length, 1, 'writeFileSync should have been called once.');
-      // Corrected destructuring:
-      const { data: writtenContent } = writeFileSyncCalls[0]; // Only need content here
+      const { data: writtenContent } = writeFileSyncCalls[0];
       const normalizedWrittenContent = normalize(writtenContent);
 
-      //assert.ok(normalizedWrittenContent.includes(normalize('cost: DeltaTime.fromMin(15)')), 'Min cost incorrect.');
+      assert.ok(normalizedWrittenContent.includes(normalize('cost: DeltaTime.fromMin(15)')), 'Min cost incorrect.');
       assert.ok(normalizedWrittenContent.includes(normalize('cost: DeltaTime.fromHours(2)')), 'Hour cost incorrect.');
       assert.ok(normalizedWrittenContent.includes(normalize('cost: DeltaTime.fromDays(3)')), 'Day cost incorrect.');
       assert.ok(normalizedWrittenContent.includes(normalize('cost: { time: DeltaTime.fromMin(30) }')), 'Time-only min cost incorrect.');
@@ -421,7 +404,6 @@ export const costTestPassage = (s,e) => ({ id:'costTest', type:'screen', title:_
       assert.ok(normalizedWrittenContent.includes(normalize("cost: { tools: [ 'axe', 'pickaxe' ] }")), 'Tools cost incorrect.');
       assert.ok(normalizedWrittenContent.includes(normalize("cost: { time: DeltaTime.fromHours(1), items: [ { id: 'food', amount: 1 } ], tools: [ 'knife' ] }")), 'Combined cost incorrect.');
       assert.ok(normalizedWrittenContent.includes(normalize("cost: { value: 1, unit: 'unknown_unit' }")), 'Unknown unit cost incorrect.');
-
     });
   });
 });

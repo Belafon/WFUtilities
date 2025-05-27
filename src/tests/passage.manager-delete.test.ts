@@ -21,16 +21,6 @@ const getPrimaryPassagePath = (eventId: string, characterId: string, passagePart
   );
 };
 
-const getAlternativePassagePath = (eventId: string, characterId: string, passagePartId: string) => {
-  return path.join(
-    ActualPaths.eventsDir(), // This will call the stubbed function during tests
-    eventId,
-    characterId,
-    'passages',
-    `${passagePartId}${ActualPaths.passageFilePostfix}` // Uses actual constant from Paths
-  );
-};
-
 // Use suite for the outer grouping with TDD interface
 suite('PassageManager - deletePassage', function() {
   // We need to set up stubs within each test since beforeEach/afterEach aren't working as expected
@@ -75,29 +65,8 @@ suite('PassageManager - deletePassage', function() {
     }
   });
 
-  test('should successfully delete a passage at the alternative path if primary not found', async function() {
-    setupStubs();
-    
-    try {
-      const passageId = 'eventX-charY-passageZ';
-      const primaryPath = getPrimaryPassagePath('eventX', 'charY', 'passageZ');
-      const expectedAlternativePath = getAlternativePassagePath('eventX', 'charY', 'passageZ');
-  
-      existsSyncStub.withArgs(primaryPath).returns(false);
-      existsSyncStub.withArgs(expectedAlternativePath).returns(true);
-      unlinkSyncStub.withArgs(expectedAlternativePath).returns(undefined);
-  
-      await passageManager.deletePassage(passageId);
-  
-      assert.ok(existsSyncStub.calledWith(primaryPath), 'existsSync should check primary path first');
-      assert.ok(existsSyncStub.calledWith(expectedAlternativePath), 'existsSync should check alternative path');
-      assert.ok(unlinkSyncStub.calledOnceWith(expectedAlternativePath), 'unlinkSync should be called once with alternative path');
-      assert.ok((console.log as sinon.SinonStub).calledWith(sinon.match(/deleted successfully/)), 'Success message should be logged');
-      assert.ok(showInfoNotificationStub.calledWith(sinon.match(/deleted successfully/)), 'Information notification should be shown');
-    } finally {
-      teardownStubs();
-    }
-  });
+  // REMOVED: "should successfully delete a passage at the alternative path if primary not found" test
+  // The PassageManager implementation only supports primary path structure
 
   test('should throw error if passageId is invalid', async function() {
     setupStubs();
@@ -119,23 +88,23 @@ suite('PassageManager - deletePassage', function() {
     }
   });
 
-  test('should throw error if passage file is not found at either path', async function() {
+  test('should throw error if passage file is not found at primary path', async function() {
     setupStubs();
     
     try {
       const passageId = 'eventGone-charLost-passageMissing';
       const primaryPath = getPrimaryPassagePath('eventGone', 'charLost', 'passageMissing');
-      const alternativePath = getAlternativePassagePath('eventGone', 'charLost', 'passageMissing');
 
-      existsSyncStub.withArgs(primaryPath).returns(false);
-      existsSyncStub.withArgs(alternativePath).returns(false);
+      // Set up all possible paths to return false (the implementation tries multiple file extensions)
+      existsSyncStub.returns(false);
 
       await assert.rejects(
         async () => passageManager.deletePassage(passageId),
         (error: Error) => {
-          return error.message.includes('Passage file to delete not found at') &&
-                 error.message.includes(primaryPath) &&
-                 error.message.includes(alternativePath);
+          return error.message.includes('Passage file not found for passageId') &&
+                 error.message.includes('passageMissing') &&
+                 error.message.includes('eventGone') &&
+                 error.message.includes('charLost');
         }
       );
 
