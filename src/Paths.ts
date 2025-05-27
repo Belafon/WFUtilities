@@ -34,6 +34,9 @@ export const getEventFilePath = (eventId: string): string => {
 };
 
 export const passageFilePostfix = '.ts';
+export const passageFilePostfixScreen = '.screen.ts';
+export const passageFilePostfixTransition = '.transition.ts';
+export const passageFilePostfixLinear = '.linear.ts';
 
 export const racesFilePath = () => path.join(workspaceFolders(), 'src', 'data', 'races', 'races.ts');
 export const racesDir = () => path.join(workspaceFolders(), 'src', 'data', 'races');
