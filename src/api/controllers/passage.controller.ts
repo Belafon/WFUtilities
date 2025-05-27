@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { PassageUpdateRequest } from '../../types';
+import { ScreenPassageUpdateRequest } from '../../types';
 import { passageManager } from '../services/passage.manager';
 import { logger } from '../../utils/logger';
 
@@ -11,7 +11,7 @@ import { logger } from '../../utils/logger';
 export const updateScreenPassage = async (req: Request<{ passageId: string }>, res: Response): Promise<void> => {
   try {
     const { passageId } = req.params;
-    const passageData = req.body as PassageUpdateRequest;
+    const passageData = req.body as ScreenPassageUpdateRequest;
     
     // Check for demo mode
     const isDemoMode = req.query.demo === 'true' || req.header('x-demo-mode') === 'true';

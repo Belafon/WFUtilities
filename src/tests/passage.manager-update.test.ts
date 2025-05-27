@@ -4,7 +4,7 @@ import path from 'path'; // Using the standard 'path' module
 // --- SUT and Types ---
 // Adjust these paths if your test file structure changes
 import { PassageManager } from '../api/services/passage.manager';
-import { PassageUpdateRequest, TPassageScreenBodyItemUpdateRequest } from '../types';
+import { ScreenPassageUpdateRequest, TPassageScreenBodyItemUpdateRequest } from '../types';
 import { EditorAdapter, DefaultEditorAdapter } from '../api/adapters/editorAdapter';
 import { config } from '../WFServerConfig'; // Import the config object
 
@@ -150,7 +150,7 @@ export const visitPassage = (s, e) => {
 };`;
     mockFsStore[filePath] = originalContent;
 
-    const updateData: PassageUpdateRequest = {
+    const updateData: ScreenPassageUpdateRequest = {
       type: 'screen',
       title: 'New Awesome Title',
       image: 'new_image_func.jpg',
@@ -214,7 +214,7 @@ export const intro = { // Name 'intro' matches passagePartId
 };`;
     mockFsStore = { [primaryPath]: originalContent };
 
-    const updateData: PassageUpdateRequest = {
+    const updateData: ScreenPassageUpdateRequest = {
       type: 'linear',
       title: "'New Linear Title'",
       description: 'New Description for Linear',
@@ -254,7 +254,7 @@ export const movePassage = (s, e) => {
 };`;
     mockFsStore[filePath] = originalContent;
 
-    const updateData: PassageUpdateRequest = {
+    const updateData: ScreenPassageUpdateRequest = {
       type: 'transition',
       nextPassageId: 'transEvent-transChar-newTarget',
     };
@@ -272,7 +272,7 @@ export const movePassage = (s, e) => {
   suite('Error Handling', () => {
     test('should throw error for invalid passageId format', async () => {
       const invalidPassageId = 'invalidIdOnly';
-      const updateData: PassageUpdateRequest = { type: 'screen', title: 't' };
+      const updateData: ScreenPassageUpdateRequest = { type: 'screen', title: 't' };
       await assert.rejects(
         async () => passageManager.updatePassage(invalidPassageId, updateData),
         (error: Error) => error.message.includes(`Invalid passageId format: ${invalidPassageId}`)
@@ -283,7 +283,7 @@ export const movePassage = (s, e) => {
       const passageId = 'notFound-event-char';
       mockFsStore = {};
 
-      const updateData: PassageUpdateRequest = { type: 'screen', title: 't' };
+      const updateData: ScreenPassageUpdateRequest = { type: 'screen', title: 't' };
 
       await assert.rejects(
         async () => passageManager.updatePassage(passageId, updateData),
@@ -302,7 +302,7 @@ export const movePassage = (s, e) => {
       const originalContent = `export const someOtherThing = 123;`;
       mockFsStore[filePath] = originalContent;
 
-      const updateData: PassageUpdateRequest = { type: 'screen', title: 't' };
+      const updateData: ScreenPassageUpdateRequest = { type: 'screen', title: 't' };
       await assert.rejects(
         async () => passageManager.updatePassage(passageId, updateData),
         (error: Error) => error.message.includes(`Could not find passage definition (object or function return) for 'noDefPassagePart'`)
@@ -340,7 +340,7 @@ export const i18nTitlePassage = (s,e) => {
         mockFsStore = { [filePath]: baseContent('_("initial")') };
         writeFileSyncCalls = [];
 
-        const updateData: PassageUpdateRequest = { type: 'screen', title: input, body: [] };
+        const updateData: ScreenPassageUpdateRequest = { type: 'screen', title: input, body: [] };
         await passageManager.updatePassage(passageId, updateData);
 
         assert.strictEqual(writeFileSyncCalls.length, 1, 'writeFileSync should have been called once.');
@@ -387,7 +387,7 @@ export const costTestPassage = (s,e) => ({ id:'costTest', type:'screen', title:_
         },
       ];
 
-      const updateData: PassageUpdateRequest = { type: 'screen', title: 'Cost Test', body: bodyWithVariousCosts };
+      const updateData: ScreenPassageUpdateRequest = { type: 'screen', title: 'Cost Test', body: bodyWithVariousCosts };
       await passageManager.updatePassage(passageId, updateData);
 
       assert.strictEqual(writeFileSyncCalls.length, 1, 'writeFileSync should have been called once.');

@@ -30,14 +30,16 @@ const createTestMapFileContent = (mapId: string, options: {
         tileTypes = ['grass', 'water', 'tree', 'rock']
     } = options;
 
-    // Create a simple map data structure
+    // Create a simple map data structure with all required fields
     const mapData: MapUpdateRequest = {
+        mapId, // Add the missing mapId field
         title,
         width,
         height,
         data: Array(height).fill(null).map(() => 
             Array(width).fill(null).map((_, colIndex) => ({
-                tile: tileTypes[colIndex % tileTypes.length]
+                tile: tileTypes[colIndex % tileTypes.length],
+                title: `Tile ${colIndex}` // Optional title for tile
             }))
         ),
         locations: [
@@ -47,7 +49,13 @@ const createTestMapFileContent = (mapId: string, options: {
         maps: [
             { i: 0, j: 0, mapId: 'world_overview' },
             { i: 9, j: 7, mapId: 'dungeon_entrance' }
-        ]
+        ],
+        palette: { // Add the missing palette field
+            'grass': { name: 'Grass', color: '#90EE90' },
+            'water': { name: 'Water', color: '#4169E1' },
+            'tree': { name: 'Tree', color: '#228B22' },
+            'rock': { name: 'Rock', color: '#696969' }
+        }
     };
 
     return mapData;
@@ -138,12 +146,14 @@ suite('Map API Integration Tests', () => {
             const fileContent = fs.readFileSync(mapFilePath, 'utf-8');
             const savedMapData = JSON.parse(fileContent);
             
+            assert.strictEqual(savedMapData.mapId, mapId);
             assert.strictEqual(savedMapData.title, 'Enchanted Forest');
             assert.strictEqual(savedMapData.width, 15);
             assert.strictEqual(savedMapData.height, 12);
             assert.ok(Array.isArray(savedMapData.data));
             assert.ok(Array.isArray(savedMapData.locations));
             assert.ok(Array.isArray(savedMapData.maps));
+            assert.ok(typeof savedMapData.palette === 'object');
         });
 
         test('should successfully update an existing map', async () => {
@@ -178,6 +188,7 @@ suite('Map API Integration Tests', () => {
             const fileContent = fs.readFileSync(mapFilePath, 'utf-8');
             const savedMapData = JSON.parse(fileContent);
             
+            assert.strictEqual(savedMapData.mapId, mapId);
             assert.strictEqual(savedMapData.title, 'Expanded Desert Oasis');
             assert.strictEqual(savedMapData.width, 12);
             assert.strictEqual(savedMapData.height, 10);
@@ -229,7 +240,7 @@ suite('Map API Integration Tests', () => {
             // Test missing required fields
             const invalidMapData = {
                 title: 'Invalid Map'
-                // Missing width, height, data, locations, maps
+                // Missing mapId, width, height, data, locations, maps, palette
             };
 
             const response = await request(app)
@@ -309,12 +320,14 @@ suite('Map API Integration Tests', () => {
 
             assert.strictEqual(response.body.success, true);
             assert.ok(response.body.data);
+            assert.strictEqual(response.body.data.mapId, mapId);
             assert.strictEqual(response.body.data.title, 'Treacherous Mountain Pass');
             assert.strictEqual(response.body.data.width, 20);
             assert.strictEqual(response.body.data.height, 15);
             assert.ok(Array.isArray(response.body.data.data));
             assert.ok(Array.isArray(response.body.data.locations));
             assert.ok(Array.isArray(response.body.data.maps));
+            assert.ok(typeof response.body.data.palette === 'object');
         });
 
         test('should return 404 for non-existent map', async () => {
@@ -458,6 +471,7 @@ suite('Map API Integration Tests', () => {
                 .get(`/api/map/${mapId}`)
                 .expect(200);
             assert.strictEqual(response.body.success, true);
+            assert.strictEqual(response.body.data.mapId, mapId);
             assert.strictEqual(response.body.data.title, 'Lifecycle Test Map');
 
             // 4. Update the map
@@ -477,6 +491,7 @@ suite('Map API Integration Tests', () => {
             response = await request(app)
                 .get(`/api/map/${mapId}`)
                 .expect(200);
+            assert.strictEqual(response.body.data.mapId, mapId);
             assert.strictEqual(response.body.data.title, 'Updated Lifecycle Test Map');
             assert.strictEqual(response.body.data.width, 12);
             assert.strictEqual(response.body.data.height, 10);
@@ -549,6 +564,18 @@ suite('Map API Integration Tests', () => {
                 mapId: `connected_map_${index}`
             }));
 
+            // Update palette to match the tile types
+            largeMapData.palette = {
+                'grass': { name: 'Grass', color: '#90EE90' },
+                'water': { name: 'Water', color: '#4169E1' },
+                'forest': { name: 'Forest', color: '#228B22' },
+                'mountain': { name: 'Mountain', color: '#8B4513' },
+                'desert': { name: 'Desert', color: '#F4A460' },
+                'snow': { name: 'Snow', color: '#FFFAFA' },
+                'swamp': { name: 'Swamp', color: '#556B2F' },
+                'cave': { name: 'Cave', color: '#2F4F4F' }
+            };
+
             const response = await request(app)
                 .put(`/api/map/${mapId}`)
                 .send(largeMapData)
@@ -561,10 +588,12 @@ suite('Map API Integration Tests', () => {
                 .get(`/api/map/${mapId}`)
                 .expect(200);
 
+            assert.strictEqual(getResponse.body.data.mapId, mapId);
             assert.strictEqual(getResponse.body.data.width, 50);
             assert.strictEqual(getResponse.body.data.height, 50);
             assert.strictEqual(getResponse.body.data.locations.length, 25);
             assert.strictEqual(getResponse.body.data.maps.length, 10);
+            assert.ok(typeof getResponse.body.data.palette === 'object');
         });
     });
 
@@ -632,7 +661,7 @@ suite('Map API Integration Tests', () => {
     suite('Error Handling and Edge Cases', () => {
         test('should handle extremely long map IDs', async () => {
             const longMapId = 'a'.repeat(1000);
-            const mapData = createTestMapFileContent('test');
+            const mapData = createTestMapFileContent(longMapId);
 
             const response = await request(app)
                 .put(`/api/map/${longMapId}`)
@@ -662,19 +691,22 @@ suite('Map API Integration Tests', () => {
                     .expect(200);
                 
                 assert.strictEqual(getResponse.body.success, true);
+                assert.strictEqual(getResponse.body.data.mapId, mapId);
                 assert.strictEqual(getResponse.body.data.title, 'Test Map');
             }
         });
 
         test('should handle maps with zero dimensions gracefully', async () => {
             const mapId = 'zero_dimension_map';
-            const mapData = {
+            const mapData: MapUpdateRequest = {
+                mapId,
                 title: 'Zero Dimension Map',
                 width: 0,
                 height: 0,
                 data: [],
                 locations: [],
-                maps: []
+                maps: [],
+                palette: {}
             };
 
             const response = await request(app)
@@ -689,6 +721,7 @@ suite('Map API Integration Tests', () => {
                 .get(`/api/map/${mapId}`)
                 .expect(200);
 
+            assert.strictEqual(getResponse.body.data.mapId, mapId);
             assert.strictEqual(getResponse.body.data.width, 0);
             assert.strictEqual(getResponse.body.data.height, 0);
         });
@@ -709,12 +742,14 @@ suite('Map API Integration Tests', () => {
             
             // Test with non-array data field
             const invalidMapData = {
+                mapId,
                 title: 'Invalid Arrays Map',
                 width: 10,
                 height: 10,
                 data: 'not an array',
                 locations: [],
-                maps: []
+                maps: [],
+                palette: {}
             };
 
             const response = await request(app)

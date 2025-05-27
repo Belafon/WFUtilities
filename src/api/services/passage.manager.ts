@@ -1,6 +1,6 @@
 import path from 'path'; // Ensure path is imported
 import {
-  PassageUpdateRequest,
+  ScreenPassageUpdateRequest,
   TLinkCostObjectUpdateRequest,
   TLinkCostUpdateRequest,
   TPassageScreenBodyItemUpdateRequest,
@@ -49,7 +49,7 @@ export class PassageManager {
     return this._editorAdapter || config.editorAdapter;
   }
 
-  public async updatePassage(passageId: string, passageData: PassageUpdateRequest): Promise<void> {
+  public async updatePassage(passageId: string, passageData: ScreenPassageUpdateRequest): Promise<void> {
     const parts = validatePassageId(passageId);
     if (!parts) {
       const errorMessage = `Invalid passageId format: ${passageId}`;

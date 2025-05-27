@@ -37,11 +37,6 @@ export interface SetTimeRequest {
   timeRange: TimeRange;
 }
 
-export interface TLinkCostItem {
-  id: string;
-  amount: number;
-}
-
 export interface TLinkCostObjectUpdateRequest {
   time?: {
     value: number;
@@ -49,6 +44,11 @@ export interface TLinkCostObjectUpdateRequest {
   };
   items?: TLinkCostItem[];
   tools?: string[];
+}
+
+export interface TLinkCostItem {
+  id: string;
+  amount: number;
 }
 
 export type TLinkCostUpdateRequest = 
@@ -69,7 +69,7 @@ export interface TPassageScreenBodyItemUpdateRequest {
   links?: TLinkUpdateRequest[];
 }
 
-export interface PassageUpdateRequest {
+export interface ScreenPassageUpdateRequest {
   type: 'screen' | 'linear' | 'transition';
   title?: string;
   image?: string;
@@ -88,7 +88,7 @@ export interface ErrorResponse {
   error: string;
 }
 
-// New Map related type definitions
+// Updated Map related type definitions to include missing fields
 export interface MapTileData {
   tile: string;
   title?: string;
@@ -106,14 +106,43 @@ export interface MapMapReference {
   mapId: string;
 }
 
+// New Map related type definitions
 export interface MapData {
+  mapId: string;  // Added missing field
   title: string;
   width: number;
   height: number;
   data: MapTileData[][];
   locations: MapLocationReference[];
   maps: MapMapReference[];
+  palette: Record<string, { name: string; color: string; }>;  // Added missing field
 }
 
-// This is used for the PUT request body
 export interface MapUpdateRequest extends MapData {}
+
+export interface MapResponse {
+  success: boolean;
+  data: MapData;
+}
+
+export interface MapListResponse {
+  success: boolean;
+  data: string[];
+}
+
+export type TEventData = {
+  title: string;
+  description: string;
+  locationId: string;
+  timeRange: {
+    start: string;
+    end: string;
+  };
+};
+
+export type TPassageData = {
+  type: string;
+  title?: string;
+};
+
+export type TEventPassageType = "screen" | "linear" | "transition";

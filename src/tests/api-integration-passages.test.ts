@@ -11,7 +11,7 @@ import { config } from '../WFServerConfig';
 import { StaticWorkspaceAdapter } from '../api/adapters/workspaceAdapter';
 import { NodeFileSystemAdapter } from '../api/adapters/fileSystem';
 import { DefaultEditorAdapter } from '../api/adapters/editorAdapter';
-import { PassageUpdateRequest } from '../types';
+import { ScreenPassageUpdateRequest } from '../types';
 
 // Test workspace setup
 let testWorkspaceRoot: string;
@@ -163,7 +163,7 @@ suite('PassageManager Integration Tests', () => {
             fs.writeFileSync(passageFilePath, initialContent, 'utf-8');
 
             // Update data
-            const updateData: PassageUpdateRequest = {
+            const updateData: ScreenPassageUpdateRequest = {
                 type: 'screen',
                 title: 'Updated Passage Title',
                 image: 'updated.jpg',
@@ -225,7 +225,7 @@ suite('PassageManager Integration Tests', () => {
             fs.writeFileSync(passageFilePath, initialContent, 'utf-8');
 
             // Update data
-            const updateData: PassageUpdateRequest = {
+            const updateData: ScreenPassageUpdateRequest = {
                 type: 'linear',
                 description: 'Updated journey through the forest',
                 nextPassageId: 'kingdom-annie-forest-end'
@@ -261,7 +261,7 @@ suite('PassageManager Integration Tests', () => {
             fs.writeFileSync(passageFilePath, initialContent, 'utf-8');
 
             // Update data
-            const updateData: PassageUpdateRequest = {
+            const updateData: ScreenPassageUpdateRequest = {
                 type: 'transition',
                 nextPassageId: 'kingdom-annie-newnext'
             };
@@ -289,7 +289,7 @@ suite('PassageManager Integration Tests', () => {
             const initialContent = createTestPassageFileContent(passagePartId, { type: 'screen' });
             fs.writeFileSync(passageFilePath, initialContent, 'utf-8');
 
-            const updateData: PassageUpdateRequest = {
+            const updateData: ScreenPassageUpdateRequest = {
                 type: 'screen',
                 body: [
                     {
@@ -370,7 +370,7 @@ suite('PassageManager Integration Tests', () => {
             const initialContent = createTestPassageFileContent(passagePartId);
             fs.writeFileSync(passageFilePath, initialContent, 'utf-8');
 
-            const updateData: PassageUpdateRequest = {
+            const updateData: ScreenPassageUpdateRequest = {
                 type: 'screen',
                 body: [
                     {
@@ -412,7 +412,7 @@ suite('PassageManager Integration Tests', () => {
             const initialContent = createTestPassageFileContent(passagePartId);
             fs.writeFileSync(passageFilePath, initialContent, 'utf-8');
 
-            const updateData: PassageUpdateRequest = {
+            const updateData: ScreenPassageUpdateRequest = {
                 type: 'screen',
                 title: "Annie's \"Special\" Passage",
                 body: [
@@ -575,7 +575,7 @@ suite('PassageManager Integration Tests', () => {
             fs.writeFileSync(passageFilePath, initialContent, 'utf-8');
 
             // 2. Update the passage
-            const updateData: PassageUpdateRequest = {
+            const updateData: ScreenPassageUpdateRequest = {
                 type: 'screen',
                 title: 'Updated Title',
                 image: 'updated.jpg',
@@ -646,19 +646,19 @@ suite('PassageManager Integration Tests', () => {
             }
 
             // Update each with type-specific data
-            const screenUpdate: PassageUpdateRequest = {
+            const screenUpdate: ScreenPassageUpdateRequest = {
                 type: 'screen',
                 title: 'Updated Screen',
                 body: [{ text: 'Screen content' }]
             };
 
-            const linearUpdate: PassageUpdateRequest = {
+            const linearUpdate: ScreenPassageUpdateRequest = {
                 type: 'linear',
                 description: 'Updated linear description',
                 nextPassageId: 'kingdom-annie-next'
             };
 
-            const transitionUpdate: PassageUpdateRequest = {
+            const transitionUpdate: ScreenPassageUpdateRequest = {
                 type: 'transition',
                 nextPassageId: 'kingdom-annie-transitioned'
             };
@@ -758,7 +758,7 @@ suite('PassageManager Integration Tests', () => {
             const malformedContent = `export const ${passagePartId}Passage = { // Missing closing brace`;
             fs.writeFileSync(passageFilePath, malformedContent, 'utf-8');
 
-            const updateData: PassageUpdateRequest = {
+            const updateData: ScreenPassageUpdateRequest = {
                 type: 'screen',
                 title: 'Test Update'
             };
@@ -787,7 +787,7 @@ suite('PassageManager Integration Tests', () => {
             const updatePromises = [];
 
             for (let i = 0; i < 5; i++) {
-                const updateData: PassageUpdateRequest = {
+                const updateData: ScreenPassageUpdateRequest = {
                     type: 'screen',
                     title: `Concurrent Update ${i}`
                 };

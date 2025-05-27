@@ -97,12 +97,17 @@ suite('MapManager Tests', () => {
   };
 
   const sampleMapData: MapUpdateRequest = {
+    mapId: "treasureMap",
     title: "Treasure Island",
     width: 20,
     height: 15,
     data: [[{ tile: "sand" }, {tile: "water"}]],
     locations: [{ i: 1, j: 1, locationId: "cave_entrance" }],
     maps: [{ i: 5, j: 5, mapId: "world_map" }],
+    palette: {
+      sand: { name: "Sand", color: "#FFD700" },
+      water: { name: "Water", color: "#1E90FF" }
+    }
   };
 
   setup(() => {
