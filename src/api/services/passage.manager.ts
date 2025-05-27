@@ -6,13 +6,14 @@ import {
   TPassageScreenBodyItemUpdateRequest,
   TLinkUpdateRequest,
 } from '../../types'; // Adjust path as necessary
-import { eventsDir, evnetPassagesFilePostfixWithoutFileType, passageFilePostfix } from '../../Paths';
+import { eventsDir, evnetPassagesFilePostfixWithoutFileType as eventPassagesFilePostfixWithoutFileType, passageFilePostfix, passageFilePostfixScreen, passageFilePostfixTransition, passageFilePostfixLinear } from '../../Paths';
 import { DefaultEditorAdapter, EditorAdapter } from '../adapters/editorAdapter';
 import { TokenGroup, TypeScriptCodeBuilder, TypeScriptObjectBuilder } from '../../typescriptObjectParser/ObjectParser';
 // Assuming CodeLiteral and ObjectToStringConverter are in this path or similar
 import { CodeLiteral, ObjectToStringConverter } from '../../utils/objectToStringConverter';
 import { config } from '../../WFServerConfig';
 
+type TPassageType = 'screen' | 'linear' | 'transition';
 
 // MODIFIED validatePassageId function
 function validatePassageId(passageId: string): [string, string, string] | null {
@@ -57,7 +58,7 @@ export class PassageManager {
     }
     const [eventId, characterId, passagePartId] = parts;
 
-    const resolvedPassageFilePath = this.resolvePassageFilePath(eventId, characterId, passagePartId, 'update');
+    const resolvedPassageFilePath = this.resolvePassageFilePath(eventId, characterId, passagePartId);
 
     const originalContent = config.fileSystem.readFileSync(resolvedPassageFilePath, 'utf-8');
     const codeBuilder = new TypeScriptCodeBuilder(originalContent);
@@ -299,7 +300,7 @@ export class PassageManager {
     }
     const [eventId, characterId, passagePartId] = parts;
 
-    const resolvedPassageFilePath = this.resolvePassageFilePath(eventId, characterId, passagePartId, 'delete');
+    const resolvedPassageFilePath = this.resolvePassageFilePath(eventId, characterId, passagePartId);
 
     try {
       config.fileSystem.unlinkSync(resolvedPassageFilePath);
@@ -313,7 +314,7 @@ export class PassageManager {
     }
   }
 
-  public async openPassage(passageId: string): Promise<void> {
+  public async openScreenPassage(passageId: string): Promise<void> {
     const parts = validatePassageId(passageId);
     if (!parts) {
       const errorMessage = `Invalid passageId format: ${passageId}. Expected format: eventId-characterId-passagePartId`;
@@ -322,7 +323,7 @@ export class PassageManager {
     }
     const [eventId, characterId, passagePartId] = parts;
 
-    const resolvedPassageFilePath = this.resolvePassageFilePath(eventId, characterId, passagePartId, 'open');
+    const resolvedPassageFilePath = this.resolvePassageFilePath(eventId, characterId, passagePartId);
 
     try {
       await this.editorAdapter.openFile(resolvedPassageFilePath);
@@ -335,29 +336,23 @@ export class PassageManager {
     }
   }
 
-  private resolvePassageFilePath(eventId: string, characterId: string, passagePartId: string, context: 'update' | 'delete' | 'open' = 'update'): string {
+  private resolvePassageFilePath(
+    eventId: string,
+    characterId: string,
+    passagePartId: string,
+  ): string {
+
     const primaryPassageParentDir = path.join(
       eventsDir(),
       eventId,
-      `${characterId}${evnetPassagesFilePostfixWithoutFileType}`
-    );
-    const alternativePassageParentDir = path.join(
-      eventsDir(),
-      eventId,
-      characterId,
-      'passages'
+      `${characterId}${eventPassagesFilePostfixWithoutFileType}`
     );
 
-    // Try different file paths in order of preference
     const possiblePaths = [
-      // Primary location with regular .ts extension
+      path.join(primaryPassageParentDir, `${passagePartId}${passageFilePostfixScreen}`),
+      path.join(primaryPassageParentDir, `${passagePartId}${passageFilePostfixTransition}`),
+      path.join(primaryPassageParentDir, `${passagePartId}${passageFilePostfixLinear}`),
       path.join(primaryPassageParentDir, `${passagePartId}${passageFilePostfix}`),
-      // Primary location with .screen.ts extension
-      path.join(primaryPassageParentDir, `${passagePartId}.screen.ts`),
-      // Alternative location with regular .ts extension
-      path.join(alternativePassageParentDir, `${passagePartId}${passageFilePostfix}`),
-      // Alternative location with .screen.ts extension
-      path.join(alternativePassageParentDir, `${passagePartId}.screen.ts`)
     ];
 
     for (const filePath of possiblePaths) {
@@ -366,28 +361,7 @@ export class PassageManager {
       }
     }
 
-    // If no file found, create appropriate error message based on context
-    let errorMessage: string;
-    if (context === 'update') {
-      // Format expected by update tests: "Passage file not found at primary path {path} or alternative path {path}"
-      const primaryPath = possiblePaths[0]; // First path is primary location with .ts
-      const altPath = possiblePaths[2]; // Third path is alternative location with .ts
-      errorMessage = `Passage file not found at primary path ${primaryPath} or alternative path ${altPath}`;
-    } else if (context === 'delete') {
-      // Format expected by delete tests: "Passage file to delete not found at"
-      const primaryPath = possiblePaths[0];
-      const altPath = possiblePaths[2];
-      errorMessage = `Passage file to delete not found at ${primaryPath} or ${altPath}`;
-    } else if (context === 'open') {
-      // Format expected by open tests: "Passage file to open not found at"
-      const primaryPath = possiblePaths[0];
-      const altPath = possiblePaths[2];
-      errorMessage = `Passage file to open not found at ${primaryPath} or ${altPath}`;
-    } else {
-      // Default format for other contexts or new screen-specific operations
-      errorMessage = `Screen passage file not found. Tried paths:\n${possiblePaths.join('\n')}`;
-    }
-    
+    const errorMessage = `Passage file not found for passageId '${passagePartId}' in event '${eventId}' and character '${characterId}'. Tried paths: ${possiblePaths.join(', ')}`;
     this.editorAdapter.showErrorNotification(errorMessage);
     throw new Error(errorMessage);
   }
