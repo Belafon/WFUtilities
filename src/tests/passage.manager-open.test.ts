@@ -65,7 +65,7 @@ suite('PassageManager - openPassage', function() {
       existsSyncStub.withArgs(expectedPrimaryPath).returns(true);
       openFileStub.withArgs(expectedPrimaryPath).resolves(); // Simulate successful file open
 
-      await passageManager.openPassage(passageId);
+      await passageManager.openScreenPassage(passageId);
 
       assert.ok(existsSyncStub.calledWith(expectedPrimaryPath), 'existsSync should check primary path');
       assert.ok(openFileStub.calledOnceWith(expectedPrimaryPath), 'editorAdapter.openFile should be called once with primary path');
@@ -87,7 +87,7 @@ suite('PassageManager - openPassage', function() {
       existsSyncStub.withArgs(expectedAlternativePath).returns(true);
       openFileStub.withArgs(expectedAlternativePath).resolves(); // Simulate successful file open
 
-      await passageManager.openPassage(passageId);
+      await passageManager.openScreenPassage(passageId);
 
       assert.ok(existsSyncStub.calledWith(primaryPath), 'existsSync should check primary path first');
       assert.ok(existsSyncStub.calledWith(expectedAlternativePath), 'existsSync should check alternative path');
@@ -105,7 +105,7 @@ suite('PassageManager - openPassage', function() {
       const invalidPassageId = 'invalid-id-format'; // This ID is caught by your validatePassageId function
 
       await assert.rejects(
-        async () => passageManager.openPassage(invalidPassageId),
+        async () => passageManager.openScreenPassage(invalidPassageId),
         (error: Error) => {
           return error.message.includes('Invalid passageId format') &&
                  error.message.includes(invalidPassageId);
@@ -126,7 +126,7 @@ suite('PassageManager - openPassage', function() {
       const invalidPassageId = 'id-id-id'; 
 
       await assert.rejects(
-        async () => passageManager.openPassage(invalidPassageId),
+        async () => passageManager.openScreenPassage(invalidPassageId),
         (error: Error) => {
           return error.message.includes('Invalid passageId format') &&
                  error.message.includes(invalidPassageId);
@@ -151,7 +151,7 @@ suite('PassageManager - openPassage', function() {
       existsSyncStub.withArgs(alternativePath).returns(false);
 
       await assert.rejects(
-        async () => passageManager.openPassage(passageId),
+        async () => passageManager.openScreenPassage(passageId),
         (error: Error) => {
           return error.message.includes('Passage file to open not found at') &&
                  error.message.includes(primaryPath) &&
@@ -176,7 +176,7 @@ suite('PassageManager - openPassage', function() {
       openFileStub.withArgs(primaryPath).rejects(openError); // Simulate editorAdapter.openFile failing
 
       await assert.rejects(
-        async () => passageManager.openPassage(passageId),
+        async () => passageManager.openScreenPassage(passageId),
         openError
       );
 
@@ -199,7 +199,7 @@ suite('PassageManager - openPassage', function() {
       openFileStub.withArgs(primaryPath).returns(Promise.reject(openErrorString));
 
       await assert.rejects(
-        async () => passageManager.openPassage(passageId),
+        async () => passageManager.openScreenPassage(passageId),
         (error: any) => {
           return error === openErrorString ||
                  (typeof error === 'object' && error.message && error.message.includes(openErrorString));

@@ -122,7 +122,7 @@ export const openScreenPassage = async (req: Request<{ passageId: string }>, res
       return;
     }
     
-    await passageManager.openPassage(passageId);
+    await passageManager.openScreenPassage(passageId);
     
     res.status(200).json({
       success: true,
