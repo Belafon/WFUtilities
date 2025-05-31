@@ -13,7 +13,7 @@ const timeFormatRegex = /^\d{1,2}\.\d{1,2}\.\s\d{1,2}:\d{2}$/;
  */
 export const validateEventUpdate = [
   body('title').optional().notEmpty().withMessage('Title cannot be empty if provided'),
-  body('description').optional().notEmpty().withMessage('Description cannot be empty if provided'),
+  body('description').optional(), 
   body('location').optional().notEmpty().withMessage('Location cannot be empty if provided'),
   body('timeRange.start')
     .optional()
