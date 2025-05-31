@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: API for WorldsFactory VS Code Extension
 servers:
-  - url: http://localhost:3149
+  - url: http://localhost:3123
     description: Development server
 
 components:
@@ -152,6 +152,7 @@ components:
         description:
           type: string
           description: New description for a linear passage.
+          minLength: 0
         nextPassageId:
           type: string
           description: New nextPassageId for a transition or linear passage.
