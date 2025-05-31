@@ -1,4 +1,5 @@
 /**
+import default from '../../tests/objectParser.test';
  * Interface for workspace operations
  * Implementations will handle workspace path resolution from different sources
  */
@@ -22,6 +23,12 @@ export interface WorkspaceAdapter {
  */
 export class DefaultWorkspaceAdapter implements WorkspaceAdapter {
   getWorkspaceFolderPath(): string {
+    var  possibleWorkspaceDirPath =  '/home/belafon/Downloads/story/';
+    
+    const fs = require('fs');
+    if (fs.existsSync(possibleWorkspaceDirPath)) {
+      return possibleWorkspaceDirPath;
+    }
     throw new Error(
       'Workspace path not configured. Please set one of the following environment variables:\n' +
       '- WF_WORKSPACE_PATH: Path to your workspace folder\n' +
