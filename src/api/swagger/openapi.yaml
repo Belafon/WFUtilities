@@ -228,39 +228,69 @@ components:
         mapId:
           type: string
           description: ID of the map to link to.
+
+    # Palette color definition
+    PaletteColor:
+      type: object
+      required:
+        - name
+        - color
+      properties:
+        name:
+          type: string
+          description: Display name for the color
+        color:
+          type: string
+          description: Hex color code or CSS color value
           
     MapData:
       type: object
       required:
+        - mapId
         - title
         - width
         - height
         - data
         - locations
         - maps
+        - palette
       properties:
+        mapId:
+          type: string
+          description: Unique identifier for the map
         title:
           type: string
+          description: Display title for the map
         width:
           type: integer
           format: int32
+          description: Map width in tiles
         height:
           type: integer
           format: int32
+          description: Map height in tiles
         data:
           type: array
           items:
             type: array
             items:
               $ref: '#/components/schemas/MapTileData'
+          description: 2D array of tile data [height][width]
         locations:
           type: array
           items:
             $ref: '#/components/schemas/MapLocationReference'
+          description: Array of location references on the map
         maps:
           type: array
           items:
             $ref: '#/components/schemas/MapMapReference'
+          description: Array of map connections/links
+        palette:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PaletteColor'
+          description: Color palette mapping tile IDs to color definitions
             
     MapUpdateRequest: 
       $ref: '#/components/schemas/MapData'
@@ -323,6 +353,12 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Success'
+        '400':
+          description: Bad request due to invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
@@ -372,6 +408,12 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Success'
+        '400':
+          description: Bad request due to invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           $ref: '#/components/responses/NotFound'
 
@@ -393,6 +435,12 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Success'
+        '400':
+          description: Bad request due to invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
@@ -442,6 +490,12 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Success'
+        '400':
+          description: Bad request due to invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           $ref: '#/components/responses/NotFound'
           

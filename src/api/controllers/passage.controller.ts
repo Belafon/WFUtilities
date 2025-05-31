@@ -111,7 +111,6 @@ export const openScreenPassage = async (req: Request<{ passageId: string }>, res
   try {
     const { passageId } = req.params;
     
-    // Check for demo mode
     const isDemoMode = req.query.demo === 'true' || req.header('x-demo-mode') === 'true';
     
     if (isDemoMode) {

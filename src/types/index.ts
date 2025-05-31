@@ -106,16 +106,15 @@ export interface MapMapReference {
   mapId: string;
 }
 
-// New Map related type definitions
 export interface MapData {
-  mapId: string;  // Added missing field
+  mapId: string;
   title: string;
   width: number;
   height: number;
   data: MapTileData[][];
   locations: MapLocationReference[];
   maps: MapMapReference[];
-  palette: Record<string, { name: string; color: string; }>;  // Added missing field
+  palette: Record<string, { name: string; color: string; }>;  
 }
 
 export interface MapUpdateRequest extends MapData {}
@@ -133,16 +132,30 @@ export interface MapListResponse {
 export type TEventData = {
   title: string;
   description: string;
-  locationId: string;
+  location: string;
   timeRange: {
     start: string;
     end: string;
   };
 };
 
-export type TPassageData = {
-  type: string;
-  title?: string;
+export type TScreenPassageData = {
+  type: TEventPassageType;
+  eventId: string;
+  characterId: string;
+  id: string;
+  title: string;
+  image: string;
+  body: Array<{
+    text?: string;
+    redirect?: string;
+    links?: Array<{
+      text: string;
+      passageId: string;
+      autoPriority: number;
+      cost?: any; // You might want to define TLinkCost type more specifically
+    }>;
+  }>;
 };
 
 export type TEventPassageType = "screen" | "linear" | "transition";

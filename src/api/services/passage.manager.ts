@@ -15,7 +15,6 @@ import { config } from '../../WFServerConfig';
 
 type TPassageType = 'screen' | 'linear' | 'transition';
 
-// MODIFIED validatePassageId function
 function validatePassageId(passageId: string): [string, string, string] | null {
   const parts = passageId.split('-');
 
