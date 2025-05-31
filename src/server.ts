@@ -4,7 +4,7 @@ dotenv.config();
 import { app } from './index';
 import { logger } from './utils/logger';
 
-const PORT = Number(process.env.PORT) || 3149;
+const PORT = Number(process.env.PORT) || 3123;
 const HOST = process.env.HOST || 'localhost';
 
 // Create HTTP server and start it
