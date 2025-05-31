@@ -15,6 +15,26 @@ export class CharacterTemplateVariables {
         this.characterIdCapitalized = characterId.charAt(0).toUpperCase() + characterId.slice(1);
     }
 
+
+    public static get propertyNames() {
+        return {
+            characterName: 'characterName' as const,
+            startEventId: 'startEventId' as const,
+            startPassageId: 'startPassageId' as const,
+            startLocation: 'startLocation' as const,
+            health: 'health' as const,
+            hunger: 'hunger' as const,
+            stamina: 'stamina' as const,
+            inventoryItems: 'inventoryItems' as const,
+            inventory: 'inventory' as const,
+            location: 'location' as const,
+        };
+    }
+
+    public get propertyNames() {
+        return CharacterTemplateVariables.propertyNames;
+    }
+
     public get mainCharacterFunction(): string {
         return this.characterIdCapitalized;
     }

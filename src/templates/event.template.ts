@@ -15,6 +15,20 @@ export class EventTemplateVariables {
         this.eventIdCapitalized = eventId.charAt(0).toUpperCase() + eventId.slice(1);
     }
 
+    public static get propertyNames() {
+        return {
+            title: 'title' as const,
+            description: 'description' as const,
+            location: 'location' as const,
+            timeRange: 'timeRange' as const,
+            eventId: 'eventId' as const,
+        };
+    }
+
+    public get propertyNames() {
+        return EventTemplateVariables.propertyNames;
+    }
+
     public get mainEventFunction(): string {
         return `${this.eventId}Event`;
     }

@@ -18,6 +18,18 @@ export class EventPassagesTemplateVariables {
         this.eventIdCapitalized = eventId.charAt(0).toUpperCase() + eventId.slice(1);
     }
 
+    public static get propertyNames() {
+        return {
+            eventId: 'eventId' as const,
+            passages: 'passages' as const,
+            characterPassages: 'characterPassages' as const,
+        };
+    }
+
+    public get propertyNames() {
+        return EventPassagesTemplateVariables.propertyNames;
+    }
+
     public get eventPassagesConstName(): string {
         return `${this.eventId}EventPassages`;
     }
@@ -31,10 +43,9 @@ export class EventPassagesTemplateVariables {
     }
 
     public get passageIdUnion(): string {
-            return 'never';
+        return 'never';
     }
 
-    // Generate the final code by replacing template variables
     public generateEventPassagesCode(template: string): string {
         return template
             .replace(/{characterImports}/g, '\n')

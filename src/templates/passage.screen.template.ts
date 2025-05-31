@@ -1,4 +1,3 @@
-
 export class PassageScreenTemplateVariables {
     public readonly eventIdCapitalized: string;
     public readonly characterIdCapitalized: string;
@@ -12,6 +11,24 @@ export class PassageScreenTemplateVariables {
         this.eventIdCapitalized = eventId.charAt(0).toUpperCase() + eventId.slice(1);
         this.characterIdCapitalized = characterId.charAt(0).toUpperCase() + characterId.slice(1);
         this.passageIdCapitalized = passageId.charAt(0).toUpperCase() + passageId.slice(1);
+    }
+
+    public static get propertyNames() {
+        return {
+            eventId: 'eventId' as const,
+            characterId: 'characterId' as const,
+            passageId: 'passageId' as const,
+            titleTranslationKey: 'titleTranslationKey' as const,
+            bodyTranslationKey: 'bodyTranslationKey' as const,
+            linkTranslationKey: 'linkTranslationKey' as const,
+            title: 'title' as const,
+            body: 'body' as const,
+            links: 'links' as const,
+        };
+    }
+
+    public get propertyNames() {
+        return PassageScreenTemplateVariables.propertyNames;
     }
 
     public get mainPassageFunction(): string {
@@ -42,6 +59,19 @@ export class PassageScreenTemplateVariables {
         return '';
     }
 
+    public get quotedEventId(): string {
+        return `'${this.eventId}'`;
+    }
+
+    public get quotedCharacterId(): string {
+        return `'${this.characterId}'`;
+    }
+
+    public get quotedPassageId(): string {
+        return `'${this.passageId}'`;
+    }
+
+
     public generatePassageCode(template: string): string {
         return template
             .replace(/{mainPassageFunction}/g, this.mainPassageFunction)
@@ -54,17 +84,5 @@ export class PassageScreenTemplateVariables {
             .replace(/{bodyTranslationKey}/g, this.bodyTranslationKey)
             .replace(/{linkTranslationKey}/g, this.linkTranslationKey)
             .replace(/{fullPassageReference}/g, this.fullPassageReference);
-    }
-
-    public get quotedEventId(): string {
-        return `'${this.eventId}'`;
-    }
-
-    public get quotedCharacterId(): string {
-        return `'${this.characterId}'`;
-    }
-
-    public get quotedPassageId(): string {
-        return `'${this.passageId}'`;
     }
 }

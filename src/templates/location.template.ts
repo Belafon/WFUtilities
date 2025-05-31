@@ -10,6 +10,20 @@ export class LocationTemplateVariables {
         this.locationIdCapitalized = locationId.charAt(0).toUpperCase() + locationId.slice(1);
     }
 
+
+    public static get propertyNames() {
+        return {
+            locationName: 'locationName' as const,
+            description: 'description' as const,
+            localCharacters: 'localCharacters' as const,
+            locationId: 'locationId' as const,
+        };
+    }
+
+    public get propertyNames() {
+        return LocationTemplateVariables.propertyNames;
+    }
+
     public get mainLocationFunction(): string {
         return `${this.locationId}Location`;
     }

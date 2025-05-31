@@ -12,6 +12,21 @@ export class SideCharacterTemplateVariables {
         this.sideCharacterIdCapitalized = sideCharacterId.charAt(0).toUpperCase() + sideCharacterId.slice(1);
     }
 
+    public static get propertyNames() {
+        return {
+            sideCharacterName: 'sideCharacterName' as const,
+            description: 'description' as const,
+            inventory: 'inventory' as const,
+            location: 'location' as const,
+            isDead: 'isDead' as const,
+            sideCharacterId: 'sideCharacterId' as const,
+        };
+    }
+
+    public get propertyNames() {
+        return SideCharacterTemplateVariables.propertyNames;
+    }
+
     public get mainSideCharacterFunction(): string {
         return this.sideCharacterIdCapitalized;
     }

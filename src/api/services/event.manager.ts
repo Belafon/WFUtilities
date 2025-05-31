@@ -1,15 +1,13 @@
 import path from 'path';
-import { EventUpdateRequest, SetTimeRequest, TimeRange } from '../../types'; // Adjust path as necessary
-import { eventsDir, eventFilePostfix, getEventFilePath } from '../../Paths'; // Adjust path as necessary
-import { DefaultEditorAdapter, EditorAdapter } from '../adapters/editorAdapter'; // Adjust path as necessary
-import { TypeScriptCodeBuilder, TypeScriptObjectBuilder } from '../../typescriptObjectParser/ObjectParser'; // Adjust path as necessary
-import { CodeLiteral, ObjectToStringConverter } from '../../utils/objectToStringConverter'; // Adjust path as necessary
+import { EventUpdateRequest, SetTimeRequest, TimeRange } from '../../types';
+import { eventsDir, eventFilePostfix, getEventFilePath } from '../../Paths';
+import { TypeScriptCodeBuilder, TypeScriptObjectBuilder } from '../../typescriptObjectParser/ObjectParser';
+import { CodeLiteral, ObjectToStringConverter } from '../../utils/objectToStringConverter';
 import { config } from '../../WFServerConfig';
 import { logger } from '../../utils/logger';
 import { templateManager } from '../../templates/TemplateManager';
-import { createServer } from '../../index';
-import { IEventParams as TEventParams } from '../../templates/TempalteGenerator';
 import { registerFileManager } from '../../register/RegisterFileManager';
+import { EventTemplateVariables } from '../../templates/event.template';
 
 /**
  * Event Manager Service
@@ -30,20 +28,30 @@ export class EventManager {
    * @param eventData The data to update the event with.
    */
   public async updateEvent(eventId: string, eventData: EventUpdateRequest): Promise<void> {
-
     const eventFilePath = getEventFilePath(eventId);
 
     let eventFileContent: string | null = null;
     if (!config.fileSystem.existsSync(eventFilePath)) {
-      
       // create new event
       eventFileContent = await this.createNewEvent(eventId, eventFileContent, eventFilePath);
     }
 
     try {
-      const originalContent = config.fileSystem.readFileSync(eventFilePath, 'utf-8');
-      const codeBuilder = new TypeScriptCodeBuilder(originalContent);
-      const eventObjectName = `${eventId}Event`;
+      if (eventFileContent === null) {
+        eventFileContent = config.fileSystem.readFileSync(eventFilePath, 'utf-8');
+      }
+
+      const eventTemplateVariables = new EventTemplateVariables(
+        eventId,
+        eventData.title || '',
+        eventData.description || '',
+        eventData.location || 'village',
+        eventData.timeRange?.start || '0.0. 0:00',
+        eventData.timeRange?.end || '0.0. 0:00'
+      );
+
+      const codeBuilder = new TypeScriptCodeBuilder(eventFileContent);
+      const eventObjectName = eventTemplateVariables.mainEventFunction;
       let eventObjectBuilder: TypeScriptObjectBuilder | null = null;
 
       codeBuilder.findObject(eventObjectName, {
@@ -60,21 +68,33 @@ export class EventManager {
       const builder = eventObjectBuilder as TypeScriptObjectBuilder;
 
       if (eventData.title !== undefined) {
-        builder.setPropertyValue('title', this.formatStringForI18nCode(eventData.title));
+        builder.setPropertyValue(
+          eventTemplateVariables.propertyNames.title,
+          this.formatStringForI18nCode(eventData.title)
+        );
       }
+
       if (eventData.description !== undefined) {
-        builder.setPropertyValue('description', this.formatStringForI18nCode(eventData.description));
+        builder.setPropertyValue(
+          eventTemplateVariables.propertyNames.description,
+          this.formatStringForI18nCode(eventData.description)
+        );
       }
+
       if (eventData.location !== undefined) {
-        builder.setPropertyValue('location', `'${eventData.location}'`);
+        builder.setPropertyValue(
+          eventTemplateVariables.propertyNames.location,
+          eventTemplateVariables.quotedLocation
+        );
       }
+
       if (eventData.timeRange !== undefined) {
         const timeRangeObject = {
-          start: new CodeLiteral(`Time.fromString('${eventData.timeRange.start}')`),
-          end: new CodeLiteral(`Time.fromString('${eventData.timeRange.end}')`)
+          start: new CodeLiteral(`Time.fromString(${eventTemplateVariables.quotedTimeStart})`),
+          end: new CodeLiteral(`Time.fromString(${eventTemplateVariables.quotedTimeEnd})`)
         };
         const timeRangeString = this.objectConverter.convert(timeRangeObject);
-        builder.setPropertyValue('timeRange', timeRangeString);
+        builder.setPropertyValue(eventTemplateVariables.propertyNames.timeRange, timeRangeString);
       }
 
       const updatedContent = await codeBuilder.toString();
@@ -92,7 +112,6 @@ export class EventManager {
 
   private async createNewEvent(eventId: string, eventFileContent: string | null, eventFilePath: string) {
     try {
-
       // create event file from template
       const templateGenerationOutput = await templateManager.generateAndSaveEvent({
         eventId: eventId,
