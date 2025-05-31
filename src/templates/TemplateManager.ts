@@ -1,11 +1,11 @@
-import { ICharacterParams, IEventParams, IScreenPassageParams, IEventPassagesParams, TemplateGenerator } from './TempalteGenerator';
+import { ICharacterParams, IEventParams, IScreenPassageParams, IEventPassagesParams, ILocationParams, ISideCharacterParams, TemplateGenerator } from './TempalteGenerator';
 import { TemplateFileSaver, ISaveResult } from './TemplateFileSaver';
 
 export interface IGenerateAndSaveResult extends ISaveResult {
     content: string;
 }
 
-export class TemplateManager {
+class TemplateManager {
     private generator: TemplateGenerator;
     private fileSaver: TemplateFileSaver;
 
@@ -103,12 +103,62 @@ export class TemplateManager {
     }
 
     /**
+     * Generates and saves a location file in one operation
+     */
+    public async generateAndSaveLocation(params: ILocationParams): Promise<IGenerateAndSaveResult> {
+        try {
+            const content = await this.generator.createLocation(params);
+            const saveResult = await this.fileSaver.saveLocation(params, content);
+            
+            return {
+                ...saveResult,
+                content
+            };
+        } catch (error) {
+            return {
+                success: false,
+                filePath: '',
+                content: '',
+                error: error instanceof Error ? error.message : String(error)
+            };
+        }
+    }
+
+    /**
+     * Generates and saves a side character file in one operation
+     */
+    public async generateAndSaveSideCharacter(params: ISideCharacterParams): Promise<IGenerateAndSaveResult> {
+        try {
+            const content = await this.generator.createSideCharacter(params);
+            const saveResult = await this.fileSaver.saveSideCharacter(params, content);
+            
+            return {
+                ...saveResult,
+                content
+            };
+        } catch (error) {
+            return {
+                success: false,
+                filePath: '',
+                content: '',
+                error: error instanceof Error ? error.message : String(error)
+            };
+        }
+    }
+
+    /**
      * Preview file paths without generating or saving
      */
-    public previewFilePaths(params: ICharacterParams | IEventParams | IScreenPassageParams | IEventPassagesParams): string {
+    public previewFilePaths(params: ICharacterParams | IEventParams | IScreenPassageParams | IEventPassagesParams | ILocationParams | ISideCharacterParams): string {
         if ('characterId' in params && !('eventId' in params)) {
             // Character params
             return this.fileSaver.getCharacterFilePath(params.characterId);
+        } else if ('locationId' in params) {
+            // Location params
+            return this.fileSaver.getLocationFilePath((params as ILocationParams).locationId);
+        } else if ('sideCharacterId' in params) {
+            // Side character params
+            return this.fileSaver.getSideCharacterFilePath((params as ISideCharacterParams).sideCharacterId);
         } else if ('eventId' in params && !('characterId' in params) && !('passageId' in params)) {
             // Could be Event params or EventPassages params
             if ('title' in params || 'description' in params) {
@@ -130,7 +180,7 @@ export class TemplateManager {
     /**
      * Check if files would overwrite existing files
      */
-    public async checkForConflicts(params: ICharacterParams | IEventParams | IScreenPassageParams | IEventPassagesParams): Promise<{
+    public async checkForConflicts(params: ICharacterParams | IEventParams | IScreenPassageParams | IEventPassagesParams | ILocationParams | ISideCharacterParams): Promise<{
         hasConflict: boolean;
         existingFilePath?: string;
     }> {
@@ -164,3 +214,5 @@ export class TemplateManager {
         return this.fileSaver;
     }
 }
+
+export const templateManager = new TemplateManager();

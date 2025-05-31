@@ -1,7 +1,7 @@
 import path from 'path';
 import { config } from '../WFServerConfig';
-import { charactersDir, eventsDir, passageFilePostfixScreen } from '../Paths';
-import { ICharacterParams, IEventParams, IEventPassagesParams, IScreenPassageParams } from './TempalteGenerator';
+import { charactersDir, eventsDir, passageFilePostfixScreen, locationsDir, sideCharacterDir, locationFilePostfix } from '../Paths';
+import { ICharacterParams, IEventParams, IEventPassagesParams, IScreenPassageParams, ILocationParams, ISideCharacterParams } from './TempalteGenerator';
 
 export interface ISaveResult {
     success: boolean;
@@ -117,6 +117,58 @@ export class TemplateFileSaver {
     }
 
     /**
+     * Saves a location file to the locations directory
+     * Path: /src/data/locations/{locationId}.location.ts
+     */
+    public async saveLocation(params: ILocationParams, content: string): Promise<ISaveResult> {
+        try {
+            const fileName = `${params.locationId}${locationFilePostfix}`;
+            const filePath = path.join(locationsDir(), fileName);
+
+            this.ensureDirectoryExists(locationsDir());
+
+            config.fileSystem.writeFileSync(filePath, content, 'utf8');
+
+            return {
+                success: true,
+                filePath
+            };
+        } catch (error) {
+            return {
+                success: false,
+                filePath: '',
+                error: error instanceof Error ? error.message : String(error)
+            };
+        }
+    }
+
+    /**
+     * Saves a side character file to the side characters directory
+     * Path: /src/data/sideCharacters/{sideCharacterId}.ts
+     */
+    public async saveSideCharacter(params: ISideCharacterParams, content: string): Promise<ISaveResult> {
+        try {
+            const fileName = `${params.sideCharacterId}.ts`;
+            const filePath = path.join(sideCharacterDir(), fileName);
+
+            this.ensureDirectoryExists(sideCharacterDir());
+
+            config.fileSystem.writeFileSync(filePath, content, 'utf8');
+
+            return {
+                success: true,
+                filePath
+            };
+        } catch (error) {
+            return {
+                success: false,
+                filePath: '',
+                error: error instanceof Error ? error.message : String(error)
+            };
+        }
+    }
+
+    /**
      * Ensures a directory exists, creating it recursively if necessary
      */
     private ensureDirectoryExists(dirPath: string): void {
@@ -155,6 +207,20 @@ export class TemplateFileSaver {
     }
 
     /**
+     * Gets the file path that would be used for a location (without saving)
+     */
+    public getLocationFilePath(locationId: string): string {
+        return path.join(locationsDir(), `${locationId}${locationFilePostfix}`);
+    }
+
+    /**
+     * Gets the file path that would be used for a side character (without saving)
+     */
+    public getSideCharacterFilePath(sideCharacterId: string): string {
+        return path.join(sideCharacterDir(), `${sideCharacterId}.ts`);
+    }
+
+    /**
      * Checks if a file already exists at the target location
      */
     public fileExists(filePath: string): boolean {
@@ -183,6 +249,24 @@ export class TemplateFileSaver {
             }
         } catch (error) {
             errors.push(`Events directory: ${error instanceof Error ? error.message : String(error)}`);
+        }
+
+        try {
+            // Check if locations directory is accessible
+            if (!config.fileSystem.existsSync(locationsDir())) {
+                this.ensureDirectoryExists(locationsDir());
+            }
+        } catch (error) {
+            errors.push(`Locations directory: ${error instanceof Error ? error.message : String(error)}`);
+        }
+
+        try {
+            // Check if side characters directory is accessible
+            if (!config.fileSystem.existsSync(sideCharacterDir())) {
+                this.ensureDirectoryExists(sideCharacterDir());
+            }
+        } catch (error) {
+            errors.push(`Side characters directory: ${error instanceof Error ? error.message : String(error)}`);
         }
 
         return {

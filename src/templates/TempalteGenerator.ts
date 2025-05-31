@@ -3,6 +3,8 @@ import { CharacterTemplateVariables } from './character.template';
 import { EventTemplateVariables } from './event.template';
 import { EventPassagesTemplateVariables } from './eventPassages.template';
 import { PassageScreenTemplateVariables } from './passage.screen.template';
+import { LocationTemplateVariables } from './location.template';
+import { SideCharacterTemplateVariables } from './sideCharacter.template';
 
 export interface ICharacterParams {
     characterId: string;
@@ -40,6 +42,26 @@ export interface IScreenPassageParams {
 
 export interface IEventPassagesParams {
     eventId: string;
+}
+
+export interface ILocationParams {
+    locationId: string;
+    locationName?: string;
+    description?: string;
+    localCharacters?: string;
+    initObjectContent?: string;
+    locationDataTypeContent?: string;
+}
+
+export interface ISideCharacterParams {
+    sideCharacterId: string;
+    sideCharacterName?: string;
+    description?: string;
+    inventory?: string;
+    location?: string;
+    isDead?: boolean;
+    initObjectContent?: string;
+    sideCharacterDataTypeContent?: string;
 }
 
 export class TemplateGenerator {
@@ -115,6 +137,40 @@ export class TemplateGenerator {
     }
 
     /**
+     * Creates a location file using the location template
+     */
+    public async createLocation(params: ILocationParams): Promise<string> {
+        const template = this.loadTemplate('location.template');
+
+        const variables = new LocationTemplateVariables(
+            params.locationId,
+            params.locationName,
+            params.description,
+            params.localCharacters
+        );
+
+        return variables.generateLocationCode(template, params.initObjectContent, params.locationDataTypeContent);
+    }
+
+    /**
+     * Creates a side character file using the side character template
+     */
+    public async createSideCharacter(params: ISideCharacterParams): Promise<string> {
+        const template = this.loadTemplate('sideCharacter.template');
+
+        const variables = new SideCharacterTemplateVariables(
+            params.sideCharacterId,
+            params.sideCharacterName,
+            params.description,
+            params.inventory,
+            params.location,
+            params.isDead
+        );
+
+        return variables.generateSideCharacterCode(template, params.initObjectContent, params.sideCharacterDataTypeContent);
+    }
+
+    /**
      * Creates a character with minimal required parameters
      */
     public async createSimpleCharacter(characterId: string, characterName?: string): Promise<string> {
@@ -133,6 +189,20 @@ export class TemplateGenerator {
      */
     public async createSimpleEventPassages(eventId: string): Promise<string> {
         return this.createEventPassages({ eventId });
+    }
+
+    /**
+     * Creates a location with minimal required parameters
+     */
+    public async createSimpleLocation(locationId: string, locationName?: string): Promise<string> {
+        return this.createLocation({ locationId, locationName });
+    }
+
+    /**
+     * Creates a side character with minimal required parameters
+     */
+    public async createSimpleSideCharacter(sideCharacterId: string, sideCharacterName?: string): Promise<string> {
+        return this.createSideCharacter({ sideCharacterId, sideCharacterName });
     }
 
     /**
