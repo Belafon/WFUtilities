@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { EventUpdateRequest, SetTimeRequest } from '../../types';
 import { eventManager } from '../services/event.manager';
 import { logger } from '../../utils/logger';
+import { config } from '../../WFServerConfig';
 
 /**
  * @desc    Update an event
@@ -21,6 +22,12 @@ export const updateEvent = async (req: Request<{ eventId: string }>, res: Respon
         message: `Event ${eventId} updated successfully (demo mode)`,
       });
       return;
+    }
+
+    if (!eventId || eventId.trim() === '') {
+      const errorMessage = 'Event ID cannot be empty.';
+      config.editorAdapter.showErrorNotification(errorMessage);
+      throw new Error(errorMessage);
     }
 
     await eventManager.updateEvent(eventId, eventData);

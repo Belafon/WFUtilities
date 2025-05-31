@@ -6,6 +6,10 @@ import { TypeScriptCodeBuilder, TypeScriptObjectBuilder } from '../../typescript
 import { CodeLiteral, ObjectToStringConverter } from '../../utils/objectToStringConverter'; // Adjust path as necessary
 import { config } from '../../WFServerConfig';
 import { logger } from '../../utils/logger';
+import { templateManager } from '../../templates/TemplateManager';
+import { createServer } from '../../index';
+import { IEventParams as TEventParams } from '../../templates/TempalteGenerator';
+import { registerFileManager } from '../../register/RegisterFileManager';
 
 /**
  * Event Manager Service
@@ -26,18 +30,14 @@ export class EventManager {
    * @param eventData The data to update the event with.
    */
   public async updateEvent(eventId: string, eventData: EventUpdateRequest): Promise<void> {
-    if (!eventId || eventId.trim() === '') {
-      const errorMessage = 'Event ID cannot be empty.';
-      config.editorAdapter.showErrorNotification(errorMessage);
-      throw new Error(errorMessage);
-    }
 
     const eventFilePath = getEventFilePath(eventId);
 
+    let eventFileContent: string | null = null;
     if (!config.fileSystem.existsSync(eventFilePath)) {
-      const errorMessage = `Event file not found at ${eventFilePath}`;
-      config.editorAdapter.showErrorNotification(errorMessage);
-      throw new Error(errorMessage);
+      
+      // create new event
+      eventFileContent = await this.createNewEvent(eventId, eventFileContent, eventFilePath);
     }
 
     try {
@@ -86,6 +86,42 @@ export class EventManager {
       const errorMessage = `Failed to update event '${eventId}': ${error instanceof Error ? error.message : String(error)}`;
       config.editorAdapter.showErrorNotification(errorMessage);
       console.error(errorMessage, error);
+      throw error;
+    }
+  }
+
+  private async createNewEvent(eventId: string, eventFileContent: string | null, eventFilePath: string) {
+    try {
+
+      // create event file from template
+      const templateGenerationOutput = await templateManager.generateAndSaveEvent({
+        eventId: eventId,
+      });
+      if (!templateGenerationOutput.success) {
+        const errorMessage = `Failed to create new event file for '${eventId}': ${templateGenerationOutput.error}`;
+        config.editorAdapter.showErrorNotification(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      eventFileContent = templateGenerationOutput.content;
+
+      // add eventPassages file from template
+      const eventPassagesFileGenerationOutput = await templateManager.generateAndSaveEventPassages({
+        eventId: eventId
+      });
+      if (!eventPassagesFileGenerationOutput.success) {
+        const errorMessage = `Failed to create new event passages file for '${eventId}': ${eventPassagesFileGenerationOutput.error}`;
+        config.editorAdapter.showErrorNotification(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      // add event to register
+      await registerFileManager.addEventToRegister(eventId, eventFilePath);
+      return eventFileContent;
+    } catch (error) {
+      this.deleteEvent(eventId).catch((err) => {
+        console.error(`Failed to rollback event deletion for '${eventId}':`, err);
+      });
       throw error;
     }
   }
@@ -171,9 +207,9 @@ export class EventManager {
       } else {
         detailMessage = String(error);
       }
-      
+
       const errorMessageText = `Failed to open event file ${eventFilePath}: ${detailMessage}`;
-      
+
       config.editorAdapter.showErrorNotification(errorMessageText);
       console.error(`Error opening event file ${eventFilePath}:`, error);
       logger.error(`Error opening event file ${eventFilePath}:`, error);
