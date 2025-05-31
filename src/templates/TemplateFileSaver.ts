@@ -1,7 +1,7 @@
 import path from 'path';
 import { config } from '../WFServerConfig';
-import { ICharacterParams, IEventParams, IScreenPassageParams } from './TempalteGenerator';
 import { charactersDir, eventsDir, passageFilePostfixScreen } from '../Paths';
+import { ICharacterParams, IEventParams, IEventPassagesParams, IScreenPassageParams } from './TempalteGenerator';
 
 export interface ISaveResult {
     success: boolean;
@@ -19,13 +19,11 @@ export class TemplateFileSaver {
         try {
             const fileName = `${params.characterId}.ts`;
             const filePath = path.join(charactersDir(), fileName);
-            
-            // Ensure the characters directory exists
+
             this.ensureDirectoryExists(charactersDir());
-            
-            // Write the file
+
             config.fileSystem.writeFileSync(filePath, content, 'utf8');
-            
+
             return {
                 success: true,
                 filePath
@@ -47,13 +45,11 @@ export class TemplateFileSaver {
         try {
             const filePath = this.getEventFilePath(params.eventId);
             const eventDir = path.dirname(filePath);
-            
-            // Ensure the event directory exists
+
             this.ensureDirectoryExists(eventDir);
-            
-            // Write the file
+
             config.fileSystem.writeFileSync(filePath, content, 'utf8');
-            
+
             return {
                 success: true,
                 filePath
@@ -76,13 +72,37 @@ export class TemplateFileSaver {
             const passagesDir = path.join(eventsDir(), params.eventId, `${params.characterId}.passages`);
             const fileName = `${params.passageId}${passageFilePostfixScreen}`;
             const filePath = path.join(passagesDir, fileName);
-            
-            // Ensure the passages directory exists
+
             this.ensureDirectoryExists(passagesDir);
-            
-            // Write the file
+
             config.fileSystem.writeFileSync(filePath, content, 'utf8');
-            
+
+            return {
+                success: true,
+                filePath
+            };
+        } catch (error) {
+            return {
+                success: false,
+                filePath: '',
+                error: error instanceof Error ? error.message : String(error)
+            };
+        }
+    }
+
+    /**
+     * Saves an event passages file to the events directory
+     * Path: /src/data/events/{eventId}/{eventId}.passages.ts
+     */
+    public async saveEventPassages(params: IEventPassagesParams, content: string): Promise<ISaveResult> {
+        try {
+            const filePath = this.getEventPassagesFilePath(params.eventId);
+            const eventDir = path.dirname(filePath);
+
+            this.ensureDirectoryExists(eventDir);
+
+            config.fileSystem.writeFileSync(filePath, content, 'utf8');
+
             return {
                 success: true,
                 filePath
@@ -116,7 +136,14 @@ export class TemplateFileSaver {
      * Gets the file path that would be used for an event (without saving)
      */
     public getEventFilePath(eventId: string): string {
-        return this.getEventFilePath(eventId);
+        return path.join(eventsDir(), eventId, `${eventId}.event.ts`);
+    }
+
+    /**
+     * Gets the file path that would be used for an event passages file (without saving)
+     */
+    public getEventPassagesFilePath(eventId: string): string {
+        return path.join(eventsDir(), eventId, `${eventId}.passages.ts`);
     }
 
     /**
@@ -139,7 +166,7 @@ export class TemplateFileSaver {
      */
     public validateDirectories(): { valid: boolean; errors: string[] } {
         const errors: string[] = [];
-        
+
         try {
             // Check if characters directory is accessible
             if (!config.fileSystem.existsSync(charactersDir())) {

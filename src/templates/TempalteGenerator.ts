@@ -1,6 +1,7 @@
 import { config } from '../WFServerConfig';
 import { CharacterTemplateVariables } from './character.template';
 import { EventTemplateVariables } from './event.template';
+import { EventPassagesTemplateVariables } from './eventPassages.template';
 import { PassageScreenTemplateVariables } from './passage.screen.template';
 
 export interface ICharacterParams {
@@ -35,6 +36,10 @@ export interface IScreenPassageParams {
     eventId: string;
     characterId: string;
     passageId: string;
+}
+
+export interface IEventPassagesParams {
+    eventId: string;
 }
 
 export class TemplateGenerator {
@@ -97,6 +102,19 @@ export class TemplateGenerator {
     }
 
     /**
+     * Creates an event passages file using the event passages template
+     */
+    public async createEventPassages(params: IEventPassagesParams): Promise<string> {
+        const template = this.loadTemplate('event.passages.template');
+
+        const variables = new EventPassagesTemplateVariables(
+            params.eventId
+        );
+
+        return variables.generateEventPassagesCode(template);
+    }
+
+    /**
      * Creates a character with minimal required parameters
      */
     public async createSimpleCharacter(characterId: string, characterName?: string): Promise<string> {
@@ -110,6 +128,12 @@ export class TemplateGenerator {
         return this.createEvent({ eventId, title });
     }
 
+    /**
+     * Creates an empty event passages file with minimal required parameters
+     */
+    public async createSimpleEventPassages(eventId: string): Promise<string> {
+        return this.createEventPassages({ eventId });
+    }
 
     /**
      * Loads a template file and returns its content

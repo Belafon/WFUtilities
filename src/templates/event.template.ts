@@ -15,62 +15,50 @@ export class EventTemplateVariables {
         this.eventIdCapitalized = eventId.charAt(0).toUpperCase() + eventId.slice(1);
     }
 
-    // Main event export name
     public get mainEventFunction(): string {
         return `${this.eventId}Event`;
     }
 
-    // Event title (defaults to capitalized eventId + " Event")
     public get eventTitle(): string {
         return this.title || `${this.eventIdCapitalized} Event`;
     }
 
-    // Event description (defaults to template format)
     public get eventDescription(): string {
         return this.description || `A ${this.eventIdCapitalized} event is happening`;
     }
 
-    // TypeScript type name for event data
     public get eventDataTypeName(): string {
         return `T${this.eventIdCapitalized}EventData`;
     }
 
-    // Quoted eventId for the object literal
     public get quotedEventId(): string {
         return `'${this.eventId}'`;
     }
 
-    // Quoted location
     public get quotedLocation(): string {
         return `'${this.location}'`;
     }
 
-    // Quoted time start
     public get quotedTimeStart(): string {
         return `'${this.timeStart}'`;
     }
 
-    // Quoted time end  
     public get quotedTimeEnd(): string {
         return `'${this.timeEnd}'`;
     }
 
-    // Quoted child condition
     public get quotedChildCondition(): string {
         return `'${this.childCondition}'`;
     }
 
-    // Child event import (the variable name)
     public get childEventImport(): string {
         return this.childEventName;
     }
 
-    // Child event import path
     public get childEventPath(): string {
         return this.childEventImportPath;
     }
 
-    // Generate the final code by replacing template variables
     public generateEventCode(template: string, initObjectContent: string = '', eventDataTypeContent: string = ''): string {
         const defaultInitContent = initObjectContent || `mojePromena: {
             time: 0,

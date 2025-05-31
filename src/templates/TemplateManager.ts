@@ -1,4 +1,4 @@
-import { ICharacterParams, IEventParams, IScreenPassageParams, TemplateGenerator } from './TempalteGenerator';
+import { ICharacterParams, IEventParams, IScreenPassageParams, IEventPassagesParams, TemplateGenerator } from './TempalteGenerator';
 import { TemplateFileSaver, ISaveResult } from './TemplateFileSaver';
 
 export interface IGenerateAndSaveResult extends ISaveResult {
@@ -81,15 +81,43 @@ export class TemplateManager {
     }
 
     /**
+     * Generates and saves an event passages file in one operation
+     */
+    public async generateAndSaveEventPassages(params: IEventPassagesParams): Promise<IGenerateAndSaveResult> {
+        try {
+            const content = await this.generator.createEventPassages(params);
+            const saveResult = await this.fileSaver.saveEventPassages(params, content);
+            
+            return {
+                ...saveResult,
+                content
+            };
+        } catch (error) {
+            return {
+                success: false,
+                filePath: '',
+                content: '',
+                error: error instanceof Error ? error.message : String(error)
+            };
+        }
+    }
+
+    /**
      * Preview file paths without generating or saving
      */
-    public previewFilePaths(params: ICharacterParams | IEventParams | IScreenPassageParams): string {
+    public previewFilePaths(params: ICharacterParams | IEventParams | IScreenPassageParams | IEventPassagesParams): string {
         if ('characterId' in params && !('eventId' in params)) {
             // Character params
             return this.fileSaver.getCharacterFilePath(params.characterId);
-        } else if ('eventId' in params && !('characterId' in params)) {
-            // Event params
-            return this.fileSaver.getEventFilePath((params as IEventParams).eventId);
+        } else if ('eventId' in params && !('characterId' in params) && !('passageId' in params)) {
+            // Could be Event params or EventPassages params
+            if ('title' in params || 'description' in params) {
+                // Event params (has properties specific to events)
+                return this.fileSaver.getEventFilePath((params as IEventParams).eventId);
+            } else {
+                // EventPassages params
+                return this.fileSaver.getEventPassagesFilePath((params as IEventPassagesParams).eventId);
+            }
         } else if ('eventId' in params && 'characterId' in params && 'passageId' in params) {
             // Screen passage params
             const p = params as IScreenPassageParams;
@@ -102,7 +130,7 @@ export class TemplateManager {
     /**
      * Check if files would overwrite existing files
      */
-    public async checkForConflicts(params: ICharacterParams | IEventParams | IScreenPassageParams): Promise<{
+    public async checkForConflicts(params: ICharacterParams | IEventParams | IScreenPassageParams | IEventPassagesParams): Promise<{
         hasConflict: boolean;
         existingFilePath?: string;
     }> {
