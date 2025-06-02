@@ -38,32 +38,70 @@ export class TypeScriptObjectBuilder {
 
 	private handleEmptyObjectAddition(propertyName: string, newValue: string, currentContent: string, contentStart: number, contentEnd: number): void {
 		const originalHadNewline = currentContent.includes('\n');
-		const isTrulyEmptyAndFormatted = originalHadNewline && currentContent.trim() === '';
+		const newPropertySegment = `${propertyName}: ${newValue}`;
 
 		let newPropertyFullText: string;
 
-		if (isTrulyEmptyAndFormatted) {
-			// Multi-line empty object like {\n  }
-			const indentation = this.detectIndentation();
-			const baseIndentation = this.detectBaseIndentation();
-			newPropertyFullText = `\n${indentation}${propertyName}: ${newValue}\n${baseIndentation}`;
+		if (originalHadNewline) {
+			const indentation = this.detectIndentation(); 
+			const baseIndentation = this.detectBaseIndentation(); 
+			const propertyLine = `${indentation}${newPropertySegment}`;
+			
+			if (currentContent.trim() === '') { 
+				// currentContent was purely whitespace (newlines, spaces)
+				newPropertyFullText = `\n${propertyLine}\n${baseIndentation}`;
+			} else {
+				// currentContent has comments or other non-whitespace content.
+				// We want to preserve this content, ensure it ends with a newline,
+				// then add the new property, then add the base indentation for the closing brace.
+
+				let effectiveCurrentContent = currentContent;
+
+				// Trim trailing spaces/tabs from the very end of currentContent, 
+				// but be careful to keep essential newlines that separate content from the closing brace.
+				effectiveCurrentContent = currentContent.trimEnd(); // Removes trailing spaces/tabs/newlines from the very end.
+
+				// If trimEnd() removed everything because currentContent was e.g. "\n   \n",
+				// but currentContent.trim() was NOT empty (e.g. it had comments like "\n //c \n"),
+				// then trimEnd() was too aggressive. We must preserve the comments.
+				if (effectiveCurrentContent === '' && currentContent.trim() !== '') {
+					// This implies currentContent had comments but they were surrounded by enough whitespace
+					// that trimEnd() removed them. Revert to a less aggressive trim.
+					// Find the last non-whitespace character and take everything up to it, then add a newline.
+					let lastCharIndex = -1;
+					for(let k=currentContent.length -1; k >=0; k--) {
+						if (currentContent[k].trim() !== '') {
+							lastCharIndex = k;
+							break;
+						}
+					}
+					if (lastCharIndex !== -1) {
+						effectiveCurrentContent = currentContent.substring(0, lastCharIndex + 1);
+					} else {
+						// Should not happen if currentContent.trim() !== ''
+						effectiveCurrentContent = currentContent; // fallback
+					}
+				}
+
+				// Ensure the (potentially comment-filled) content ends with a newline.
+				if (effectiveCurrentContent.length > 0 && !effectiveCurrentContent.endsWith('\n')) {
+					effectiveCurrentContent += '\n';
+				}
+				// If effectiveCurrentContent is empty now (e.g. original was "\n \n"), we still want a leading newline for propertyLine.
+				if (effectiveCurrentContent.length === 0 && currentContent.length > 0 && currentContent.includes('\n')) {
+					effectiveCurrentContent = "\n";
+				}
+
+				newPropertyFullText = `${effectiveCurrentContent}${propertyLine}\n${baseIndentation}`;
+			}
+
 		} else if (this.originalText.substring(this.objectGroup.start, this.objectGroup.end) === '{}') {
 			// Exactly "{}" - no spaces
-			newPropertyFullText = `${propertyName}: ${newValue}`;
+			newPropertyFullText = `${newPropertySegment}`; 
 		} else {
-			// Object with spaces like "{ }" or "{   }"
-			const hasLeadingSpace = currentContent.startsWith(' ');
-			const hasTrailingSpace = currentContent.endsWith(' ');
-			
-			if (hasLeadingSpace && hasTrailingSpace) {
-				newPropertyFullText = ` ${propertyName}: ${newValue} `;
-			} else if (hasLeadingSpace) {
-				newPropertyFullText = ` ${propertyName}: ${newValue}`;
-			} else if (hasTrailingSpace) {
-				newPropertyFullText = `${propertyName}: ${newValue} `;
-			} else {
-				newPropertyFullText = `${propertyName}: ${newValue}`;
-			}
+			// Single-line object, possibly with spaces like "{ }" or "{   }" but no newlines in currentContent
+			// currentContent might be " " or "   "
+			newPropertyFullText = ` ${newPropertySegment} `; // Default to adding with surrounding spaces
 		}
 
 		this.parentBuilder.addEdit(contentStart, contentEnd, newPropertyFullText);

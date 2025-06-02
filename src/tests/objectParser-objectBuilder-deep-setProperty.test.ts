@@ -192,10 +192,9 @@ export const register = {
         newToggle: true
     }
 };`;
-        // Normalizing for this test, as exact spacing within empty can be tricky.
-        assert.ok(
-            result.replace(/\s+/g, ' ').includes("features: { newToggle: true }"),
-            `Adding to empty nested object failed. Got:\n${result}`
+        // A more precise assertion:
+        assert.strictEqual(result.trim(), expected.trim(), 
+            `Adding to empty nested object failed. Expected:\n${expected}\nGot:\n${result}`
         );
     });
 
