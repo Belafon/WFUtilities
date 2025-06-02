@@ -1,9 +1,9 @@
 import * as assert from 'assert';
 import {
     TypeScriptCodeBuilder,
-    TypeScriptObjectBuilder,
     TypeScriptArrayBuilder, // For findNestedProperty returning array builder
 } from '../typescriptObjectParser/ObjectParser'; // Adjust path as needed
+import { TypeScriptObjectBuilder } from "../typescriptObjectParser/TypeScriptObjectBuilder";
 
 // Helper to create a TypeScriptCodeBuilder instance for testing
 function createCodeBuilder(code: string): TypeScriptCodeBuilder {

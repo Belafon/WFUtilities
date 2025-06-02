@@ -1,5 +1,6 @@
 import * as assert from 'assert';
-import { ParsedItemToken, SourcePointer, TokenGroup, TokenGrouper, Tokenizer, TokenStream, TypeScriptArrayBuilder, TypeScriptClassBuilder, TypeScriptCodeBuilder, TypeScriptInterfaceBuilder, TypeScriptObjectBuilder, TypeScriptTypeBuilder } from '../typescriptObjectParser/ObjectParser';
+import { ParsedItemToken, SourcePointer, TokenGroup, TokenGrouper, Tokenizer, TokenStream, TypeScriptArrayBuilder, TypeScriptClassBuilder, TypeScriptCodeBuilder, TypeScriptInterfaceBuilder, TypeScriptTypeBuilder } from '../typescriptObjectParser/ObjectParser';
+import { TypeScriptObjectBuilder } from "../typescriptObjectParser/TypeScriptObjectBuilder";
 function printTokenGroupStructure(group: TokenGroup | null | undefined, indent: number = 0): string {
   if (!group) return `${' '.repeat(indent * 2)}NULL_OR_UNDEFINED`;
 

@@ -45,6 +45,18 @@ export const racesDir = () => path.join(workspaceFolders(), 'src', 'data', 'race
 export const mapsDir = () => path.join(workspaceFolders(), 'src', 'data', 'maps');
 export const mapFileExtension = '.json';
 
+// Templates functionality
+export const templatesDir = () => path.join(workspaceFolders(), 'src', 'templates');
+
+/**
+ * Gets the full path to a template file
+ * @param templateFileName The name of the template file (e.g., 'character.template')
+ * @returns The full path to the template file
+ */
+export const getTemplateFilePath = (templateFileName: string): string => {
+  return path.join(templatesDir(), templateFileName);
+};
+
 /**
  * Validates that the workspace is properly configured and accessible
  * @returns true if workspace is valid, false otherwise

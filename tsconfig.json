@@ -13,6 +13,14 @@
       "declaration": true,                // Generate .d.ts files for library
       "declarationMap": true,             // Generate sourcemaps for .d.ts files
     },
+    "ts-node": {
+      "esm": false,
+      "transpileOnly": true,
+      "compilerOptions": {
+        "module": "CommonJS",
+        "moduleResolution": "node"
+      }
+    },
     "include": [
       "src/**/*"                          // Which files to include in compilation
     ],

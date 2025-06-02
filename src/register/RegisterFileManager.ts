@@ -181,7 +181,7 @@ export class RegisterFileManager {
      * Adds an import statement to the top of the file
      */
     private async addImportStatement(codeBuilder: TypeScriptCodeBuilder, importName: string, importPath: string): Promise<void> {
-        codeBuilder.insertCodeAtIndex(0, `import { ${importName} } from '${importPath}';\n`);
+        codeBuilder.insertCodeAtIndex(0, `import { ${importName} } from '${importPath}';`);
     }
 
     /**

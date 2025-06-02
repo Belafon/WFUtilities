@@ -1,0 +1,19 @@
+import { TLocation } from 'types/TLocation';
+import { applyFormatting } from 'code/utils/translations';
+void applyFormatting;
+
+export const {mainLocationFunction}: TLocation<{quotedLocationId}> = {
+    id: {quotedLocationId},
+    name: _({quotedLocationName}),
+    description: `{description}`,
+    
+    localCharacters: {localCharacters},
+    
+    init: {
+        {initObjectContent}
+    },
+};
+
+export type {locationDataTypeName} = {
+    {locationDataTypeContent}
+};

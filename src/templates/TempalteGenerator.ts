@@ -1,3 +1,4 @@
+import path from 'path';
 import { config } from '../WFServerConfig';
 import { CharacterTemplateVariables } from './character.template';
 import { EventTemplateVariables } from './event.template';
@@ -65,12 +66,48 @@ export interface ISideCharacterParams {
 }
 
 export class TemplateGenerator {
+    
+    /**
+     * Gets the path to the templates directory
+     */
+    private getTemplatesDir(): string {
+        try {
+            // First try to get from workspace (for development in consuming projects)
+            const workspaceFolder = config.workspaceAdapter.getWorkspaceFolderPath();
+            if (workspaceFolder) {
+                const workspaceTemplatesDir = path.join(workspaceFolder, 'src', 'templates');
+                if (config.fileSystem.existsSync(workspaceTemplatesDir)) {
+                    return workspaceTemplatesDir;
+                }
+            }
+        } catch (error) {
+            // Workspace adapter failed, continue to other methods
+        }
+        
+        // For library usage: find templates relative to this module
+        const currentDir = __dirname;
+        
+        // Check if we're in the library's compiled dist directory
+        if (currentDir.includes('dist')) {
+            // When used as a library: dist/templates should exist
+            const libTemplatesDir = path.join(currentDir, '..', 'templates');
+            if (config.fileSystem.existsSync(libTemplatesDir)) {
+                return libTemplatesDir;
+            }
+            
+            // Fallback for source directory access
+            return path.join(currentDir, '..', '..', 'src', 'templates');
+        } else {
+            // Development mode: we're in src/templates
+            return currentDir;
+        }
+    }
 
     /**
      * Creates a character file using the character template
      */
     public async createCharacter(params: ICharacterParams): Promise<string> {
-        const template = this.loadTemplate('character.template');
+        const template = this.loadTemplate('character.hbs');
 
         const variables = new CharacterTemplateVariables(
             params.characterId,
@@ -91,7 +128,7 @@ export class TemplateGenerator {
      * Creates an event file using the event template
      */
     public async createEvent(params: IEventParams): Promise<string> {
-        const template = this.loadTemplate('event.template');
+        const template = this.loadTemplate('event.hbs');
 
         const variables = new EventTemplateVariables(
             params.eventId,
@@ -112,7 +149,7 @@ export class TemplateGenerator {
      * Creates a screen passage file using the passage screen template
      */
     public async createScreenPassage(params: IScreenPassageParams): Promise<string> {
-        const template = this.loadTemplate('passage.screen.template');
+        const template = this.loadTemplate('passage.screen.hbs');
 
         const variables = new PassageScreenTemplateVariables(
             params.eventId,
@@ -127,7 +164,7 @@ export class TemplateGenerator {
      * Creates an event passages file using the event passages template
      */
     public async createEventPassages(params: IEventPassagesParams): Promise<string> {
-        const template = this.loadTemplate('event.passages.template');
+        const template = this.loadTemplate('eventPassages.hbs');
 
         const variables = new EventPassagesTemplateVariables(
             params.eventId
@@ -140,7 +177,7 @@ export class TemplateGenerator {
      * Creates a location file using the location template
      */
     public async createLocation(params: ILocationParams): Promise<string> {
-        const template = this.loadTemplate('location.template');
+        const template = this.loadTemplate('location.hbs');
 
         const variables = new LocationTemplateVariables(
             params.locationId,
@@ -156,7 +193,7 @@ export class TemplateGenerator {
      * Creates a side character file using the side character template
      */
     public async createSideCharacter(params: ISideCharacterParams): Promise<string> {
-        const template = this.loadTemplate('sideCharacter.template');
+        const template = this.loadTemplate('sideCharacter.hbs');
 
         const variables = new SideCharacterTemplateVariables(
             params.sideCharacterId,
@@ -210,10 +247,14 @@ export class TemplateGenerator {
      */
     private loadTemplate(templateFileName: string): string {
         try {
-            const templateContent = config.fileSystem.readFileSync(templateFileName, 'utf8');
+            const templatesDir = this.getTemplatesDir();
+            const templatePath = path.join(templatesDir, templateFileName);
+            const templateContent = config.fileSystem.readFileSync(templatePath, 'utf8');
             return templateContent;
         } catch (error) {
-            throw new Error(`Failed to load template file: ${templateFileName}. Error: ${error}`);
+            const templatesDir = this.getTemplatesDir();
+            const templatePath = path.join(templatesDir, templateFileName);
+            throw new Error(`Failed to load template file: ${templatePath}. Error: ${error}`);
         }
     }
 }

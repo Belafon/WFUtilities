@@ -8,7 +8,8 @@ import {
 } from '../../types'; // Adjust path as necessary
 import { eventsDir, evnetPassagesFilePostfixWithoutFileType as eventPassagesFilePostfixWithoutFileType, passageFilePostfix, passageFilePostfixScreen, passageFilePostfixTransition, passageFilePostfixLinear } from '../../Paths';
 import { DefaultEditorAdapter, EditorAdapter } from '../adapters/editorAdapter';
-import { TokenGroup, TypeScriptCodeBuilder, TypeScriptObjectBuilder } from '../../typescriptObjectParser/ObjectParser';
+import { TokenGroup, TypeScriptCodeBuilder } from '../../typescriptObjectParser/ObjectParser';
+import { TypeScriptObjectBuilder } from "../../typescriptObjectParser/TypeScriptObjectBuilder";
 // Assuming CodeLiteral and ObjectToStringConverter are in this path or similar
 import { CodeLiteral, ObjectToStringConverter } from '../../utils/objectToStringConverter';
 import { config } from '../../WFServerConfig';

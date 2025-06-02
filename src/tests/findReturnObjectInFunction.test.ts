@@ -10,9 +10,9 @@ import {
   TypeScriptClassBuilder,
   TypeScriptCodeBuilder,
   TypeScriptInterfaceBuilder,
-  TypeScriptObjectBuilder,
   TypeScriptTypeBuilder
 } from '../typescriptObjectParser/ObjectParser'; // Adjust path as necessary
+import { TypeScriptObjectBuilder } from "../typescriptObjectParser/TypeScriptObjectBuilder";
 
 // Helper to create a TypeScriptCodeBuilder for findReturnObjectInFunction tests
 async function createCodeBuilderForFunctionTest(functionDefinition: string): Promise<TypeScriptCodeBuilder> {

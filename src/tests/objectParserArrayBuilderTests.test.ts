@@ -2,8 +2,8 @@ import * as assert from 'assert';
 import {
   TypeScriptArrayBuilder,
   TypeScriptCodeBuilder,
-  TypeScriptObjectBuilder,
 } from '../typescriptObjectParser/ObjectParser'; // Adjust path as needed
+import { TypeScriptObjectBuilder } from "../typescriptObjectParser/TypeScriptObjectBuilder";
 
 // Helper function to create an ArrayBuilder instance for testing
 async function createArrayBuilder(

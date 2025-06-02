@@ -1,7 +1,8 @@
 import path from 'path';
 import { EventUpdateRequest, SetTimeRequest, TimeRange } from '../../types';
 import { eventsDir, eventFilePostfix, getEventFilePath } from '../../Paths';
-import { TypeScriptCodeBuilder, TypeScriptObjectBuilder } from '../../typescriptObjectParser/ObjectParser';
+import { TypeScriptCodeBuilder } from '../../typescriptObjectParser/ObjectParser';
+import { TypeScriptObjectBuilder } from "../../typescriptObjectParser/TypeScriptObjectBuilder";
 import { CodeLiteral, ObjectToStringConverter } from '../../utils/objectToStringConverter';
 import { config } from '../../WFServerConfig';
 import { logger } from '../../utils/logger';

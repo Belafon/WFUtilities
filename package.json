@@ -4,6 +4,11 @@
   "description": "Node server library for WorldsFactory",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
   "license": "MIT",
   "scripts": {
     "start": "node dist/server.js",
@@ -11,8 +16,10 @@
     "dev:watch": "yarn nodemon --watch 'src/**/*.ts' --exec 'yarn ts-node' src/server.ts",
     "build": "npm run tsc && npm run copy-files",
     "tsc": "npx tsc",
-    "copy-files": "mkdir -p dist/api/swagger && cp src/api/swagger/openapi.yaml dist/api/swagger/",
-    "test": "npx mocha -r ts-node/register --ui tdd src/tests/**/*.test.ts",
+    "copy-files": "mkdir -p dist/api/swagger && cp src/api/swagger/openapi.yaml dist/api/swagger/ && mkdir -p dist/templates && cp src/templates/*.hbs dist/templates/",
+    "test": "npx mocha -r ts-node/register --ui tdd 'src/tests/**/*.test.ts' --ignore 'src/tests/api-integration*.test.ts'",
+    "test:unit": "npx mocha -r ts-node/register --ui tdd 'src/tests/**/*.test.ts' --ignore 'src/tests/api-integration*.test.ts'",
+    "test:integration": "npx mocha -r ts-node/register --ui tdd src/tests/api-integration*.test.ts",
     "test:watch": "yarn mocha -r ts-node/register --ui tdd --watch --watch-files src/**/*.ts src/tests/**/*.test.ts",
     "prepare": "npm run build",
     "example:basic": "yarn ts-node examples/library-usage.ts",
