@@ -118,6 +118,17 @@ export class Tokenizer {
 				continue;
 			}
 
+			// NEW: Handle comments (before other token types like strings)
+			if (current === '/') {
+				if (this.pointer.peek(1) === '/') {
+					this.consumeSingleLineComment(startPos);
+					continue;
+				} else if (this.pointer.peek(1) === '*') {
+					this.consumeMultiLineComment(startPos);
+					continue;
+				}
+			}
+
 			// 2) Identifiers or keywords
 			if (isIdentifierStart(current)) {
 				this.tokenizeIdentifierOrKeyword(startPos);
@@ -148,6 +159,35 @@ export class Tokenizer {
 			this.tokens.push(token);
 		}
 		return this.tokens;
+	}
+
+	private consumeSingleLineComment(startPos: number): void {
+		this.pointer.moveToNextChar(); // Past first /
+		this.pointer.moveToNextChar(); // Past second /
+		while (!this.pointer.isEOF() && this.pointer.currentChar() !== '\n') {
+			this.pointer.moveToNextChar();
+		}
+		// The newline itself will be consumed as whitespace by the next iteration or consumeWhitespace
+		const endPos = this.pointer.position;
+		// We'll treat comments as whitespace for now, so they are skipped by the TokenGrouper
+		const token = TokenFactory.createToken('whitespace', startPos, endPos);
+		this.tokens.push(token);
+	}
+
+	private consumeMultiLineComment(startPos: number): void {
+		this.pointer.moveToNextChar(); // Past /
+		this.pointer.moveToNextChar(); // Past *
+		while (!this.pointer.isEOF()) {
+			if (this.pointer.currentChar() === '*' && this.pointer.peek(1) === '/') {
+				this.pointer.moveToNextChar(); // Past *
+				this.pointer.moveToNextChar(); // Past /
+				break;
+			}
+			this.pointer.moveToNextChar();
+		}
+		const endPos = this.pointer.position;
+		const token = TokenFactory.createToken('whitespace', startPos, endPos);
+		this.tokens.push(token);
 	}
 
 	private tokenizeNumber(startPos: number): void {
@@ -1533,11 +1573,6 @@ export class TokenGrouper {
 						else if (consumedTypeToken.name === '(') parenDepth++;
 						else if (consumedTypeToken.name === ')') parenDepth--;
 
-						// Add to type annotation string
-						if (consumedTypeToken.name) {
-							typeAnnotation += consumedTypeToken.name + ' ';
-						}
-
 						// If we just completed a return type after an arrow, check if the next token is '='
 						if (continueAfterArrow && braceDepth === 0 && squareDepth === 0 && parenDepth === 0) {
 							tokenStream.consumeWhitespace();
@@ -2038,17 +2073,49 @@ export class TypeScriptCodeBuilder {
 				// We need to find it in the source directly
 				const openBraceToken = variableGroup.tokens[openBraceIndex];
 				let searchPos = openBraceToken.end;
-				let braceDepth = 1;
+				let currentBraceDepth = 1; // Start with 1 for the openBraceToken
 				let closeBracePos = -1;
 
-				while (searchPos < this.originalText.length && braceDepth > 0) {
+				let inString = false;
+				let stringChar = '';
+				let inLineComment = false;
+				let inBlockComment = false;
+
+				while (searchPos < this.originalText.length && currentBraceDepth > 0) {
 					const char = this.originalText[searchPos];
-					if (char === '{') braceDepth++;
-					else if (char === '}') {
-						braceDepth--;
-						if (braceDepth === 0) {
-							closeBracePos = searchPos + 1; // Include the closing brace
-							break;
+					const prevChar = searchPos > 0 ? this.originalText[searchPos - 1] : '';
+					const nextChar = searchPos + 1 < this.originalText.length ? this.originalText[searchPos + 1] : '';
+
+					if (inLineComment) {
+						if (char === '\n') {
+							inLineComment = false;
+						}
+					} else if (inBlockComment) {
+						if (prevChar === '*' && char === '/') { // Check prevChar for '*' before current '/'
+							inBlockComment = false;
+						}
+					} else if (inString) {
+						if (char === stringChar && prevChar !== '\\') {
+							inString = false;
+						}
+					} else { // Not in comment or string
+						if (char === '/' && nextChar === '/') {
+							inLineComment = true;
+							searchPos++; // also skip the second '/'
+						} else if (char === '/' && nextChar === '*') {
+							inBlockComment = true;
+							searchPos++; // also skip the '*'
+						} else if (char === '"' || char === "'") {
+							inString = true;
+							stringChar = char;
+						} else if (char === '{') {
+							currentBraceDepth++;
+						} else if (char === '}') {
+							currentBraceDepth--;
+							if (currentBraceDepth === 0) {
+								closeBracePos = searchPos + 1; // end is exclusive
+								break;
+							}
 						}
 					}
 					searchPos++;
@@ -2063,11 +2130,12 @@ export class TypeScriptCodeBuilder {
 					type: 'ObjectLiteral',
 					start: openBraceToken.start,
 					end: closeBracePos,
-					tokens: [], // We don't need the internal tokens for this use case
+					tokens: [], // Tokens are not essential here as parseProperties uses the text slice
 					children: [],
 					metadata: {}
 				};
 			} else {
+				// Existing logic for when closeBraceIndex is found in variableGroup.tokens
 				const openBraceToken = variableGroup.tokens[openBraceIndex];
 				const closeBraceToken = variableGroup.tokens[closeBraceIndex];
 				objectLiteralGroup = {

@@ -801,22 +801,75 @@ export class TypeScriptObjectBuilder {
 		const content = this.originalText.substring(contentStart, contentEnd);
 		const properties: Array<{ name: string; nameStart: number; nameEnd: number; valueStart: number; valueEnd: number; start: number; end: number; }> = [];
 		let pos = 0; let inString = false; let stringChar = '';
+		let inLineComment = false; let inBlockComment = false;
 		let braceDepth = 0; let bracketDepth = 0; let parenDepth = 0;
 		let propertyFullStart = -1; let nameStart = -1; let nameEnd = -1; let colonPos = -1;
 
 		while (pos < content.length) {
 			const char = content[pos];
-			if (propertyFullStart === -1 && !/\s|,/.test(char)) propertyFullStart = pos;
-			if ((char === '"' || char === "'") && (pos === 0 || content[pos - 1] !== '\\')) {
-				if (!inString) { inString = true; stringChar = char; }
-				else if (char === stringChar) inString = false;
+			const nextChar = pos + 1 < content.length ? content[pos + 1] : '';
+			const prevChar = pos > 0 ? content[pos - 1] : '';
+
+			// Handle comments
+			if (inLineComment) {
+				if (char === '\n') {
+					inLineComment = false;
+				}
+				pos++;
+				continue;
 			}
-			if (inString) { pos++; continue; }
+			if (inBlockComment) {
+				if (char === '*' && nextChar === '/') {
+					inBlockComment = false;
+					pos += 2; // Skip '*/'
+					continue;
+				}
+				pos++;
+				continue;
+			}
+
+			// Check for comment start (only if not in string)
+			if (!inString) {
+				if (char === '/' && nextChar === '/') {
+					inLineComment = true;
+					pos += 2; // Skip '//'
+					continue;
+				}
+				if (char === '/' && nextChar === '*') {
+					inBlockComment = true;
+					pos += 2; // Skip '/*'
+					continue;
+				}
+			}
+
+			// Only start tracking property if we're not in comments and find non-whitespace/comma
+			if (propertyFullStart === -1 && !/\s|,/.test(char)) propertyFullStart = pos;
+			
+			// Handle strings
+			if ((char === '"' || char === "'") && prevChar !== '\\') {
+				if (!inString) { 
+					inString = true; 
+					stringChar = char; 
+				} else if (char === stringChar) { 
+					inString = false; 
+				}
+			}
+			
+			if (inString) { 
+				pos++; 
+				continue; 
+			}
+			
+			// Track nested structures
 			if (char === '{') braceDepth++; else if (char === '}') braceDepth--;
 			if (char === '[') bracketDepth++; else if (char === ']') bracketDepth--;
 			if (char === '(') parenDepth++; else if (char === ')') parenDepth--;
+			
+			// Track property name bounds
 			if (nameStart === -1 && propertyFullStart !== -1 && !/\s/.test(char)) nameStart = pos;
 			if (nameStart !== -1 && nameEnd === -1 && char === ':') { nameEnd = pos; colonPos = pos; }
+			
+			// Check for property end (comma or end of content at depth 0)
 			if (propertyFullStart !== -1 && colonPos !== -1 && (char === ',' || pos === content.length - 1) && braceDepth === 0 && bracketDepth === 0 && parenDepth === 0) {
 				const propertyFullEnd = (char === ',' ? pos : pos + 1);
 				const nameText = content.substring(nameStart, nameEnd).trim();
