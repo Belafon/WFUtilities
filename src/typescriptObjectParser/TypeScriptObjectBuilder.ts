@@ -311,11 +311,36 @@ export class TypeScriptObjectBuilder {
 	 * Helper to detect the indentation pattern used in the object
 	 */
 	private detectIndentation(): string {
+		// First, try to detect indentation from existing properties
+		const properties = this.parseProperties();
+		if (properties.length > 0) {
+			// Get the indentation of each property by looking at the line it starts on
+			const contentStart = this.objectGroup.start + 1;
+			const fullContent = this.originalText.substring(contentStart, this.objectGroup.end - 1);
+			
+			for (const prop of properties) {
+				// Find the line containing this property
+				const propRelativeStart = prop.start - contentStart;
+				const textBeforeProperty = fullContent.substring(0, propRelativeStart);
+				const lastNewlineIndex = textBeforeProperty.lastIndexOf('\n');
+				
+				if (lastNewlineIndex !== -1) {
+					// Extract text from the last newline to the property start
+					const lineStartToProperty = fullContent.substring(lastNewlineIndex + 1, propRelativeStart);
+					if (/^\s+$/.test(lineStartToProperty)) {
+						// This line contains only whitespace before the property, so it's the indentation
+						return lineStartToProperty;
+					}
+				}
+			}
+		}
+
+		// Fallback to content-based detection
 		const contentStart = this.objectGroup.start + 1;
 		const contentEnd = this.objectGroup.end - 1;
 		const content = this.originalText.substring(contentStart, contentEnd);
 
-		// First, look for lines with actual content that have indentation
+		// Look for lines with actual content that have indentation
 		const lines = content.split('\n');
 		for (let line of lines) {
 			if (line.trim() && /^\s+/.test(line)) {
@@ -354,13 +379,27 @@ export class TypeScriptObjectBuilder {
 	private detectBaseIndentation(): string {
 		// Look at the line containing the opening brace to determine base indentation
 		const objectStart = this.objectGroup.start;
-		const textBefore = this.originalText.substring(0, objectStart);
-		const lines = textBefore.split('\n');
-		const lastLine = lines[lines.length - 1];
-
-		// Extract indentation from the line containing the opening brace
-		const match = lastLine.match(/^(\s*)/);
-		return match ? match[1] : '';
+		
+		// Find the start of the line that contains the opening brace
+		let lineStart = objectStart;
+		while (lineStart > 0 && this.originalText[lineStart - 1] !== '\n') {
+			lineStart--;
+		}
+		
+		// Extract indentation from that line
+		let lineContent = '';
+		let pos = lineStart;
+		while (pos < objectStart && this.originalText[pos] !== '\n') {
+			if (this.originalText[pos] === ' ' || this.originalText[pos] === '\t') {
+				lineContent += this.originalText[pos];
+			} else {
+				// Hit non-whitespace, this is the base indentation
+				break;
+			}
+			pos++;
+		}
+		
+		return lineContent;
 	}
 
 	/**
