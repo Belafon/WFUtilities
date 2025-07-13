@@ -174,3 +174,216 @@ export const config = {
 };
 ```
 *(Note: The exact formatting of the output depends on the logic within the builder methods).*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Here is a list of all classes and their methods, including the parameters and their types, from the provided document file:
+
+### **Class: `SourcePointer`**
+-   **constructor**`(source: string)`
+-   **get position**`(): number`
+-   **currentChar**`(): string`
+-   **moveToNextChar**`(): void`
+-   **isEOF**`(): boolean`
+-   **peek**`(offset: number = 0): string`
+-   **setPosition**`(newPos: number): void`
+
+### **Class: `TokenFactory`**
+-   **static createToken**`(type: ParsedItemToken['type'], start: number, end: number, name?: string, templateParams?: string): ParsedItemToken`
+
+### **Class: `Tokenizer`**
+-   **constructor**`(pointer: SourcePointer)`
+-   **tokenize**`(): ParsedItemToken[]`
+-   `private` **consumeSingleLineComment**`(startPos: number): void`
+-   `private` **consumeMultiLineComment**`(startPos: number): void`
+-   `private` **tokenizeNumber**`(startPos: number): void`
+-   `private` **tokenizeStringLiteral**`(startPos: number, quoteChar: string): void`
+-   `private` **consumeWhitespace**`(): void`
+-   `private` **tokenizeIdentifierOrKeyword**`(startPos: number): void`
+-   `private` **getSourceSlice**`(start: number, end: number): string`
+
+### **Class: `TokenStream`**
+-   **constructor**`(tokens: ParsedItemToken[])`
+-   **peek**`(): ParsedItemToken | null`
+-   **next**`(): ParsedItemToken | null`
+-   **isEOF**`(): boolean`
+-   **consumeWhitespace**`(): void`
+
+### **Class: `TokenGrouper`**
+-   **constructor**`(tokens: ParsedItemToken[], source: string)`
+-   **group**`(): TokenGroup`
+-   `private` **processTokens**`(tokenStream: TokenStream, parent: TokenGroup): void`
+-   `private` **processImportDeclaration**`(tokenStream: TokenStream): TokenGroup | null`
+-   `private` **processClassDeclaration**`(tokenStream: TokenStream): TokenGroup | null`
+-   `private` **processInterfaceDeclaration**`(tokenStream: TokenStream): TokenGroup | null | undefined`
+-   `private` **processTypeDeclaration**`(tokenStream: TokenStream): TokenGroup | null`
+-   `private` **processEnumDeclaration**`(tokenStream: TokenStream): TokenGroup | null`
+-   `private` **processFunctionDeclaration**`(tokenStream: TokenStream): TokenGroup | null`
+-   `private` **processVariableDeclaration**`(tokenStream: TokenStream): TokenGroup | null`
+-   `private` **processObjectLiteral**`(tokenStream: TokenStream): TokenGroup | null`
+-   `private` **processArrayLiteral**`(tokenStream: TokenStream): TokenGroup | null`
+-   `private` **findMatchingClosingDelimiter**`(stream: TokenStream, openDelim: string, closeDelim: string): number`
+-   `private` **extractTemplateParams**`(tokenStream: TokenStream): string | undefined`
+
+### **Class: `TypeScriptCodeBuilder`**
+-   **constructor**`(input: string)`
+-   **parseText**`(input: string): void`
+-   **findGroup**`(predicate: (group: TokenGroup) => boolean, scope?: TokenGroup): TokenGroup | null`
+-   **findObject**`(variableName: string, options: { onFound: (objectBuilder: TypeScriptObjectBuilder) => void; onNotFound?: () => void; }): void`
+-   **findArray**`(variableName: string, options: { onFound: (arrayBuilder: TypeScriptArrayBuilder) => void; onNotFound?: () => void; }): void`
+-   **findType**`(variableName: string, options: { onFound: (typeBuilder: TypeScriptTypeBuilder) => void; onNotFound?: () => void; }): void`
+-   **findClass**`(className: string, options: { onFound: (classBuilder: TypeScriptClassBuilder) => void; onNotFound?: () => void; }): void`
+-   **findInterface**`(interfaceName: string, options: { onFound: (interfaceBuilder: TypeScriptInterfaceBuilder) => void; onNotFound?: () => void; }): void`
+-   **findReturnObjectInFunction**`(functionName: string, options: { onFound: (objectBuilder: TypeScriptObjectBuilder) => void; onNotFound?: () => void; }): void`
+-   **addEdit**`(start: number, end: number, replacement: string): void`
+-   **toString**`(): Promise<string>`
+-   **insertCodeAtIndex**`(index: number, codeToInsert: string): void`
+-   **findTypeDeclaration**`(typeName: string, options: { onFound: (typeBuilder: TypeScriptTypeDeclarationBuilder) => void; onNotFound?: () => void; }): void`
+-   **getImportManager**`(): TypeScriptImportManager`
+
+### **Class: `TypeScriptArrayBuilder`**
+-   **constructor**`(parentBuilder: TypeScriptCodeBuilder, arrayGroup: TokenGroup, originalText: string)`
+-   `private` **isWhitespace**`(char: string): boolean`
+-   **addItem**`(itemToAdd: string): void`
+-   **insertItemAtIndex**`(index: number, itemToAdd: string): void`
+-   **removeItemAtIndex**`(indexToRemove: number): boolean`
+-   **replaceItemAtIndex**`(index: number, newItem: string): boolean`
+-   **getObjectItems**`(): TypeScriptObjectBuilder[]`
+-   **getArrayItems**`(): TypeScriptArrayBuilder[]`
+-   **getItemTexts**`(): string[]`
+-   **getItemCount**`(): number`
+-   **getContentText**`(): string`
+-   **getFullText**`(): string`
+-   `private` **parseItems**`(): Array<{ value: string; start: number; end: number; }>`
+
+### **Class: `TypeScriptTypeObjectBuilder`**
+-   **constructor**`(parentBuilder: TypeScriptCodeBuilder, startPos: number, endPos: number, originalText: string)`
+-   **getContent**`(): string`
+-   `private` **detectBaseIndentation**`(): string`
+-   **addProperty**`(propertyName: string, propertyType: string, options: TypePropertyOptions = {}): void`
+-   **hasProperty**`(propertyName: string): boolean`
+-   **removeProperty**`(propertyName: string): boolean`
+-   **getPropertyNames**`(): string[]`
+-   **replaceProperty**`(propertyName: string, newPropertyType: string, options: TypePropertyOptions = {}): boolean`
+-   **getPropertyType**`(propertyName: string): string | null`
+
+### **Class: `TypeScriptTypeBuilder`**
+-   **constructor**`(parentBuilder: TypeScriptCodeBuilder, typeStart: number, typeEnd: number, originalText: string)`
+-   **getTypeText**`(): string`
+-   **setType**`(newType: string): void`
+-   **getUnionTypes**`(): string[]`
+-   **addUnionType**`(newType: string): void`
+-   **removeUnionType**`(typeToRemove: string): boolean`
+-   **isUnionType**`(): boolean`
+
+### **Class: `TypeScriptClassBuilder`**
+-   **constructor**`(parentBuilder: TypeScriptCodeBuilder, classGroup: TokenGroup, originalText: string)`
+-   **getName**`(): string | undefined`
+-   **rename**`(newName: string): void`
+-   **addProperty**`(propertyDeclaration: string): void`
+-   **addMethod**`(methodDeclaration: string): void`
+-   **findProperty**`(propertyName: string, options: { onFound: (propertyBuilder: any) => void; onNotFound?: () => void; }): void`
+-   **findMethod**`(methodName: string, options: { onFound: (methodBuilder: any) => void; onNotFound?: () => void; }): void`
+-   **addImplements**`(interfaceName: string): void`
+-   **setExtends**`(className: string | null | undefined): void`
+
+### **Class: `TypeScriptInterfaceBuilder`**
+-   **constructor**`(parentBuilder: TypeScriptCodeBuilder, interfaceGroup: TokenGroup, originalText: string)`
+-   **getName**`(): string | undefined`
+-   **rename**`(newName: string): void`
+-   **addProperty**`(propertySignature: string): void`
+-   **addMethod**`(methodSignature: string): void`
+-   **findProperty**`(propertyName: string, options: { onFound: (propertyBuilder: any) => void; onNotFound?: () => void; }): void`
+-   **findMethod**`(methodName: string, options: { onFound: (methodBuilder: any) => void; onNotFound?: () => void; }): void`
+-   **addExtends**`(interfaceName: string): void`
+
+### **Class: `TypeScriptImportManager`**
+-   **constructor**`(parentBuilder: TypeScriptCodeBuilder, originalText: string)`
+-   **addNamedImport**`(importName: string | string[], fromPath: string): void`
+-   **addDefaultImport**`(importName: string, fromPath: string): void`
+-   **addNamespaceImport**`(namespaceName: string, fromPath: string): void`
+-   **addNamedImportWithAlias**`(importName: string, alias: string, fromPath: string): void`
+-   **removeImport**`(fromPath: string): void`
+-   **removeNamedImport**`(importName: string | string[], fromPath: string): void`
+-   **hasImport**`(fromPath: string): boolean`
+-   **hasNamedImport**`(importName: string, fromPath: string): boolean`
+-   **hasDefaultImport**`(importName: string, fromPath: string): boolean`
+-   **hasNamespaceImport**`(namespaceName: string, fromPath: string): boolean`
+-   **getAllImports**`(): ImportInfo[]`
+-   **getNamedImportsFromPath**`(fromPath: string): string[]`
+-   **organizeImports**`(): void`
+-   **updateNamedImport**`(fromPath: string, newImports: string[]): void`
+-   `private` **parseExistingImports**`(): void`
+-   `private` **findImportByPath**`(fromPath: string): ImportInfo | null`
+-   `private` **addToExistingNamedImport**`(newImports: string[], fromPath: string): void`
+-   `private` **addToExistingImport**`(importName: string, fromPath: string, isDefault: boolean): void`
+-   `private` **replaceNamedImport**`(fromPath: string, newImports: string[]): void`
+-   `private` **insertImportStatement**`(importStatement: string): void`
+-   `private` **createImportPattern**`(fromPath: string): RegExp`
+-   `private` **createNamedImportPattern**`(fromPath: string): RegExp`
+-   `private` **normalizeImportName**`(importName: string): string`
+-   `private` **generateImportStatement**`(importInfo: ImportInfo): string`
+-   `private` **removeAllImports**`(): void`
+-   `private` **getCurrentContent**`(): string`
+
+### **Class: `TypeScriptObjectBuilder`**
+-   **constructor**`(parentBuilder: TypeScriptCodeBuilder, objectGroup: TokenGroup, originalText: string)`
+-   **setPropertyValue**`(propertyName: string, newValue: string): void`
+-   `private` **handleEmptyObjectAddition**`(propertyName: string, newValue: string, currentContent: string, contentStart: number, contentEnd: number): void`
+-   `private` **handleExistingPropertiesAddition**`(propertyName: string, newValue: string, properties: Array<any>, currentContent: string): void`
+-   `private` **handleMultiLineAddition**`(newPropSegment: string, lastProperty: any, currentContent: string): void`
+-   `private` **handleSingleLineAddition**`(newPropSegment: string, lastProperty: any): void`
+-   `private` **detectIndentation**`(): string`
+-   `private` **detectBaseIndentation**`(): string`
+-   **addPropertyIfMissing**`(propertyName: string, value: string): boolean`
+-   **findNestedProperty**`(objectPath: string, options: { onFound: (result: { builder?: TypeScriptObjectBuilder | TypeScriptArrayBuilder; value?: string; start?: number; end?: number; }) => void; onNotFound?: () => void; }): void`
+-   **traverseObjectTree**`(callbacks: { onProperty?: (path: string, name: string, valueText: string, valueType: 'object' | 'array' | 'primitive') => void; onObjectEnter?: (path: string, name?: string) => void; onObjectLeave?: (path: string, name?: string) => void; onArrayEnter?: (path: string, name: string) => void; onArrayLeave?: (path: string, name: string) => void; onArrayItem?: (path: string, index: number, itemText: string, itemType: 'object' | 'array' | 'primitive') => void; onPrimitive?: (path: string, name: string, valueText: string) => void; }, currentObjectPath: string = ''): void`
+-   `private` **_parsePath**`(path: string): string[]`
+-   **removeProperty**`(propertyName: string): boolean`
+-   **addPropertyAtIndex**`(index: number, propertyName: string, value: string): void`
+-   **addPropertyAfterItem**`(itemName: string, newPropertyName: string, value: string): void`
+-   **addObjectAtIndex**`(index: number, propertyName: string, value: string): void`
+-   **addObjectAfterItem**`(itemName: string, newPropertyName: string, value: string): void`
+-   **addArrayAtIndex**`(index: number, propertyName: string, value: string): void`
+-   **addArrayAfterItem**`(itemName: string, newPropertyName: string, value: string): void`
+-   **findArray**`(propertyName: string, options: { onFound: (arrayBuilder: TypeScriptArrayBuilder) => void; onNotFound?: () => void; }): void`
+-   **findObject**`(propertyName: string, options: { onFound: (objectBuilder: TypeScriptObjectBuilder) => void; onNotFound?: () => void; }): void`
+-   **getContentText**`(): string`
+-   **getFullText**`(): string`
+-   `private` **parseProperties**`(): Array<{ name: string; nameStart: number; nameEnd: number; valueStart: number; valueEnd: number; start: number; end: number; }>`
+-   `private` **findPropertyByName**`(propertyName: string): { name: string; nameStart: number; nameEnd: number; valueStart: number; valueEnd: number; start: number; end: number; } | null`
+-   `private` **isWhitespace**`(char: string): boolean`
+-   `private` **trimQuotes**`(text: string): string`
+
+### **Class: `TypeScriptTypeDeclarationBuilder`**
+-   **constructor**`(parentBuilder: TypeScriptCodeBuilder, typeGroup: TokenGroup, originalText: string)`
+-   **getName**`(): string | undefined`
+-   **getTypeDefinition**`(): string`
+-   **findNestedTypeObject**`(path: string[], options: { onFound: (typeObjectBuilder: TypeScriptTypeObjectBuilder) => void; onNotFound?: () => void; }): void`
+-   **setTypeDefinition**`(newDefinition: string): void`
+-   **addProperty**`(propertyName: string, propertyType: string, options: TypePropertyOptions = {}): void`
+-   **isObjectType**`(): boolean`
+-   **isUnionType**`(): boolean`
+-   **getUnionTypes**`(): string[]`
+-   **addUnionType**`(newType: string): void`
+-   **removeUnionType**`(typeToRemove: string): boolean`
+-   `private` **getTypeDefinitionStart**`(): number`
+-   `private` **getTypeDefinitionEnd**`(): number`
+-   `private` **findNestedObjectInDefinition**`(definition: string, path: string[], baseOffset: number): { start: number; end: number; } | null`
+-   `private` **findPropertyInDefinition**`(definition: string, propertyName: string, baseOffset: number): { content: string; contentStart: number; } | null`
+-   `private` **findMatchingBrace**`(text: string, openBraceIndex: number): number`
