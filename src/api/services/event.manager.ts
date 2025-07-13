@@ -9,6 +9,7 @@ import { logger } from '../../utils/logger';
 import { templateManager } from '../../templates/TemplateManager';
 import { registerFileManager } from '../../register/RegisterFileManager';
 import { EventTemplateVariables } from '../../templates/event.template';
+import { worldStateFileManager } from '../../register/WorldStateFileManager';
 
 /**
  * Event Manager Service
@@ -29,6 +30,12 @@ export class EventManager {
    * @param eventData The data to update the event with.
    */
   public async updateEvent(eventId: string, eventData: EventUpdateRequest): Promise<void> {
+    if (!eventId || eventId.trim() === '') {
+      const errorMessage = 'Event ID cannot be empty.';
+      config.editorAdapter.showErrorNotification(errorMessage);
+      throw new Error(errorMessage);
+    }
+
     const eventFilePath = getEventFilePath(eventId);
 
     let eventFileContent: string | null = null;
@@ -137,6 +144,15 @@ export class EventManager {
 
       // add event to register
       await registerFileManager.addEventToRegister(eventId, eventFilePath);
+
+      try {
+        await worldStateFileManager.addEventToWorldState(eventId, eventFilePath);
+      } catch (worldStateError) {
+        const errorMessage = `Event '${eventId}' was created and added to register, but failed to add to world state: ${worldStateError instanceof Error ? worldStateError.message : String(worldStateError)}`;
+        config.editorAdapter.showWarningNotification(errorMessage);
+        console.error(errorMessage, worldStateError);
+      }
+
       return eventFileContent;
     } catch (error) {
       this.deleteEvent(eventId).catch((err) => {

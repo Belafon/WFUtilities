@@ -338,8 +338,8 @@ export const config = {
         const code = `
 export const setup = {
     user: {
-        "name": 'Alice', // double quotes for key, single for value
-        'age': 30        // single quotes for key, no quotes for value
+        "name": 'Alice',
+        'age': 30        
     }
 };`;
         const result = await testNestedPropertyModification(

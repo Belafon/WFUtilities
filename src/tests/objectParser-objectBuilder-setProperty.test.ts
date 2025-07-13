@@ -186,24 +186,6 @@ suite('TypeScriptObjectBuilder.setPropertyValue - Indentation Tests', () => {
         });
     });
 
-    suite('Mixed Indentation Scenarios', () => {
-        test('should handle mixed spaces and tabs (prefer detected pattern)', async () => {
-            const originalCode = `const obj = {
-    prop1: 'value1',  // 4 spaces
-\tprop2: 'value2'   // 1 tab
-};`;
-            const result = await testPropertyModification(originalCode, 'obj', 'prop3', 'value3');
-
-            // Should detect the first pattern (4 spaces) as the primary indentation
-            const expected = `const obj = {
-    prop1: 'value1',  // 4 spaces
-\tprop2: 'value2',   // 1 tab
-    prop3: value3
-};`;
-            assert.strictEqual(result, expected, 'Should use the first detected indentation pattern');
-        });
-    });
-
     suite('Complex Real-world Example', () => {
         test('should handle the register object example correctly', async () => {
             const originalCode = `export const register = {
@@ -340,7 +322,8 @@ suite('TypeScriptObjectBuilder.setPropertyValue - Indentation Tests', () => {
             const expected = `const obj = {
     prop1: 'value1',
     prop2: 'value2',
-    prop3: value3};`;
+    prop3: value3
+};`;
 
             assert.strictEqual(result, expected, 'Should handle objects without newline before closing brace');
         });

@@ -1,4 +1,5 @@
 import { TypeScriptObjectBuilder } from "./TypeScriptObjectBuilder";
+import { TypeScriptTypeDeclarationBuilder, TypePropertyOptions } from "./TypeScriptTypeDeclarationBuilder";
 
 /******************************************************
  * Debug flag for logging internal state.
@@ -364,6 +365,8 @@ export type TokenGroup = {
 		modifiers?: string[]; // public, private, static, etc.
 		importPath?: string; // for import declarations
 		importSpecifiers?: string[]; // for import declarations
+		typeDefinitionStart?: number; // start position of type definition content
+		typeDefinitionEnd?: number; // end position of type definition content
 	};
 }
 
@@ -866,15 +869,15 @@ export class TokenGrouper {
 
 		// Process the type definition until we reach a semicolon
 		// We need to keep track of nested structures
-		let typeDefinition = '';
 		let reachedSemicolon = false;
 		let braceDepth = 0;
 		let angleDepth = 0;
 		let squareDepth = 0;
 		let parenDepth = 0;
 
-		// Track previous token to handle special cases like arrow function
-		let prevToken: ParsedItemToken | null = null;
+		// Track the actual start and end positions of the type definition for extraction
+		let typeDefinitionStart = -1;
+		let typeDefinitionEnd = -1;
 
 		while (!tokenStream.isEOF() && !reachedSemicolon) {
 			const token = tokenStream.next();
@@ -882,27 +885,14 @@ export class TokenGrouper {
 
 			allTokens.push(token);
 
-			// Build up the type definition string, with special case handling for arrow functions
-			if (token.name) {
-				// Special case for arrow function: don't add space between = and >
-				if (prevToken && prevToken.name === '=' && token.name === '>') {
-					// Replace the last space with empty string to join = and >
-					if (typeDefinition.endsWith(' ')) {
-						typeDefinition = typeDefinition.slice(0, -1) + token.name + ' ';
-					} else {
-						typeDefinition += token.name + ' ';
-					}
-				} else {
-					typeDefinition += token.name + ' ';
-				}
+			// Mark the start of type definition (first token after '=')
+			if (typeDefinitionStart === -1) {
+				typeDefinitionStart = token.start;
 			}
 
-			// Update previous token
-			prevToken = token;
-
 			// Track nested structure depths
-			if (token.name === '<' || token.name === '{' || token.name === '[') angleDepth++;
-			else if (token.name === '>' || token.name === '}' || token.name === ']') angleDepth--;
+			if (token.name === '{') braceDepth++;
+			else if (token.name === '}') braceDepth--;
 			else if (token.name === '<') angleDepth++;
 			else if (token.name === '>') angleDepth--;
 			else if (token.name === '[') squareDepth++;
@@ -914,16 +904,38 @@ export class TokenGrouper {
 				// We've found the end of the type declaration
 				// But only if we're not inside any nested structure
 				reachedSemicolon = true;
+				typeDefinitionEnd = token.start; // End before the semicolon
 				typeGroup.end = token.end;
+				break; // Don't include the final semicolon in the type definition
 			}
 		}
 
 		// Update tokens in the type group
 		typeGroup.tokens = allTokens;
 
-		// Save the type definition in metadata
-		if (typeDefinition) {
-			typeGroup.metadata!.typeAnnotation = typeDefinition.trim();
+		// Extract the type definition from the original source for better accuracy
+		if (typeDefinitionStart !== -1 && typeDefinitionEnd !== -1 && typeDefinitionStart < typeDefinitionEnd) {
+			const extractedTypeDefinition = this.source.substring(typeDefinitionStart, typeDefinitionEnd).trim();
+			if (extractedTypeDefinition) {
+				typeGroup.metadata!.typeAnnotation = extractedTypeDefinition;
+				// Store the computed positions for use by TypeScriptTypeDeclarationBuilder
+				typeGroup.metadata!.typeDefinitionStart = typeDefinitionStart;
+				typeGroup.metadata!.typeDefinitionEnd = typeDefinitionEnd;
+			}
+		} else {
+			// Fallback: if we couldn't determine proper bounds, extract from equals to end
+			const equalsIndex = allTokens.findIndex(t => t.name === '=');
+			if (equalsIndex !== -1 && equalsIndex < allTokens.length - 1) {
+				const startToken = allTokens[equalsIndex + 1];
+				const endToken = allTokens[allTokens.length - (reachedSemicolon ? 2 : 1)];
+				if (startToken && endToken) {
+					const fallbackDefinition = this.source.substring(startToken.start, (endToken.name === ';' ? endToken.start : endToken.end)).trim();
+					typeGroup.metadata!.typeAnnotation = fallbackDefinition;
+					// Store fallback positions
+					typeGroup.metadata!.typeDefinitionStart = startToken.start;
+					typeGroup.metadata!.typeDefinitionEnd = (endToken.name === ';' ? endToken.start : endToken.end);
+				}
+			}
 		}
 
 		if (typeGroup.end === -1) {
@@ -1564,6 +1576,15 @@ export class TokenGrouper {
 					const consumedTypeToken = tokenStream.next();
 					if (consumedTypeToken) {
 						allTokens.push(consumedTypeToken);
+
+						// Add the token content to type annotation
+						if (consumedTypeToken.name) {
+							typeAnnotation += consumedTypeToken.name;
+							// Add space after most tokens for readability, except for certain symbols
+							if (!['(', ')', '[', ']', '{', '}', ':', ';', ',', '.'].includes(consumedTypeToken.name)) {
+								typeAnnotation += ' ';
+							}
+						}
 
 						// Update depth counters
 						if (consumedTypeToken.name === '{') braceDepth++;
@@ -2498,11 +2519,8 @@ export class TypeScriptCodeBuilder {
 					options.onNotFound?.();
 					return;
 				}
-			} else { // variableDeclarationGroup not found
-				options.onNotFound?.();
-				return;
-			}
-		} // End of `else` for `VariableDeclaration`
+			} // End of `else` for `VariableDeclaration`
+		}
 
 		// CRITICAL CHECK: Ensure funcBodyTokens is defined before proceeding
 		if (!funcBodyTokens) {
@@ -2709,7 +2727,7 @@ export class TypeScriptCodeBuilder {
 			return;
 		}
 		if (index === 0) {
-			this.addEdit(topLevelElements[0].start, topLevelElements[0].start, codeToInsert + '\n');
+			this.addEdit(topLevelElements[0].start, topLevelElements[0].start, codeToInsert + '\n\n');
 		} else if (index === count) {
 			this.addEdit(topLevelElements[index - 1].end, topLevelElements[index - 1].end, '\n\n' + codeToInsert + '\n');
 		} else {
@@ -2718,6 +2736,42 @@ export class TypeScriptCodeBuilder {
 			const formattedCode = '\n\n\n' + codeToInsert + '\n\n\n';
 			this.addEdit(precedingElement.end, followingElement.start, formattedCode);
 		}
+	}
+
+	/**
+	 * NEW: Enhanced Type Declaration Support
+	 * Finds a type declaration by name and provides a builder for it
+	 */
+	public findTypeDeclaration(
+		typeName: string,
+		options: {
+			onFound: (typeBuilder: TypeScriptTypeDeclarationBuilder) => void;
+			onNotFound?: () => void;
+		}
+	): void {
+		if (!this.rootGroup) {
+			options.onNotFound?.();
+			return;
+		}
+
+		const typeGroup = this.findGroup(
+			(group) => group.type === 'TypeDeclaration' && group.name === typeName
+		);
+
+		if (typeGroup) {
+			const typeBuilder = new TypeScriptTypeDeclarationBuilder(this, typeGroup, this.originalText);
+			options.onFound(typeBuilder);
+		} else {
+			options.onNotFound?.();
+		}
+	}
+
+	/**
+	 * NEW: Import Statement Manager
+	 * Gets an import manager for handling import statements
+	 */
+	public getImportManager(): TypeScriptImportManager {
+		return new TypeScriptImportManager(this, this.originalText);
 	}
 }
 
@@ -2902,6 +2956,164 @@ export class TypeScriptArrayBuilder {
 			pos++;
 		}
 		return items;
+	}
+}
+
+
+/******************************************************
+ * Type Object Builder (for nested type objects)
+ ******************************************************/
+
+/**
+ * Provides methods for inspecting and modifying type object definitions.
+ * Similar to TypeScriptObjectBuilder but for type definitions rather than object literals.
+ */
+export class TypeScriptTypeObjectBuilder {
+	constructor(
+		private parentBuilder: TypeScriptCodeBuilder,
+		private startPos: number,
+		private endPos: number,
+		private originalText: string
+	) { }
+
+	/**
+	 * Gets the content of the type object.
+	 */
+	public getContent(): string {
+		return this.originalText.substring(this.startPos, this.endPos);
+	}
+
+	private detectBaseIndentation(): string {
+		let lineStart = this.startPos - 1;
+		while (lineStart > 0 && this.originalText[lineStart - 1] !== '\n') {
+			lineStart--;
+		}
+		const line = this.originalText.substring(lineStart, this.startPos);
+		const match = line.match(/^\s*/);
+		return match ? match[0] : '';
+	}
+
+	/**
+	 * Adds a property to the type object with advanced options.
+	 */
+	public addProperty(
+		propertyName: string,
+		propertyType: string,
+		options: TypePropertyOptions = {}
+	): void {
+		// Start with the base type.
+		let fullPropertyType = propertyType;
+
+		// Handle intersection types first, as '&' has higher precedence than '|'.
+		// This appends the intersection types to the base type.
+		if (options.intersection && options.intersection.length > 0) {
+			fullPropertyType = [fullPropertyType, ...options.intersection].join(' & ');
+		}
+
+		// Handle union types. This appends the union types to the *result* of the
+		// previous step (which may or may not include intersections).
+		if (options.union && options.union.length > 0) {
+			fullPropertyType = [fullPropertyType, ...options.union].join(' | ');
+		}
+
+		// Handle Partial wrapper. This wraps the entire constructed type.
+		if (options.partial) {
+			fullPropertyType = `Partial<${fullPropertyType}>`;
+		}
+
+		// Handle optional properties.
+		const optionalMark = options.optional ? '?' : '';
+
+		const propertyDefinition = `${propertyName}${optionalMark}: ${fullPropertyType};`;
+
+		// Find a good insertion point.
+		const content = this.getContent().trim();
+		if (content.length === 0) {
+			// Empty type object.
+			const baseIndentation = this.detectBaseIndentation();
+			const propIndentation = baseIndentation + '    ';
+			this.parentBuilder.addEdit(this.startPos, this.endPos, `\n${propIndentation}${propertyDefinition}\n${baseIndentation}`);
+		} else {
+			// Add to the end, before the closing brace.
+			const baseIndentation = this.detectBaseIndentation();
+			const propIndentation = baseIndentation + '    ';
+			const insertPos = this.endPos; // Insert before the closing '}' of the type object.
+			this.parentBuilder.addEdit(insertPos, insertPos, `\n${propIndentation}${propertyDefinition}`);
+		}
+	}
+
+
+	/**
+	 * Checks if a property exists in the type object.
+	 */
+	public hasProperty(propertyName: string): boolean {
+		const content = this.getContent();
+		const propertyPattern = new RegExp(`\\b${propertyName}\\s*\\??\\s*:`);
+		return propertyPattern.test(content);
+	}
+
+	/**
+	 * Removes a property from the type object.
+	 */
+	public removeProperty(propertyName: string): boolean {
+		const content = this.getContent();
+		const propertyPattern = new RegExp(`\\s*${propertyName}\\s*\\??\\s*:[^;]*;`, 'g');
+
+		if (!propertyPattern.test(content)) {
+			return false;
+		}
+
+		const updatedContent = content.replace(propertyPattern, '');
+		this.parentBuilder.addEdit(this.startPos, this.endPos, updatedContent);
+		return true;
+	}
+
+	/**
+	 * Gets all property names in the type object.
+	 */
+	public getPropertyNames(): string[] {
+		const content = this.getContent();
+		const propertyPattern = /(\w+)\s*\??\s*:/g;
+		const properties: string[] = [];
+		let match;
+
+		while ((match = propertyPattern.exec(content)) !== null) {
+			properties.push(match[1]);
+		}
+
+		return properties;
+	}
+
+	/**
+	 * Replaces a property in the type object.
+	 */
+	public replaceProperty(
+		propertyName: string,
+		newPropertyType: string,
+		options: TypePropertyOptions = {}
+	): boolean {
+		if (!this.hasProperty(propertyName)) {
+			return false;
+		}
+
+		// Remove the old property
+		this.removeProperty(propertyName);
+
+		// Add the new property
+		this.addProperty(propertyName, newPropertyType, options);
+
+		return true;
+	}
+
+	/**
+	 * Gets the type of a specific property.
+	 */
+	public getPropertyType(propertyName: string): string | null {
+		const content = this.getContent();
+		const propertyPattern = new RegExp(`\\b${propertyName}\\s*\\??\\s*:\\s*([^;]+);`);
+		const match = content.match(propertyPattern);
+
+		return match ? match[1].trim() : null;
 	}
 }
 
@@ -3211,4 +3423,430 @@ export class TypeScriptInterfaceBuilder {
 	}
 
 	// TODO: Add methods for removing extends, getting metadata, etc.
+}
+
+
+/******************************************************
+ * Import Statement Manager
+ ******************************************************/
+
+export interface ImportInfo {
+	imports: string[];
+	fromPath: string;
+	isDefault: boolean;
+	isNamespace?: boolean;
+	alias?: string;
+}
+
+/**
+ * Manages import statements in a TypeScript file.
+ * Provides methods to add, remove, and modify imports.
+ */
+export class TypeScriptImportManager {
+	private currentImports: ImportInfo[] = [];
+
+	constructor(
+		private parentBuilder: TypeScriptCodeBuilder,
+		private originalText: string
+	) {
+		this.parseExistingImports();
+	}
+
+	/**
+	 * Adds a named import statement.
+	 * If the import path already exists, adds to existing import.
+	 */
+	public addNamedImport(importName: string | string[], fromPath: string): void {
+		const imports = Array.isArray(importName) ? importName : [importName];
+
+		// Check if import path already exists
+		const existingImport = this.findImportByPath(fromPath);
+
+		if (existingImport && !existingImport.isDefault && !existingImport.isNamespace) {
+			// Add to existing named import
+			this.addToExistingNamedImport(imports, fromPath);
+		} else {
+			// Create new import statement
+			const importStatement = `import { ${imports.join(', ')} } from '${fromPath}';`;
+			this.insertImportStatement(importStatement);
+		}
+	}
+
+	/**
+	 * Adds a default import statement.
+	 */
+	public addDefaultImport(importName: string, fromPath: string): void {
+		// Check if import already exists
+		if (this.hasImport(fromPath)) {
+			const existingImport = this.findImportByPath(fromPath);
+			if (existingImport?.isDefault) {
+				// Default import already exists
+				return;
+			}
+			// Could have named imports from same path, need to combine
+			this.addToExistingImport(importName, fromPath, true);
+		} else {
+			const importStatement = `import ${importName} from '${fromPath}';`;
+			this.insertImportStatement(importStatement);
+		}
+	}
+
+	/**
+	 * Adds a namespace import statement.
+	 * Example: import * as React from 'react'
+	 */
+	public addNamespaceImport(namespaceName: string, fromPath: string): void {
+		if (this.hasNamespaceImport(namespaceName, fromPath)) {
+			return;
+		}
+
+		const importStatement = `import * as ${namespaceName} from '${fromPath}';`;
+		this.insertImportStatement(importStatement);
+	}
+
+	/**
+	 * Adds an import with alias.
+	 * Example: import { Component as ReactComponent } from 'react'
+	 */
+	public addNamedImportWithAlias(importName: string, alias: string, fromPath: string): void {
+		const aliasedImport = `${importName} as ${alias}`;
+		this.addNamedImport(aliasedImport, fromPath);
+	}
+
+	/**
+	 * Removes an entire import statement.
+	 */
+	public removeImport(fromPath: string): void {
+		const importPattern = this.createImportPattern(fromPath);
+		const currentContent = this.getCurrentContent();
+		const updatedContent = currentContent.replace(importPattern, '');
+
+		if (updatedContent !== currentContent) {
+			this.parentBuilder.parseText(updatedContent);
+			this.parseExistingImports(); // Refresh our cache
+		}
+	}
+
+	/**
+	 * Removes specific named imports from an import statement.
+	 */
+	public removeNamedImport(importName: string | string[], fromPath: string): void {
+		const imports = Array.isArray(importName) ? importName : [importName];
+		const existingImport = this.findImportByPath(fromPath);
+
+		if (!existingImport || existingImport.isDefault || existingImport.isNamespace) {
+			return;
+		}
+
+		const currentImports = existingImport.imports;
+		const filteredImports = currentImports.filter(imp =>
+			!imports.some(removeImp => this.normalizeImportName(imp) === this.normalizeImportName(removeImp))
+		);
+
+		if (filteredImports.length === 0) {
+			// Remove entire import if no imports left
+			this.removeImport(fromPath);
+		} else if (filteredImports.length !== currentImports.length) {
+			// Update import with remaining imports
+			this.replaceNamedImport(fromPath, filteredImports);
+		}
+	}
+
+	/**
+	 * Checks if an import from a specific path exists.
+	 */
+	public hasImport(fromPath: string): boolean {
+		return this.findImportByPath(fromPath) !== null;
+	}
+
+	/**
+	 * Checks if a specific named import exists.
+	 */
+	public hasNamedImport(importName: string, fromPath: string): boolean {
+		const existingImport = this.findImportByPath(fromPath);
+		if (!existingImport || existingImport.isDefault || existingImport.isNamespace) {
+			return false;
+		}
+
+		return existingImport.imports.some(imp =>
+			this.normalizeImportName(imp) === this.normalizeImportName(importName)
+		);
+	}
+
+	/**
+	 * Checks if a specific default import exists.
+	 */
+	public hasDefaultImport(importName: string, fromPath: string): boolean {
+		const existingImport = this.findImportByPath(fromPath);
+		return existingImport?.isDefault === true &&
+			existingImport.imports.includes(importName);
+	}
+
+	/**
+	 * Checks if a specific namespace import exists.
+	 */
+	public hasNamespaceImport(namespaceName: string, fromPath: string): boolean {
+		const existingImport = this.findImportByPath(fromPath);
+		return existingImport?.isNamespace === true &&
+			existingImport.imports.includes(namespaceName);
+	}
+
+	/**
+	 * Gets all import statements in the file.
+	 */
+	public getAllImports(): ImportInfo[] {
+		return [...this.currentImports];
+	}
+
+	/**
+	 * Gets all named imports from a specific path.
+	 */
+	public getNamedImportsFromPath(fromPath: string): string[] {
+		const existingImport = this.findImportByPath(fromPath);
+		if (!existingImport || existingImport.isDefault || existingImport.isNamespace) {
+			return [];
+		}
+		return [...existingImport.imports];
+	}
+
+	/**
+	 * Organizes imports by grouping and sorting them.
+	 * Groups: 1) Node modules, 2) Relative imports, 3) Absolute imports
+	 */
+	public organizeImports(): void {
+		const imports = this.getAllImports();
+
+		// Group imports
+		const nodeModules = imports.filter(imp => !imp.fromPath.startsWith('.') && !imp.fromPath.startsWith('/'));
+		const relativeImports = imports.filter(imp => imp.fromPath.startsWith('./') || imp.fromPath.startsWith('../'));
+		const absoluteImports = imports.filter(imp => imp.fromPath.startsWith('/'));
+
+		// Sort within groups
+		const sortedGroups = [
+			nodeModules.sort((a, b) => a.fromPath.localeCompare(b.fromPath)),
+			absoluteImports.sort((a, b) => a.fromPath.localeCompare(b.fromPath)),
+			relativeImports.sort((a, b) => a.fromPath.localeCompare(b.fromPath))
+		].filter(group => group.length > 0);
+
+		// Remove all existing imports
+		this.removeAllImports();
+
+		// Add organized imports back
+		sortedGroups.forEach((group, groupIndex) => {
+			group.forEach(importInfo => {
+				const importStatement = this.generateImportStatement(importInfo);
+				this.insertImportStatement(importStatement);
+			});
+
+			// Add spacing between groups (except after last group)
+			if (groupIndex < sortedGroups.length - 1) {
+				this.insertImportStatement('');
+			}
+		});
+	}
+
+	/**
+	 * Updates an existing import with new imports.
+	 */
+	public updateNamedImport(fromPath: string, newImports: string[]): void {
+		this.replaceNamedImport(fromPath, newImports);
+	}
+
+	/**
+	 * Private helper to parse existing imports in the file.
+	 */
+	private parseExistingImports(): void {
+		this.currentImports = [];
+		const content = this.getCurrentContent();
+
+		// Named imports: import { A, B } from 'path'
+		const namedImportPattern = /import\s*\{\s*([^}]+)\s*\}\s*from\s*['"]([^'"]+)['"];?/g;
+		let match;
+
+		while ((match = namedImportPattern.exec(content)) !== null) {
+			const importNames = match[1].split(',').map(imp => imp.trim()).filter(imp => imp.length > 0);
+			this.currentImports.push({
+				imports: importNames,
+				fromPath: match[2],
+				isDefault: false
+			});
+		}
+
+		// Default imports: import A from 'path'
+		const defaultImportPattern = /import\s+(\w+)\s+from\s*['"]([^'"]+)['"];?/g;
+		while ((match = defaultImportPattern.exec(content)) !== null) {
+			this.currentImports.push({
+				imports: [match[1]],
+				fromPath: match[2],
+				isDefault: true
+			});
+		}
+
+		// Namespace imports: import * as A from 'path'
+		const namespaceImportPattern = /import\s+\*\s+as\s+(\w+)\s+from\s*['"]([^'"]+)['"];?/g;
+		while ((match = namespaceImportPattern.exec(content)) !== null) {
+			this.currentImports.push({
+				imports: [match[1]],
+				fromPath: match[2],
+				isDefault: false,
+				isNamespace: true
+			});
+		}
+
+		// Mixed imports: import A, { B, C } from 'path'
+		const mixedImportPattern = /import\s+(\w+),\s*\{\s*([^}]+)\s*\}\s*from\s*['"]([^'"]+)['"];?/g;
+		while ((match = mixedImportPattern.exec(content)) !== null) {
+			const namedImports = match[2].split(',').map(imp => imp.trim()).filter(imp => imp.length > 0);
+			this.currentImports.push({
+				imports: [match[1], ...namedImports],
+				fromPath: match[3],
+				isDefault: true // Mixed, but we mark as default since it includes default
+			});
+		}
+	}
+
+	/**
+	 * Private helper to find an import by path.
+	 */
+	private findImportByPath(fromPath: string): ImportInfo | null {
+		return this.currentImports.find(imp => imp.fromPath === fromPath) || null;
+	}
+
+	/**
+	 * Private helper to add imports to an existing import statement.
+	 */
+	private addToExistingNamedImport(newImports: string[], fromPath: string): void {
+		const existingImport = this.findImportByPath(fromPath);
+		if (!existingImport) return;
+
+		const currentImports = existingImport.imports;
+		const importsToAdd = newImports.filter(imp =>
+			!currentImports.some(existing => this.normalizeImportName(existing) === this.normalizeImportName(imp))
+		);
+
+		if (importsToAdd.length === 0) return;
+
+		const allImports = [...currentImports, ...importsToAdd];
+		this.replaceNamedImport(fromPath, allImports);
+	}
+
+	/**
+	 * Private helper to add to existing import (handling mixed default/named).
+	 */
+	private addToExistingImport(importName: string, fromPath: string, isDefault: boolean): void {
+		const existingImport = this.findImportByPath(fromPath);
+		if (!existingImport) return;
+
+		// This is complex - would need to handle mixed imports
+		// For now, just create a new import
+		if (isDefault) {
+			const importStatement = `import ${importName} from '${fromPath}';`;
+			this.insertImportStatement(importStatement);
+		}
+	}
+
+	/**
+	 * Private helper to replace a named import statement.
+	 */
+	private replaceNamedImport(fromPath: string, newImports: string[]): void {
+		const importPattern = this.createNamedImportPattern(fromPath);
+		const newImportStatement = `import { ${newImports.join(', ')} } from '${fromPath}';`;
+
+		const currentContent = this.getCurrentContent();
+		const updatedContent = currentContent.replace(importPattern, newImportStatement);
+
+		this.parentBuilder.parseText(updatedContent);
+		this.parseExistingImports(); // Refresh our cache
+	}
+
+	/**
+	 * Private helper to insert an import statement at the appropriate location.
+	 */
+	private insertImportStatement(importStatement: string): void {
+		if (importStatement.trim() === '') {
+			return;
+		}
+
+		// Find the best insertion point (after other imports)
+		const content = this.getCurrentContent();
+		const lines = content.split('\n');
+		let insertIndex = 0;
+
+		// Find the last import statement
+		for (let i = 0; i < lines.length; i++) {
+			const line = lines[i].trim();
+			if (line.startsWith('import ') && line.includes(' from ')) {
+				insertIndex = i + 1;
+			} else if (line.length > 0 && !line.startsWith('//') && !line.startsWith('/*')) {
+				// Found non-import, non-comment line
+				break;
+			}
+		}
+
+		// Insert at the appropriate location
+		this.parentBuilder.insertCodeAtIndex(insertIndex, importStatement);
+		this.parseExistingImports(); // Refresh our cache
+	}
+
+	/**
+	 * Private helper to create import pattern for removal.
+	 */
+	private createImportPattern(fromPath: string): RegExp {
+		const escapedPath = fromPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+		return new RegExp(`import.*from\\s*['"]${escapedPath}['"];?\\s*\\n?`, 'g');
+	}
+
+	/**
+	 * Private helper to create named import pattern.
+	 */
+	private createNamedImportPattern(fromPath: string): RegExp {
+		const escapedPath = fromPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+		return new RegExp(`import\\s*\\{[^}]+\\}\\s*from\\s*['"]${escapedPath}['"];?`);
+	}
+
+	/**
+	 * Private helper to normalize import names (handle aliases).
+	 */
+	private normalizeImportName(importName: string): string {
+		// Remove alias part: "Component as ReactComponent" -> "Component"
+		return importName.split(' as ')[0].trim();
+	}
+
+	/**
+	 * Private helper to generate import statement from ImportInfo.
+	 */
+	private generateImportStatement(importInfo: ImportInfo): string {
+		if (importInfo.isNamespace) {
+			return `import * as ${importInfo.imports[0]} from '${importInfo.fromPath}';`;
+		} else if (importInfo.isDefault) {
+			return `import ${importInfo.imports[0]} from '${importInfo.fromPath}';`;
+		} else {
+			return `import { ${importInfo.imports.join(', ')} } from '${importInfo.fromPath}';`;
+		}
+	}
+
+	/**
+	 * Private helper to remove all imports.
+	 */
+	private removeAllImports(): void {
+		const content = this.getCurrentContent();
+		const lines = content.split('\n');
+		const nonImportLines = lines.filter(line => {
+			const trimmed = line.trim();
+			return !(trimmed.startsWith('import ') && trimmed.includes(' from '));
+		});
+
+		const updatedContent = nonImportLines.join('\n');
+		this.parentBuilder.parseText(updatedContent);
+		this.parseExistingImports(); // Refresh our cache
+	}
+
+	/**
+	 * Private helper to get current content.
+	 */
+	private getCurrentContent(): string {
+		// This would ideally get the current content including any pending edits
+		// For now, we'll use the original text
+		return this.originalText;
+	}
 }

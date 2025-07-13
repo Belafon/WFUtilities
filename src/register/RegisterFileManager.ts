@@ -298,6 +298,19 @@ export class RegisterFileManager {
             throw error;
         }
     }
+
+    private getRelativeImportPath(filePath: string): string {
+        // Remove file extension and convert to relative path
+        const relativePath = path.relative(path.dirname(this.registerPath), filePath);
+        const cleanPath = relativePath.replace(/\.(ts|js)$/, '').replace(/\\/g, '/');
+        
+        // Ensure relative imports start with './' if they don't start with '../'
+        if (!cleanPath.startsWith('./') && !cleanPath.startsWith('../')) {
+            return './' + cleanPath;
+        }
+        
+        return cleanPath;
+    }
 }
 
 export const registerFileManager = new RegisterFileManager();

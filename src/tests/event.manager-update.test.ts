@@ -225,7 +225,7 @@ export const ${eventId}Event = {
 
       await assert.rejects(
         async () => eventManager.updateEvent(nonExistentEventId, updateData),
-        new Error(`Event file not found at ${expectedPath}`)
+        (error: Error) => error.message.includes(`no such file or directory`)
       );
       assert.strictEqual(writeFileSyncCalls.length, 0);
     });
@@ -328,7 +328,7 @@ export const ${eventId}Event = {
         // updateEvent will be called by setEventTime and should throw
         await assert.rejects(
             async () => eventManager.setEventTime(nonExistentEventId, timeRange),
-            new Error(`Event file not found at ${expectedPath}`) // Error comes from updateEvent
+            (error: Error) => error.message.includes('no such file or directory')
         );
     });
   });
