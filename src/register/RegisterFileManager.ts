@@ -35,7 +35,7 @@ export class RegisterFileManager {
      */
     public async addEventToRegister(eventId: string, eventFilePath: string): Promise<void> {
         const eventVariables = new EventTemplateVariables(eventId);
-        
+
         await this.addItemToRegister({
             itemId: eventId,
             itemFilePath: eventFilePath,
@@ -52,7 +52,7 @@ export class RegisterFileManager {
      */
     public async addCharacterToRegister(characterId: string, characterFilePath: string): Promise<void> {
         const characterVariables = new CharacterTemplateVariables(characterId);
-        
+
         await this.addItemToRegister({
             itemId: characterId,
             itemFilePath: characterFilePath,
@@ -101,15 +101,15 @@ export class RegisterFileManager {
      * @param characterId Optional character ID for template variables (if not provided, uses 'default')
      */
     public async addPassageToRegister(
-        passageId: string, 
-        passageFilePath: string, 
-        eventId?: string, 
+        passageId: string,
+        passageFilePath: string,
+        eventId?: string,
         characterId?: string
     ): Promise<void> {
         // For passages, we still use dynamic imports but can optionally use template variables
         // if eventId and characterId are provided
         const importValue = `() => import('${passageFilePath}')`;
-        
+
         await this.addItemToRegister({
             itemId: passageId,
             itemFilePath: '', // No import needed for dynamic imports
@@ -149,20 +149,36 @@ export class RegisterFileManager {
         const { itemId, itemFilePath, sectionName, importName, variableName, skipImport = false } = options;
 
         try {
-            // Load the register file
             const content = config.fileSystem.readFileSync(this.registerPath, 'utf-8');
+
+            // --- START OF CRITICAL LOGGING ---
+            console.log("\n\n<<<<<<<<<<<<<<<<<< START REGISTER DEBUG >>>>>>>>>>>>>>>>>>");
+            console.log(`[REGISTER] Modifying file: ${this.registerPath}`);
+            console.log(`[REGISTER] Adding item '${itemId}' to section '${sectionName}'.`);
+            console.log("[REGISTER] --- Initial File Content ---");
+            console.log(content);
+            console.log("[REGISTER] --- End of Initial File Content ---\n");
+            // --- END OF CRITICAL LOGGING ---
+
             const codeBuilder = new TypeScriptCodeBuilder(content);
 
-            // Add import statement (if not skipped)
             if (!skipImport && itemFilePath && importName) {
-                await this.addImportStatement(codeBuilder, importName, itemFilePath);
+                // Using the helper method to ensure the path is relative
+                const relativePath = this.getRelativeImportPath(itemFilePath);
+                await this.addImportStatement(codeBuilder, importName, relativePath);
             }
 
-            // Add entry to the register object
             await this.addToRegisterObject(codeBuilder, sectionName, itemId, variableName);
 
-            // Save the changes
             const updatedContent = await codeBuilder.toString();
+
+            // --- MORE CRITICAL LOGGING ---
+            console.log("\n[REGISTER] --- Final Generated Content ---");
+            console.log(updatedContent);
+            console.log("[REGISTER] --- End of Final Generated Content ---");
+            console.log("<<<<<<<<<<<<<<<<<< END REGISTER DEBUG >>>>>>>>>>>>>>>>>>\n\n");
+            // --- END OF MORE CRITICAL LOGGING ---
+
             config.fileSystem.writeFileSync(this.registerPath, updatedContent, 'utf-8');
 
             config.editorAdapter.showInformationNotification(
@@ -181,16 +197,21 @@ export class RegisterFileManager {
      * Adds an import statement to the top of the file
      */
     private async addImportStatement(codeBuilder: TypeScriptCodeBuilder, importName: string, importPath: string): Promise<void> {
-        codeBuilder.insertCodeAtIndex(0, `import { ${importName} } from '${importPath}';`);
+        // Get the specialized manager for handling imports.
+        const importManager = codeBuilder.getImportManager();
+
+        // Use the manager's method to add the named import.
+        // This is idempotent (won't add a duplicate) and handles formatting correctly.
+        importManager.addNamedImport(importName, importPath);
     }
 
     /**
      * Adds an entry to the specified section of the register object
      */
     private async addToRegisterObject(
-        codeBuilder: TypeScriptCodeBuilder, 
-        sectionName: RegisterSection, 
-        itemId: string, 
+        codeBuilder: TypeScriptCodeBuilder,
+        sectionName: RegisterSection,
+        itemId: string,
         variableName: string
     ): Promise<void> {
         return new Promise<void>((resolve, reject) => {
@@ -303,12 +324,12 @@ export class RegisterFileManager {
         // Remove file extension and convert to relative path
         const relativePath = path.relative(path.dirname(this.registerPath), filePath);
         const cleanPath = relativePath.replace(/\.(ts|js)$/, '').replace(/\\/g, '/');
-        
+
         // Ensure relative imports start with './' if they don't start with '../'
         if (!cleanPath.startsWith('./') && !cleanPath.startsWith('../')) {
             return './' + cleanPath;
         }
-        
+
         return cleanPath;
     }
 }

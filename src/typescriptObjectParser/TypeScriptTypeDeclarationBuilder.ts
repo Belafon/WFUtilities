@@ -38,14 +38,14 @@ export class TypeScriptTypeDeclarationBuilder {
 		// Extract from original source using the same logic as modification methods
 		const typeStart = this.getTypeDefinitionStart();
 		const typeEnd = this.getTypeDefinitionEnd();
-		
+
 		if (typeStart !== -1 && typeEnd !== -1 && typeStart < typeEnd) {
 			const extracted = this.originalText.substring(typeStart, typeEnd).trim();
 			if (extracted) {
 				return extracted;
 			}
 		}
-		
+
 		// Fallback to metadata if extraction fails
 		return this.typeGroup.metadata?.typeAnnotation || '';
 	}
@@ -264,7 +264,7 @@ export class TypeScriptTypeDeclarationBuilder {
 		if (currentTypes.some(t => t.trim() === newTypeTrimmed)) {
 			return;
 		}
-		
+
 		const updatedUnion = [...currentTypes, newTypeTrimmed].join(' | ');
 		this.setTypeDefinition(updatedUnion);
 	}
@@ -347,42 +347,61 @@ export class TypeScriptTypeDeclarationBuilder {
 	 * Private helper to find nested objects within a type definition.
 	 */
 	private findNestedObjectInDefinition(
-		definition: string,
+		definition: string, // The original, untrimmed substring of the type definition
 		path: string[],
-		baseOffset: number
+		baseOffset: number  // The absolute start position of `definition` in the original file
 	): { start: number; end: number; } | null {
-		let currentDefinition = definition.trim();
-		let currentOffset = baseOffset;
 
-		// Skip to the first opening brace if we're starting from the root
-		const firstBraceIndex = currentDefinition.indexOf('{');
-		if(firstBraceIndex === -1) return null;
-		currentOffset += firstBraceIndex;
-		currentDefinition = currentDefinition.substring(firstBraceIndex);
+		let currentDefinitionSlice = definition;
+		let relativeOffset = 0; // The offset of our current slice relative to the start of `definition`
 
+		// If we are searching for a nested path, we start inside the first object
+		if (path.length > 0) {
+			const firstBraceIndex = currentDefinitionSlice.indexOf('{');
+			if (firstBraceIndex === -1) return null;
+
+			const matchingCloseBraceIndex = this.findMatchingBrace(currentDefinitionSlice, firstBraceIndex);
+			if (matchingCloseBraceIndex === -1) return null;
+
+			// The new slice is the content of the outer object.
+			currentDefinitionSlice = currentDefinitionSlice.substring(firstBraceIndex + 1, matchingCloseBraceIndex);
+			relativeOffset += firstBraceIndex + 1;
+		}
 
 		// Navigate through each segment of the path
 		for (const segment of path) {
-			const segmentResult = this.findPropertyInDefinition(currentDefinition, segment, currentOffset);
-			if (!segmentResult) return null;
+			// Find the property pattern: `segment: ...`
+			const propertyPattern = new RegExp(`\\b${segment}\\s*:\\s*`);
+			const match = currentDefinitionSlice.match(propertyPattern);
 
-			// Update the current definition to be the content of the found property
-			currentDefinition = segmentResult.content;
-			currentOffset = segmentResult.contentStart;
+			if (!match || match.index === undefined) return null;
+
+			// The start of the property's value, relative to the current slice
+			const valueStartInSlice = match.index + match[0].length;
+
+			// Find the opening brace of the nested object, relative to the current slice
+			const openBraceInSlice = currentDefinitionSlice.indexOf('{', valueStartInSlice);
+			if (openBraceInSlice === -1) return null;
+
+			const closeBraceInSlice = this.findMatchingBrace(currentDefinitionSlice, openBraceInSlice);
+			if (closeBraceInSlice === -1) return null;
+
+			// For the next iteration, narrow our search to the content of the object we just found
+			relativeOffset += openBraceInSlice + 1;
+			currentDefinitionSlice = currentDefinitionSlice.substring(openBraceInSlice + 1, closeBraceInSlice);
 		}
 
-		// After iterating through the path, currentDefinition is the text of the target object
-		const openBraceIndex = currentDefinition.indexOf('{');
-		const closeBraceIndex = this.findMatchingBrace(currentDefinition, openBraceIndex);
-		
-		if (openBraceIndex === -1 || closeBraceIndex === -1) return null;
+		// After the loop, `relativeOffset` is the start of the target object's content (after its '{')
+		// and `currentDefinitionSlice` is the content itself.
+		// The end position is simply the start + the length of the content.
+		const finalStart = baseOffset + relativeOffset;
+		const finalEnd = finalStart + currentDefinitionSlice.length;
 
 		return {
-			start: currentOffset + openBraceIndex + 1,
-			end: currentOffset + closeBraceIndex
+			start: finalStart,
+			end: finalEnd,
 		};
 	}
-
 	/**
 	 * Private helper to find a property within a type definition.
 	 */
@@ -400,17 +419,17 @@ export class TypeScriptTypeDeclarationBuilder {
 		const contentStartIndex = match.index + match[0].length;
 
 		const firstChar = definition.substring(contentStartIndex).trim().charAt(0);
-		
+
 		let endIndex = -1;
-		if(firstChar === '{') {
+		if (firstChar === '{') {
 			endIndex = this.findMatchingBrace(definition, contentStartIndex + definition.substring(contentStartIndex).indexOf('{'));
 		}
 		// Extend this for other types if needed (e.g., arrays, primitives)
-		
-		if(endIndex === -1) {
+
+		if (endIndex === -1) {
 			// Fallback for non-object types, just find the end by semicolon or newline
 			let tempEnd = contentStartIndex;
-			while(tempEnd < definition.length && definition[tempEnd] !== ';' && definition[tempEnd] !== '\n') {
+			while (tempEnd < definition.length && definition[tempEnd] !== ';' && definition[tempEnd] !== '\n') {
 				tempEnd++;
 			}
 			endIndex = tempEnd;

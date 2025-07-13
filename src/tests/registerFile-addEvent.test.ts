@@ -40,7 +40,7 @@ suite('RegisterFileManager Correctness Tests', () => {
         const expectedBlockContent = `
             village: villageEvent,
             wedding: weddingEvent,
-            newEventName: newEventNameEvent
+            newEventName: newEventNameEvent,
         `;
 
         // Act
@@ -244,6 +244,86 @@ export const register = {
             assert.ok(
                 eventsBlockContent.includes('newEvent: newEventEvent'),
                 'The new property was not added correctly.'
+            );
+        });
+    });
+
+    suite('RegisterFileManager - Definitive Failing Test', () => {
+
+        test('Should add a new property with a trailing comma for consistency', async () => {
+            // Arrange: The EXACT initial content from your logs.
+            const initialContent = `
+import { kingdomLocation } from './locations/kingdom.location';
+import { weddingEvent } from './events/wedding/wedding.event';
+import { Annie } from './characters/annie';
+import { Thomas } from './characters/thomas';
+import { kingdomEvent } from './events/kingdom/kingdom.event';
+import { villageEvent } from './events/village/village.event';
+import { village_under_attackHappening } from './happenings/village_under_attack';
+import { villageLocation } from './locations/village.location';
+import { Franta } from './sideCharacters/Franta';
+import { NobleMan } from './sideCharacters/NobleMan';
+
+export const register = {
+    characters: {
+        thomas: Thomas,
+        annie: Annie,
+    },
+    sideCharacters: {
+        franta: Franta,
+        nobleMan: NobleMan,
+    },
+    events: {
+        village: villageEvent,
+        kingdom: kingdomEvent,
+        wedding: weddingEvent,
+    },
+    locations: {
+        village: villageLocation,
+        kingdom: kingdomLocation,
+    },
+    passages: {
+        village: () => import('./events/village/village.passages'),
+        kingdom: () => import('./events/kingdom/kingdom.passages'),
+        wedding: () => import('./events/wedding/wedding.passages'),
+    },
+    happenings: {
+        village_under_attack: village_under_attackHappening,
+    }
+} as const;
+
+export type TRegisterPassageId = keyof typeof register.passages;
+`;
+            const codeBuilder = new TypeScriptCodeBuilder(initialContent);
+
+            // Act
+            codeBuilder.getImportManager().addNamedImport('newEventNameEvent', './events/newEventName/newEventName.event');
+
+            await new Promise<void>((resolve) => {
+                codeBuilder.findObject('register', {
+                    onFound: (regBuilder) => {
+                        regBuilder.findObject('events', {
+                            onFound: (secBuilder) => {
+                                secBuilder.setPropertyValue('newEventName', 'newEventNameEvent');
+                                resolve();
+                            }
+                        });
+                    }
+                });
+            });
+
+            const finalCode = await codeBuilder.toString();
+            const eventsBlockRegex = /events:\s*{([\s\S]*?)}/s;
+            const match = finalCode.match(eventsBlockRegex);
+
+            assert.ok(match, "The 'events' object block could not be found.");
+            const eventsContent = match[1];
+
+            // Assert: Ensure the new property has a trailing comma.
+            // This test will FAIL if the bug exists.
+            assert.ok(
+                eventsContent.trim().endsWith(','),
+                "Test Failed: The newly added property should have a trailing comma for consistent formatting."
             );
         });
     });

@@ -207,7 +207,7 @@ suite('TypeScriptObjectBuilder Extended Features', () => {
             objBuilder!.addPropertyIfMissing('prop2', '123');
             const result = await builder.toString();
             // Adjusted regex to expect newline between comma and next property if object was multi-line
-            const expectedPattern = /prop1:\s*"val1",\s*\n\s*prop2:\s*123\s*\n\s*};/;
+            const expectedPattern = /prop1:\s*"val1",\s*\n\s*prop2:\s*123,\s*\n\s*};/;
             assert.ok(expectedPattern.test(result), `Result:\n${result}\nDid not match pattern: ${expectedPattern}`);
         });
 

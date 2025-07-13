@@ -43,10 +43,10 @@ export class WorldStateFileManager {
     public async addCharacterToWorldState(characterId: string, characterFilePath: string): Promise<void> {
         const characterVariables = new CharacterTemplateVariables(characterId);
         const capitalizedId = this.capitalizeFirstLetter(characterId);
-        
+
         // Import path should be relative and without extension
         const importPath = this.getRelativeImportPath(characterFilePath);
-        
+
         const typeImports: TypeImport[] = [
             {
                 typeName: `T${capitalizedId}CharacterData`,
@@ -72,7 +72,7 @@ export class WorldStateFileManager {
     public async addSideCharacterToWorldState(characterId: string, characterFilePath: string): Promise<void> {
         const capitalizedId = this.capitalizeFirstLetter(characterId);
         const importPath = this.getRelativeImportPath(characterFilePath);
-        
+
         const typeImports: TypeImport[] = [
             {
                 typeName: `T${capitalizedId}SideCharacterData`,
@@ -98,7 +98,7 @@ export class WorldStateFileManager {
     public async addEventToWorldState(eventId: string, eventFilePath: string): Promise<void> {
         const capitalizedId = this.capitalizeFirstLetter(eventId);
         const importPath = this.getRelativeImportPath(eventFilePath);
-        
+
         const typeImports: TypeImport[] = [
             {
                 typeName: `T${capitalizedId}EventData`,
@@ -125,7 +125,7 @@ export class WorldStateFileManager {
     public async addLocationToWorldState(locationId: string, locationFilePath: string, isPartial: boolean = false): Promise<void> {
         const capitalizedId = this.capitalizeFirstLetter(locationId);
         const importPath = this.getRelativeImportPath(locationFilePath);
-        
+
         const typeImports: TypeImport[] = [
             {
                 typeName: `T${capitalizedId}LocationData`,
@@ -172,20 +172,34 @@ export class WorldStateFileManager {
         const { sectionName, itemId, typeDefinition, typeImports } = options;
 
         try {
-            // Load the world state file
             const content = config.fileSystem.readFileSync(this.worldStateFilePath, 'utf-8');
+
+            // --- START OF CRITICAL LOGGING ---
+            console.log("\n\n<<<<<<<<<<<<<<<<<< START WORLD STATE DEBUG >>>>>>>>>>>>>>>>>>");
+            console.log(`[WORLD STATE] Modifying file: ${this.worldStateFilePath}`);
+            console.log(`[WORLD STATE] Adding item '${itemId}' to section '${sectionName}'.`);
+            console.log("[WORLD STATE] --- Initial File Content ---");
+            console.log(content);
+            console.log("[WORLD STATE] --- End of Initial File Content ---\n");
+            // --- END OF CRITICAL LOGGING ---
+
             const codeBuilder = new TypeScriptCodeBuilder(content);
 
-            // Add import statements
             for (const typeImport of typeImports) {
                 await this.addImportStatement(codeBuilder, typeImport.typeName, typeImport.importPath);
             }
 
-            // Add entry to the TWorldState type
             await this.addToWorldStateType(codeBuilder, sectionName, itemId, typeDefinition);
 
-            // Save the changes
             const updatedContent = await codeBuilder.toString();
+
+            // --- MORE CRITICAL LOGGING ---
+            console.log("\n[WORLD STATE] --- Final Generated Content ---");
+            console.log(updatedContent);
+            console.log("[WORLD STATE] --- End of Final Generated Content ---");
+            console.log("<<<<<<<<<<<<<<<<<< END WORLD STATE DEBUG >>>>>>>>>>>>>>>>>>\n\n");
+            // --- END OF MORE CRITICAL LOGGING ---
+
             config.fileSystem.writeFileSync(this.worldStateFilePath, updatedContent, 'utf-8');
 
             config.editorAdapter.showInformationNotification(
@@ -205,7 +219,7 @@ export class WorldStateFileManager {
      */
     private async addImportStatement(codeBuilder: TypeScriptCodeBuilder, typeName: string, importPath: string): Promise<void> {
         const importManager = codeBuilder.getImportManager();
-        
+
         if (!importManager.hasNamedImport(typeName, importPath)) {
             importManager.addNamedImport(typeName, importPath);
         }
@@ -215,9 +229,9 @@ export class WorldStateFileManager {
      * Adds an entry to the specified section of the TWorldState type using enhanced type support
      */
     private async addToWorldStateType(
-        codeBuilder: TypeScriptCodeBuilder, 
-        sectionName: WorldStateSection, 
-        itemId: string, 
+        codeBuilder: TypeScriptCodeBuilder,
+        sectionName: WorldStateSection,
+        itemId: string,
         typeDefinition: string
     ): Promise<void> {
         return new Promise<void>((resolve, reject) => {
@@ -304,7 +318,7 @@ export class WorldStateFileManager {
                                     // Save the changes
                                     codeBuilder.toString().then(updatedContent => {
                                         config.fileSystem.writeFileSync(this.worldStateFilePath, updatedContent, 'utf-8');
-                                        
+
                                         config.editorAdapter.showInformationNotification(
                                             `Successfully removed ${itemId} from ${sectionName} in TWorldState.`
                                         );
@@ -347,12 +361,12 @@ export class WorldStateFileManager {
         // Remove file extension and convert to relative path
         const relativePath = path.relative(path.dirname(this.worldStateFilePath), filePath);
         const cleanPath = relativePath.replace(/\.(ts|js)$/, '').replace(/\\/g, '/');
-        
+
         // Ensure relative imports start with './' if they don't start with '../'
         if (!cleanPath.startsWith('./') && !cleanPath.startsWith('../')) {
             return './' + cleanPath;
         }
-        
+
         return cleanPath;
     }
 }

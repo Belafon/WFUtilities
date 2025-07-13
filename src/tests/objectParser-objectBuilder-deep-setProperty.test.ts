@@ -75,7 +75,7 @@ export const register = {
     	village: villageEvent,
         kingdom: kingdomEvent,
     	wedding: weddingEvent,
-    	festival: festivalEvent
+    	festival: festivalEvent,
     },`;
         // Normalize whitespace for comparison, focusing on structure
         assert.ok(
@@ -119,7 +119,7 @@ export const register = {
     locations: {
     	village: villageLocation,
     	kingdom: kingdomLocation,
-    	castle: castleLocation
+    	castle: castleLocation,
     },`;
         assert.ok(
             result.replace(/\s+/g, ' ').includes(expectedSubstring.replace(/\s+/g, ' ')),
@@ -161,7 +161,7 @@ export const register = {
     config: {
         settings: { // This is the object we'll modify
             theme: 'dark',
-            fontSize: 12
+            fontSize: 12,
         }
     }
 };`;
@@ -297,7 +297,7 @@ export const register = {
     data: {
         item1: 10,
         item2: 20, // trailing comma here
-        item3: 30
+        item3: 30,
     }`;
         // Normalizing to focus on structure and content
         assert.ok(
@@ -328,7 +328,7 @@ export const config = {
     module: {
       isEnabled: true,  // 2-space indent within 'module'
       retries: 3,
-      timeout: 5000
+      timeout: 5000,
     }
 };`;
         assert.strictEqual(result.trim(), expected.trim(), "Indentation should be based on the direct parent (nested) object.");
@@ -358,7 +358,7 @@ export const setup = {
     user: {
         "name": 'Alice',
         'age': 30,
-        isAdmin: true
+        isAdmin: true,
     }`;
         assert.ok(
             result.replace(/\s+/g, ' ').includes(expectedSubstring.replace(/\s+/g, ' ')),

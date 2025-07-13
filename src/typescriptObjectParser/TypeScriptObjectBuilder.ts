@@ -43,11 +43,11 @@ export class TypeScriptObjectBuilder {
 		let newPropertyFullText: string;
 
 		if (originalHadNewline) {
-			const indentation = this.detectIndentation(); 
-			const baseIndentation = this.detectBaseIndentation(); 
+			const indentation = this.detectIndentation();
+			const baseIndentation = this.detectBaseIndentation();
 			const propertyLine = `${indentation}${newPropertySegment}`;
-			
-			if (currentContent.trim() === '') { 
+
+			if (currentContent.trim() === '') {
 				// currentContent was purely whitespace (newlines, spaces)
 				newPropertyFullText = `\n${propertyLine}\n${baseIndentation}`;
 			} else {
@@ -69,7 +69,7 @@ export class TypeScriptObjectBuilder {
 					// that trimEnd() removed them. Revert to a less aggressive trim.
 					// Find the last non-whitespace character and take everything up to it, then add a newline.
 					let lastCharIndex = -1;
-					for(let k=currentContent.length -1; k >=0; k--) {
+					for (let k = currentContent.length - 1; k >= 0; k--) {
 						if (currentContent[k].trim() !== '') {
 							lastCharIndex = k;
 							break;
@@ -97,7 +97,7 @@ export class TypeScriptObjectBuilder {
 
 		} else if (this.originalText.substring(this.objectGroup.start, this.objectGroup.end) === '{}') {
 			// Exactly "{}" - no spaces
-			newPropertyFullText = `${newPropertySegment}`; 
+			newPropertyFullText = `${newPropertySegment}`;
 		} else {
 			// Single-line object, possibly with spaces like "{ }" or "{   }" but no newlines in currentContent
 			// currentContent might be " " or "   "
@@ -122,36 +122,38 @@ export class TypeScriptObjectBuilder {
 	private handleMultiLineAddition(newPropSegment: string, lastProperty: any, currentContent: string): void {
 		const indentation = this.detectIndentation();
 		const baseIndentation = this.detectBaseIndentation();
-		
+
 		// Get content after the last property value
 		const contentAfterValue = this.originalText.substring(lastProperty.valueEnd, this.objectGroup.end - 1);
-		
+
 		// Check if there's a trailing comma
 		const commaMatch = contentAfterValue.match(/^(\s*,)/);
-		
+
 		if (commaMatch) {
-			// There's already a trailing comma
+			// There's already a trailing comma on the previous property
 			const commaAndSpaces = commaMatch[1];
 			const restAfterComma = contentAfterValue.substring(commaAndSpaces.length);
-			
+
 			// Find where to insert the new property
 			// Look for the first newline after the comma (if any)
 			const newlineMatch = restAfterComma.match(/^([^\n]*\n)/);
-			
+
 			if (newlineMatch) {
-				// There's content (like a comment) on the same line as the comma, then a newline
+				// There's content (like a comment or just a newline) after the comma
 				const contentOnCommaLine = newlineMatch[1];
 				const insertPosition = lastProperty.valueEnd + commaAndSpaces.length + contentOnCommaLine.length;
-				
+
 				// Insert the new property after the newline
-				const newPropertyLine = `${indentation}${newPropSegment}`;
-				
+				// FIX: Added a trailing comma to the new property line for consistency.
+				const newPropertyLine = `${indentation}${newPropSegment},`;
+
 				// Preserve everything after this point
 				const restOfContent = this.originalText.substring(insertPosition, this.objectGroup.end - 1);
-				
+
 				// Build the replacement text
 				let newPropertyFullText = newPropertyLine;
 				if (restOfContent.trim() && !restOfContent.trim().startsWith('}')) {
+					// This case handles if there were comments or other things after the insertion point
 					newPropertyFullText += restOfContent;
 				} else {
 					// Just whitespace/closing brace, ensure proper formatting
@@ -161,50 +163,52 @@ export class TypeScriptObjectBuilder {
 						newPropertyFullText += `\n${baseIndentation}`;
 					}
 				}
-				
+
 				this.parentBuilder.addEdit(insertPosition, this.objectGroup.end - 1, newPropertyFullText);
 			} else {
 				// No newline after comma, add one with the new property
 				const insertPosition = lastProperty.valueEnd + commaAndSpaces.length;
-				const newPropertyFullText = `\n${indentation}${newPropSegment}${restAfterComma}`;
-				
+				// FIX: Added a trailing comma to the new property line.
+				const newPropertyFullText = `\n${indentation}${newPropSegment},${restAfterComma}`;
+
 				this.parentBuilder.addEdit(insertPosition, this.objectGroup.end - 1, newPropertyFullText);
 			}
 		} else {
-			// No trailing comma, need to add comma and property
+			// No trailing comma, need to add a comma to the previous property and then add the new property.
 			const insertPosition = lastProperty.valueEnd;
-			
+
 			// Build replacement with comma, preserving any comments
 			const hasCommentsAfterValue = contentAfterValue.includes('//') || contentAfterValue.includes('/*');
-			
+
 			let newPropertyFullText: string;
 			if (hasCommentsAfterValue) {
 				// Check if there's a newline after the comment
 				const newlineAfterCommentMatch = contentAfterValue.match(/^([^\n]*\n)/);
-				
+
 				if (newlineAfterCommentMatch) {
-					// There's a comment on the same line, then a newline
+					// There's a comment on the same line, then a newline. Insert a comma before the comment.
 					const commentLine = newlineAfterCommentMatch[1];
 					const insertCommaPosition = contentAfterValue.indexOf('//') >= 0 ? contentAfterValue.indexOf('//') : contentAfterValue.indexOf('/*');
-					
-					// Insert comma before the comment
+
 					const beforeComment = contentAfterValue.substring(0, insertCommaPosition);
 					const commentAndAfter = contentAfterValue.substring(insertCommaPosition);
-					
-					newPropertyFullText = `${beforeComment},${commentAndAfter}${indentation}${newPropSegment}`;
-					
-					// Ensure proper closing brace formatting
+
+					// FIX: Added a trailing comma to the new property line.
+					newPropertyFullText = `${beforeComment},${commentAndAfter}${indentation}${newPropSegment},`;
+
 					if (!contentAfterValue.endsWith('\n')) {
 						newPropertyFullText += `\n${baseIndentation}`;
 					}
 				} else {
 					// Comment with no newline after - rare case
-					newPropertyFullText = `,${contentAfterValue}\n${indentation}${newPropSegment}\n${baseIndentation}`;
+					// FIX: Added a trailing comma to the new property line.
+					newPropertyFullText = `,${contentAfterValue}\n${indentation}${newPropSegment},\n${baseIndentation}`;
 				}
 			} else {
-				// Simple case: add comma and new property
-				newPropertyFullText = `,\n${indentation}${newPropSegment}`;
-				
+				// Simple case: add comma to previous property and add the new property line.
+				// FIX: Added a trailing comma to the new property line.
+				newPropertyFullText = `,\n${indentation}${newPropSegment},`;
+
 				// Preserve existing whitespace/formatting before closing brace if any
 				if (contentAfterValue.trim() === '' && contentAfterValue.includes('\n')) {
 					newPropertyFullText += contentAfterValue;
@@ -214,7 +218,7 @@ export class TypeScriptObjectBuilder {
 					newPropertyFullText += contentAfterValue;
 				}
 			}
-			
+
 			this.parentBuilder.addEdit(insertPosition, this.objectGroup.end - 1, newPropertyFullText);
 		}
 	}
@@ -222,11 +226,11 @@ export class TypeScriptObjectBuilder {
 	private handleSingleLineAddition(newPropSegment: string, lastProperty: any): void {
 		// For single-line objects, we need to be very careful about spacing
 		const contentAfterLastValue = this.originalText.substring(lastProperty.valueEnd, this.objectGroup.end - 1);
-		
+
 		// Check for existing trailing comma
 		const trailingCommaMatch = contentAfterLastValue.match(/^(\s*,\s*)/);
 		const hasSpaceBeforeClosingBrace = contentAfterLastValue.endsWith(' ');
-		
+
 		let newPropertyFullText: string;
 		let editStart: number;
 		let editEnd: number;
@@ -262,13 +266,13 @@ export class TypeScriptObjectBuilder {
 			// Get the indentation of each property by looking at the line it starts on
 			const contentStart = this.objectGroup.start + 1;
 			const fullContent = this.originalText.substring(contentStart, this.objectGroup.end - 1);
-			
+
 			for (const prop of properties) {
 				// Find the line containing this property
 				const propRelativeStart = prop.start - contentStart;
 				const textBeforeProperty = fullContent.substring(0, propRelativeStart);
 				const lastNewlineIndex = textBeforeProperty.lastIndexOf('\n');
-				
+
 				if (lastNewlineIndex !== -1) {
 					// Extract text from the last newline to the property start
 					const lineStartToProperty = fullContent.substring(lastNewlineIndex + 1, propRelativeStart);
@@ -324,13 +328,13 @@ export class TypeScriptObjectBuilder {
 	private detectBaseIndentation(): string {
 		// Look at the line containing the opening brace to determine base indentation
 		const objectStart = this.objectGroup.start;
-		
+
 		// Find the start of the line that contains the opening brace
 		let lineStart = objectStart;
 		while (lineStart > 0 && this.originalText[lineStart - 1] !== '\n') {
 			lineStart--;
 		}
-		
+
 		// Extract indentation from that line
 		let lineContent = '';
 		let pos = lineStart;
@@ -343,7 +347,7 @@ export class TypeScriptObjectBuilder {
 			}
 			pos++;
 		}
-		
+
 		return lineContent;
 	}
 
@@ -828,31 +832,31 @@ export class TypeScriptObjectBuilder {
 
 			// Only start tracking property if we're not in comments and find non-whitespace/comma
 			if (propertyFullStart === -1 && !/\s|,/.test(char)) propertyFullStart = pos;
-			
+
 			// Handle strings
 			if ((char === '"' || char === "'") && prevChar !== '\\') {
-				if (!inString) { 
-					inString = true; 
-					stringChar = char; 
-				} else if (char === stringChar) { 
-					inString = false; 
+				if (!inString) {
+					inString = true;
+					stringChar = char;
+				} else if (char === stringChar) {
+					inString = false;
 				}
 			}
-			
-			if (inString) { 
-				pos++; 
-				continue; 
+
+			if (inString) {
+				pos++;
+				continue;
 			}
-			
+
 			// Track nested structures
 			if (char === '{') braceDepth++; else if (char === '}') braceDepth--;
 			if (char === '[') bracketDepth++; else if (char === ']') bracketDepth--;
 			if (char === '(') parenDepth++; else if (char === ')') parenDepth--;
-			
+
 			// Track property name bounds
 			if (nameStart === -1 && propertyFullStart !== -1 && !/\s/.test(char)) nameStart = pos;
 			if (nameStart !== -1 && nameEnd === -1 && char === ':') { nameEnd = pos; colonPos = pos; }
-			
+
 			// Check for property end (comma or end of content at depth 0)
 			if (propertyFullStart !== -1 && colonPos !== -1 && (char === ',' || pos === content.length - 1) && braceDepth === 0 && bracketDepth === 0 && parenDepth === 0) {
 				const propertyFullEnd = (char === ',' ? pos : pos + 1);

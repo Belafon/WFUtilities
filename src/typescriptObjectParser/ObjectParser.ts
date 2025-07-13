@@ -4,7 +4,7 @@ import { TypeScriptTypeDeclarationBuilder, TypePropertyOptions } from "./TypeScr
 /******************************************************
  * Debug flag for logging internal state.
  ******************************************************/
-const DEBUG = true;
+const DEBUG = false;
 
 /******************************************************
  * Data structures to represent tokens & parsed items.
@@ -103,14 +103,14 @@ export class Tokenizer {
 	constructor(private pointer: SourcePointer) { }
 
 	public tokenize(): ParsedItemToken[] {
-		if (DEBUG) console.log("Tokenizer.tokenize: starting tokenization");
+		//if (DEBUG) console.log("Tokenizer.tokenize: starting tokenization");
 		while (!this.pointer.isEOF()) {
 			const startPos = this.pointer.position;
 			const current = this.pointer.currentChar();
 			if (DEBUG) {
-				console.log(
-					`Tokenizer.tokenize: at index ${startPos}, char '${current}'`
-				);
+				//console.log(
+				//	`Tokenizer.tokenize: at index ${startPos}, char '${current}'`
+				//);
 			}
 
 			// 1) Whitespace
@@ -3004,42 +3004,61 @@ export class TypeScriptTypeObjectBuilder {
 		// Start with the base type.
 		let fullPropertyType = propertyType;
 
-		// Handle intersection types first, as '&' has higher precedence than '|'.
-		// This appends the intersection types to the base type.
+		// Handle intersection and union types
 		if (options.intersection && options.intersection.length > 0) {
 			fullPropertyType = [fullPropertyType, ...options.intersection].join(' & ');
 		}
-
-		// Handle union types. This appends the union types to the *result* of the
-		// previous step (which may or may not include intersections).
 		if (options.union && options.union.length > 0) {
 			fullPropertyType = [fullPropertyType, ...options.union].join(' | ');
 		}
-
-		// Handle Partial wrapper. This wraps the entire constructed type.
 		if (options.partial) {
 			fullPropertyType = `Partial<${fullPropertyType}>`;
 		}
 
-		// Handle optional properties.
 		const optionalMark = options.optional ? '?' : '';
-
 		const propertyDefinition = `${propertyName}${optionalMark}: ${fullPropertyType};`;
 
-		// Find a good insertion point.
-		const content = this.getContent().trim();
-		if (content.length === 0) {
-			// Empty type object.
-			const baseIndentation = this.detectBaseIndentation();
-			const propIndentation = baseIndentation + '    ';
-			this.parentBuilder.addEdit(this.startPos, this.endPos, `\n${propIndentation}${propertyDefinition}\n${baseIndentation}`);
-		} else {
-			// Add to the end, before the closing brace.
-			const baseIndentation = this.detectBaseIndentation();
-			const propIndentation = baseIndentation + '    ';
-			const insertPos = this.endPos; // Insert before the closing '}' of the type object.
-			this.parentBuilder.addEdit(insertPos, insertPos, `\n${propIndentation}${propertyDefinition}`);
+		const content = this.getContent();
+		const trimmedContent = content.trim();
+		const baseIndentation = this.detectBaseIndentation();
+		const propIndentation = baseIndentation + '    '; // Assuming 4 spaces for properties
+
+		if (trimmedContent.length === 0) {
+			// Case 1: The object is empty, like `{}` or `{ \n }`.
+			const replacement = `\n${propIndentation}${propertyDefinition}\n${baseIndentation}`;
+			// Replace the entire (empty or whitespace) content of the object.
+			this.parentBuilder.addEdit(this.startPos, this.endPos, replacement);
+			return;
 		}
+
+		// Case 2: The object has existing properties.
+		// Find the position of the last non-whitespace character in the content block.
+		// This is typically the semicolon of the last property.
+		let lastCharIndex = -1;
+		for (let i = content.length - 1; i >= 0; i--) {
+			if (!/\s/.test(content[i])) {
+				lastCharIndex = i;
+				break;
+			}
+		}
+
+		// Determine the absolute position in the file to insert the new property.
+		// We will insert it right after the last property's last character.
+		const insertPos = this.startPos + lastCharIndex + 1;
+
+		let textToInsert = '';
+		const lastChar = content[lastCharIndex];
+
+		// Ensure the previous property is properly terminated with a semicolon.
+		if (lastChar !== ';' && lastChar !== ',') {
+			textToInsert += ';';
+		}
+
+		// Add the new property on a new line with the correct indentation.
+		textToInsert += `\n${propIndentation}${propertyDefinition}`;
+
+		// Schedule the edit to insert the text *after* the last existing property.
+		this.parentBuilder.addEdit(insertPos, insertPos, textToInsert);
 	}
 
 
@@ -3761,33 +3780,62 @@ export class TypeScriptImportManager {
 
 	/**
 	 * Private helper to insert an import statement at the appropriate location.
+	 * This method is now "smart" and inserts the new import directly after the
+	 * last existing import to maintain a clean, contiguous import block.
 	 */
 	private insertImportStatement(importStatement: string): void {
 		if (importStatement.trim() === '') {
 			return;
 		}
 
-		// Find the best insertion point (after other imports)
-		const content = this.getCurrentContent();
-		const lines = content.split('\n');
-		let insertIndex = 0;
+		// We need access to the root token group to find other imports.
+		// This requires a way to get the rootGroup from the parentBuilder.
+		// We will assume a simple public getter for this example.
+		// If rootGroup is private, you would add `public getRootGroup() { return this.rootGroup; }`
+		// to your TypeScriptCodeBuilder class.
+		const rootGroup = (this.parentBuilder as any).rootGroup as TokenGroup | null;
 
-		// Find the last import statement
-		for (let i = 0; i < lines.length; i++) {
-			const line = lines[i].trim();
-			if (line.startsWith('import ') && line.includes(' from ')) {
-				insertIndex = i + 1;
-			} else if (line.length > 0 && !line.startsWith('//') && !line.startsWith('/*')) {
-				// Found non-import, non-comment line
-				break;
-			}
+		if (!rootGroup) {
+			// Fallback if parsing failed: insert at the top.
+			this.parentBuilder.addEdit(0, 0, importStatement + '\n\n');
+			return;
 		}
 
-		// Insert at the appropriate location
-		this.parentBuilder.insertCodeAtIndex(insertIndex, importStatement);
-		this.parseExistingImports(); // Refresh our cache
-	}
+		// Find all existing top-level import declarations
+		const importGroups = rootGroup.children.filter(
+			(group) => group.type === 'ImportDeclaration'
+		);
 
+		let insertPos: number;
+		let textToInsert: string;
+
+		if (importGroups.length > 0) {
+			// Case 1: There are existing imports.
+			// Find the very last import statement in the block.
+			const lastImport = importGroups[importGroups.length - 1];
+
+			// The insertion position is right after the semicolon of the last import.
+			insertPos = lastImport.end;
+
+			// The text to insert is a single newline followed by the new import statement.
+			textToInsert = '\n' + importStatement;
+
+		} else {
+			// Case 2: There are no imports in the file.
+			// Insert the new import at the very top of the file.
+			insertPos = 0;
+
+			// The text to insert is the statement followed by two newlines
+			// to create a clean separation from the code that follows.
+			textToInsert = importStatement + '\n\n';
+		}
+
+		// Schedule the precise edit directly with the parent builder.
+		this.parentBuilder.addEdit(insertPos, insertPos, textToInsert);
+
+		// Re-parsing existing imports is not necessary here, as edits are only staged.
+		// The initial parse in the constructor is sufficient.
+	}
 	/**
 	 * Private helper to create import pattern for removal.
 	 */

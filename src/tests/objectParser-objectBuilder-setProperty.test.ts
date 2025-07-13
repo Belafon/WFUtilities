@@ -115,7 +115,7 @@ suite('TypeScriptObjectBuilder.setPropertyValue - Indentation Tests', () => {
             const expected = `const obj = {
     prop1: 'value1',
     prop2: 'value2',
-    prop3: value3
+    prop3: value3,
 };`;
             assert.strictEqual(result, expected, 'Should add property with consistent 4-space indentation');
         });
@@ -130,7 +130,7 @@ suite('TypeScriptObjectBuilder.setPropertyValue - Indentation Tests', () => {
             const expected = `const obj = {
     prop1: 'value1',
     prop2: 'value2',
-    prop3: value3
+    prop3: value3,
 };`;
             assert.strictEqual(result, expected, 'Should handle trailing comma and add with proper indentation');
         });
@@ -163,7 +163,7 @@ suite('TypeScriptObjectBuilder.setPropertyValue - Indentation Tests', () => {
             const expected = `const obj = {
   prop1: 'value1',
   prop2: 'value2',
-  prop3: value3
+  prop3: value3,
 };`;
             assert.strictEqual(result, expected, 'Should detect and use 2-space indentation');
         });
@@ -180,7 +180,7 @@ suite('TypeScriptObjectBuilder.setPropertyValue - Indentation Tests', () => {
             const expected = `const obj = {
 \tprop1: 'value1',
 \tprop2: 'value2',
-\tprop3: value3
+\tprop3: value3,
 };`;
             assert.strictEqual(result, expected, 'Should detect and use tab indentation');
         });
@@ -301,7 +301,7 @@ suite('TypeScriptObjectBuilder.setPropertyValue - Indentation Tests', () => {
         redis: {
             host: 'localhost',
             port: 6379,
-            password: 'secret'
+            password: 'secret',
         }
     }
 };`;
@@ -322,7 +322,7 @@ suite('TypeScriptObjectBuilder.setPropertyValue - Indentation Tests', () => {
             const expected = `const obj = {
     prop1: 'value1',
     prop2: 'value2',
-    prop3: value3
+    prop3: value3,
 };`;
 
             assert.strictEqual(result, expected, 'Should handle objects without newline before closing brace');
@@ -351,7 +351,7 @@ suite('TypeScriptObjectBuilder.setPropertyValue - Indentation Tests', () => {
 
             const expected = `const obj = {
     simple: 'value',
-    complex: { nested: { deep: "value" } }
+    complex: { nested: { deep: "value" } },
 };`;
             assert.strictEqual(result, expected, 'Should handle complex property values with proper indentation');
         });
@@ -385,7 +385,7 @@ prop1: 'value1'
             // Should fallback to a reasonable default (4 spaces)
             const expected = `const obj = {
 prop1: 'value1',
-    prop2: value2
+    prop2: value2,
 };`;
             assert.strictEqual(result, expected, 'Should use default indentation when detection fails');
         });

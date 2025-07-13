@@ -218,3 +218,85 @@ type TWorldState = {
         });
     });
 });
+
+
+suite('WorldStateFileManager - Definitive Failing Test', () => {
+
+    test('Should not insert an extra closing brace when adding a property after an import', async () => {
+        // Arrange: The EXACT initial content from your logs.
+        const initialContent = `
+import { TKingdomLocationData } from './locations/kingdom.location';
+import { TWeddingEventData } from './events/wedding/wedding.event';
+import { TVillageEventData } from './events/village/village.event';
+import { TCharacter, TCharacterData, TSideCharacter, TSideCharacterData } from '../types/TCharacter';
+import { TThomasCharacterData } from './characters/thomas';
+import { TFrantaSideCharacterData } from './sideCharacters/Franta';
+import { TVillageLocationData } from './locations/village.location';
+import { TEvent } from 'types/TEvent';
+import { TLocation } from 'types/TLocation';
+import { TNobleManSideCharacterData } from './sideCharacters/NobleMan';
+import { TAnnieCharacterData } from './characters/annie';
+import { TKingdomEventData } from './events/kingdom/kingdom.event';
+import { TCharacterId } from 'types/TIds';
+import { THistoryItem } from 'code/Engine/ts/History';
+import { THappening } from 'types/THappening';
+
+
+type TWorldState = {
+    time: Time;
+    mainCharacterId: TCharacterId;
+    currentHistory: Partial<Record<TCharacterId, THistoryItem>>;
+
+    characters: {
+        thomas: { ref: TCharacter<'thomas'> } & TCharacterData & Partial<TThomasCharacterData>;
+        annie: { ref: TCharacter<'annie'> } & TCharacterData & Partial<TAnnieCharacterData>;
+    };
+    sideCharacters: {
+        franta: { ref: TSideCharacter<'franta'> } & TSideCharacterData & Partial<TFrantaSideCharacterData>;
+        nobleMan: { ref: TSideCharacter<'nobleMan'> } & TSideCharacterData & Partial<TNobleManSideCharacterData>;
+    };
+
+    events: {
+        village: { ref: TEvent<'village'> } & TVillageEventData;
+        kingdom: { ref: TEvent<'kingdom'> } & TKingdomEventData;
+        wedding: { ref: TEvent <'wedding'> } & TWeddingEventData;
+    };
+    locations: {
+        village: { ref: TLocation<'village'> } & TVillageLocationData;
+        kingdom: { ref: TLocation<'kingdom'> } & Partial<TKingdomLocationData>;
+    };
+    happenings: {
+        village_under_attack: { ref: THappening<'village_under_attack'> };
+    };
+};
+`;
+        const codeBuilder = new TypeScriptCodeBuilder(initialContent);
+
+        // Act: Perform the EXACT sequence of edits from your file manager.
+        // 1. Add the import.
+        codeBuilder.getImportManager().addNamedImport('TNewEventNameEventData', './events/newEventName/newEventName.event');
+
+        // 2. Add the property to the nested type.
+        await new Promise<void>((resolve) => {
+            codeBuilder.findTypeDeclaration('TWorldState', {
+                onFound: (typeBuilder) => {
+                    typeBuilder.findNestedTypeObject(['events'], {
+                        onFound: (sectionBuilder) => {
+                            sectionBuilder.addProperty('newEventName', `{ ref: TEvent<'newEventName'> } & TNewEventNameEventData`);
+                            resolve();
+                        }
+                    });
+                }
+            });
+        });
+
+        const finalCode = await codeBuilder.toString();
+        
+        // Assert: Check for the specific malformation.
+        // This test will FAIL if the bug exists.
+        assert.ok(
+            !finalCode.includes('TNewEventNameEventData; };'),
+            "Test Failed: An extra closing brace '}' was inserted before the semicolon, breaking the syntax."
+        );
+    });
+});
