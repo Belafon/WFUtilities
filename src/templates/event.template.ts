@@ -22,6 +22,7 @@ export class EventTemplateVariables {
             location: 'location' as const,
             timeRange: 'timeRange' as const,
             eventId: 'eventId' as const,
+            children: 'children' as const,
         };
     }
 

@@ -1,5 +1,5 @@
 import path from 'path';
-import { EventUpdateRequest, SetTimeRequest, TimeRange } from '../../types';
+import { EventUpdateRequest, SetTimeRequest, TimeRange, TChildEvent } from '../../types';
 import { eventsDir, eventFilePostfix, getEventFilePath } from '../../Paths';
 import { TypeScriptCodeBuilder } from '../../typescriptObjectParser/ObjectParser';
 import { TypeScriptObjectBuilder } from "../../typescriptObjectParser/TypeScriptObjectBuilder";
@@ -103,6 +103,11 @@ export class EventManager {
         };
         const timeRangeString = this.objectConverter.convert(timeRangeObject);
         builder.setPropertyValue(eventTemplateVariables.propertyNames.timeRange, timeRangeString);
+      }
+
+      // Handle children events update
+      if (eventData.children !== undefined) {
+        await this.updateChildrenProperty(builder, eventData.children, codeBuilder);
       }
 
       const updatedContent = await codeBuilder.toString();
@@ -268,6 +273,55 @@ export class EventManager {
     const eventUpdateData = { timeRange } as EventUpdateRequest;
     await this.updateEvent(eventId, eventUpdateData);
     console.log(`Time range for event '${eventId}' set successfully via updateEvent.`);
+  }
+
+  /**
+   * Updates the children property of an event
+   * @param builder The TypeScript object builder for the event
+   * @param children Array of child events
+   * @param codeBuilder The main code builder for import management
+   */
+  private async updateChildrenProperty(
+    builder: TypeScriptObjectBuilder, 
+    children: TChildEvent[], 
+    codeBuilder: TypeScriptCodeBuilder
+  ): Promise<void> {
+    if (children.length === 0) {
+      // Set empty array if no children
+      builder.setPropertyValue('children', '[]');
+      return;
+    }
+
+    // Build the children array structure
+    const childrenArray: any[] = [];
+
+    for (const child of children) {
+      // Validate that the child event exists
+      const childEventPath = getEventFilePath(child.eventId);
+      if (!config.fileSystem.existsSync(childEventPath)) {
+        throw new Error(`Child event '${child.eventId}' does not exist at ${childEventPath}`);
+      }
+
+      // Add import for the child event
+      const importName = `${child.eventId}Event`;
+      const importPath = `../${child.eventId}/${child.eventId}.event`;
+      
+      // Add the import using the code builder's import manager
+      const importManager = codeBuilder.getImportManager();
+      importManager.addNamedImport(importName, importPath);
+
+      // Create the child object
+      const childObject = {
+        condition: new CodeLiteral(`'${child.condition.replace(/'/g, "\\'")}'`),
+        event: new CodeLiteral(importName)
+      };
+
+      childrenArray.push(childObject);
+    }
+
+    // Convert the children array to string representation
+    const childrenString = this.objectConverter.convert(childrenArray);
+    builder.setPropertyValue('children', childrenString);
   }
 }
 

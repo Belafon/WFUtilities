@@ -14,18 +14,31 @@ export interface TimeRange {
 }
 
 /**
+ * Represents a child event with a condition
+ * @interface TChildEvent
+ * @property {string} condition - The condition that triggers this child event
+ * @property {string} eventId - The ID of the child event to trigger
+ */
+export interface TChildEvent {
+  condition: string;
+  eventId: string;
+}
+
+/**
  * Request object for updating an event
  * @interface EventUpdateRequest
  * @property {string} title - The title of the event
  * @property {string} description - The description of the event
  * @property {string} location - The location where the event takes place
  * @property {TimeRange} timeRange - The time range for the event
+ * @property {TChildEvent[]} children - Array of conditional child events
  */
 export interface EventUpdateRequest {
   title?: string;
   description?: string;
   location?: string;
   timeRange?: TimeRange;
+  children?: TChildEvent[];
 }
 
 /**
