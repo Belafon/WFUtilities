@@ -28,9 +28,6 @@ export interface IEventParams {
     location?: string;
     timeStart?: string;
     timeEnd?: string;
-    childEventName?: string;
-    childEventImportPath?: string;
-    childCondition?: string;
     initObjectContent?: string;
     eventDataTypeContent?: string;
 }
@@ -137,9 +134,6 @@ export class TemplateGenerator {
             params.location,
             params.timeStart,
             params.timeEnd,
-            params.childEventName,
-            params.childEventImportPath,
-            params.childCondition
         );
 
         return variables.generateEventCode(template, params.initObjectContent, params.eventDataTypeContent);

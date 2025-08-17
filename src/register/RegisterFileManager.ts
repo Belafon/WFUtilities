@@ -1,5 +1,5 @@
 import path from 'path';
-import { registerFilePath } from '../Paths';
+import { getImportToEventPassagesFile, registerFilePath } from '../Paths';
 import { config } from '../WFServerConfig';
 import { TypeScriptCodeBuilder } from '../typescriptObjectParser/ObjectParser';
 import { EventTemplateVariables } from '../templates/event.template';
@@ -229,6 +229,18 @@ export class RegisterFileManager {
                             reject(new Error(`Section '${sectionName}' not found in register object`));
                         }
                     });
+
+                    if(sectionName === RegisterSection.Events) {
+                        // Add import into passages
+                        registerBuilder.findObject('passages', {
+                            onFound: (passagesBuilder) => {
+                                passagesBuilder.setPropertyValue(itemId, `() => ${getImportToEventPassagesFile(itemId)}`);
+                            },
+                            onNotFound: () => {
+                                reject(new Error(`Passages section not found in register object`));
+                            }
+                        });
+                    }
                 },
                 onNotFound: () => {
                     reject(new Error('Register object not found in file'));

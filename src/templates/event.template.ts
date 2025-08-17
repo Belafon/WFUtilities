@@ -8,9 +8,6 @@ export class EventTemplateVariables {
         public readonly location: string = 'village',
         public readonly timeStart: string = '2.1. 8:00',
         public readonly timeEnd: string = '5.1. 8:00',
-        public readonly childEventName: string = '',
-        public readonly childEventImportPath: string = '',
-        public readonly childCondition: string = '',
     ) {
         this.eventIdCapitalized = eventId.charAt(0).toUpperCase() + eventId.slice(1);
     }
@@ -62,18 +59,6 @@ export class EventTemplateVariables {
         return `'${this.timeEnd}'`;
     }
 
-    public get quotedChildCondition(): string {
-        return `'${this.childCondition}'`;
-    }
-
-    public get childEventImport(): string {
-        return this.childEventName;
-    }
-
-    public get childEventPath(): string {
-        return this.childEventImportPath;
-    }
-
     public generateEventCode(template: string, initObjectContent: string = '', eventDataTypeContent: string = ''): string {
         const defaultInitContent = initObjectContent || `mojePromena: {
             time: 0,
@@ -93,9 +78,6 @@ export class EventTemplateVariables {
             .replace(/{quotedLocation}/g, this.quotedLocation)
             .replace(/{quotedTimeStart}/g, this.quotedTimeStart)
             .replace(/{quotedTimeEnd}/g, this.quotedTimeEnd)
-            .replace(/{childEventImport}/g, this.childEventImport)
-            .replace(/{childEventPath}/g, this.childEventPath)
-            .replace(/{quotedChildCondition}/g, this.quotedChildCondition)
             .replace(/{eventDataTypeName}/g, this.eventDataTypeName)
             .replace(/{initObjectContent}/g, defaultInitContent)
             .replace(/{eventDataTypeContent}/g, defaultTypeContent);

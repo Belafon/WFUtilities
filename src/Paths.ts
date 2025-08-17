@@ -18,7 +18,7 @@ export const locationFilePostfixWithoutFileType = '.location';
 
 export const eventFilePostfix = '.event.ts';
 export const eventPassagesFilePostfix = '.passages.ts';
-export const evnetPassagesFilePostfixWithoutFileType = '.passages';
+export const eventPassagesFilePostfixWithoutFileType = '.passages';
 export const eventFilePostfixWithoutFileType = '.event';
 
 export const eventsDir = () => path.join(workspaceFolders(), 'src', 'data', 'events');
@@ -47,7 +47,9 @@ export const mapFileExtension = '.json';
 
 // Templates functionality
 export const templatesDir = () => path.join(workspaceFolders(), 'src', 'templates');
-
+export const getImportToEventPassagesFile = (eventId: string): string => {
+  return 'import(\'./events/' + eventId + '/' + eventId + eventPassagesFilePostfixWithoutFileType + '\')';
+}
 /**
  * Gets the full path to a template file
  * @param templateFileName The name of the template file (e.g., 'character.template')

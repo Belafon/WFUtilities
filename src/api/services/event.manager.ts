@@ -10,6 +10,7 @@ import { templateManager } from '../../templates/TemplateManager';
 import { registerFileManager } from '../../register/RegisterFileManager';
 import { EventTemplateVariables } from '../../templates/event.template';
 import { worldStateFileManager } from '../../register/WorldStateFileManager';
+import { isoTimeConverter as IsoTimeConverter } from '../../utils/IsoTimeConverter';
 
 /**
  * Event Manager Service
@@ -31,17 +32,22 @@ export class EventManager {
    */
   public async updateEvent(eventId: string, eventData: EventUpdateRequest): Promise<void> {
     if (!eventId || eventId.trim() === '') {
+      logger.error('Event ID cannot be empty.');
       const errorMessage = 'Event ID cannot be empty.';
       config.editorAdapter.showErrorNotification(errorMessage);
       throw new Error(errorMessage);
     }
+    logger.info(`Updating event with ID: ${eventId}`);
 
     const eventFilePath = getEventFilePath(eventId);
+    logger.info(`Event file path resolved to: ${eventFilePath}`);
 
     let eventFileContent: string | null = null;
     if (!config.fileSystem.existsSync(eventFilePath)) {
+      logger.info(`Event file not found at ${eventFilePath}, creating new event.`);
       // create new event
       eventFileContent = await this.createNewEvent(eventId, eventFileContent, eventFilePath);
+      logger.info(`New event file created at ${eventFilePath}`);
     }
 
     try {
@@ -49,22 +55,45 @@ export class EventManager {
         eventFileContent = config.fileSystem.readFileSync(eventFilePath, 'utf-8');
       }
 
+      // convert time range from ISO to app format
+      let convertedTimeRange: { start?: string; end?: string } | undefined;
+      if (eventData.timeRange) {
+        convertedTimeRange = IsoTimeConverter.convertTimeRangeFromIso(eventData.timeRange);
+        logger.info(`Converted time range from ISO to app format:`, {
+          original: eventData.timeRange,
+          converted: convertedTimeRange
+        });
+      }
+
       const eventTemplateVariables = new EventTemplateVariables(
         eventId,
         eventData.title || '',
         eventData.description || '',
         eventData.location || 'village',
-        eventData.timeRange?.start || '0.0. 0:00',
-        eventData.timeRange?.end || '0.0. 0:00'
+        convertedTimeRange?.start || '0.0. 0:00',
+        convertedTimeRange?.end || '0.0. 0:00'
       );
+      logger.info(`Event template variables created for event ID: ${eventId}`, eventTemplateVariables);
+      logger.info(`Event file content length: ${eventFileContent.length} characters`);
+      logger.info(`Event eventId: ${eventTemplateVariables.eventId}`);
+      logger.info(`Event title: ${eventTemplateVariables.title}`);
+      logger.info(`Event description: ${eventTemplateVariables.description}`);
+      logger.info(`Event location: ${eventTemplateVariables.location}`);
+      logger.info(`Event timeStart: ${eventTemplateVariables.timeStart}`);
+      logger.info(`Event timeEnd: ${eventTemplateVariables.timeEnd}`);
 
       const codeBuilder = new TypeScriptCodeBuilder(eventFileContent);
       const eventObjectName = eventTemplateVariables.mainEventFunction;
       let eventObjectBuilder: TypeScriptObjectBuilder | null = null;
 
       codeBuilder.findObject(eventObjectName, {
-        onFound: (objBuilder: TypeScriptObjectBuilder) => { eventObjectBuilder = objBuilder; },
-        onNotFound: () => { }
+        onFound: (objBuilder: TypeScriptObjectBuilder) => {
+          logger.info(`Found event object builder for '${eventObjectName}'`);
+          eventObjectBuilder = objBuilder;
+        },
+        onNotFound: () => {
+          logger.error(`Could not find event object builder for '${eventObjectName}'`);
+        }
       });
 
       if (!eventObjectBuilder) {
@@ -76,6 +105,7 @@ export class EventManager {
       const builder = eventObjectBuilder as TypeScriptObjectBuilder;
 
       if (eventData.title !== undefined) {
+        logger.info(`Setting event title to: ${eventData.title}`);
         builder.setPropertyValue(
           eventTemplateVariables.propertyNames.title,
           this.formatStringForI18nCode(eventData.title)
@@ -83,6 +113,7 @@ export class EventManager {
       }
 
       if (eventData.description !== undefined) {
+        logger.info(`Setting event description to: ${eventData.description}`);
         builder.setPropertyValue(
           eventTemplateVariables.propertyNames.description,
           this.formatStringForI18nCode(eventData.description)
@@ -90,6 +121,7 @@ export class EventManager {
       }
 
       if (eventData.location !== undefined) {
+        logger.info(`Setting event location to: ${eventData.location}`);
         builder.setPropertyValue(
           eventTemplateVariables.propertyNames.location,
           eventTemplateVariables.quotedLocation
@@ -97,16 +129,20 @@ export class EventManager {
       }
 
       if (eventData.timeRange !== undefined) {
+        logger.info(`Setting event time range to: ${JSON.stringify(eventData.timeRange)}`);
         const timeRangeObject = {
           start: new CodeLiteral(`Time.fromString(${eventTemplateVariables.quotedTimeStart})`),
           end: new CodeLiteral(`Time.fromString(${eventTemplateVariables.quotedTimeEnd})`)
         };
+        logger.info(`Setting event time range to: ${JSON.stringify(timeRangeObject)}`);
         const timeRangeString = this.objectConverter.convert(timeRangeObject);
+        logger.info(`Formatted time range string: ${timeRangeString}`);
         builder.setPropertyValue(eventTemplateVariables.propertyNames.timeRange, timeRangeString);
       }
 
       // Handle children events update
       if (eventData.children !== undefined) {
+        logger.info(`Updating children events for event ID: ${eventId}`);
         await this.updateChildrenProperty(builder, eventData.children, codeBuilder);
       }
 
@@ -282,8 +318,8 @@ export class EventManager {
    * @param codeBuilder The main code builder for import management
    */
   private async updateChildrenProperty(
-    builder: TypeScriptObjectBuilder, 
-    children: TChildEvent[], 
+    builder: TypeScriptObjectBuilder,
+    children: TChildEvent[],
     codeBuilder: TypeScriptCodeBuilder
   ): Promise<void> {
     if (children.length === 0) {
@@ -305,7 +341,7 @@ export class EventManager {
       // Add import for the child event
       const importName = `${child.eventId}Event`;
       const importPath = `../${child.eventId}/${child.eventId}.event`;
-      
+
       // Add the import using the code builder's import manager
       const importManager = codeBuilder.getImportManager();
       importManager.addNamedImport(importName, importPath);

@@ -17,7 +17,7 @@ const getPrimaryPassagePath = (eventId: string, characterId: string, passagePart
   return path.join(
     ActualPaths.eventsDir(),
     eventId,
-    `${characterId}${ActualPaths.evnetPassagesFilePostfixWithoutFileType}`,
+    `${characterId}${ActualPaths.eventPassagesFilePostfixWithoutFileType}`,
     `${passagePartId}${ActualPaths.passageFilePostfix}`
   );
 };

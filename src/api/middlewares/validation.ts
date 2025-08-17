@@ -1,15 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
+import { logger } from '../../utils/logger';
 
 /**
  * Validation middleware for API requests
  */
 
-// Time range validation regex: matches format like "1.1. 10:00"
-const timeFormatRegex = /^\d{1,2}\.\d{1,2}\.\s\d{1,2}:\d{2}$/;
-
 /**
- * Validation rules for event update requests
+ * Validation rules for event updates
  */
 export const validateEventUpdate = [
   body('title').optional().notEmpty().withMessage('Title cannot be empty if provided'),
@@ -18,11 +16,11 @@ export const validateEventUpdate = [
   body('timeRange.start')
     .optional()
     .notEmpty().withMessage('Start time cannot be empty if provided')
-    .matches(timeFormatRegex).withMessage('Start time must be in format "D.M. H:mm"'),
+    .isISO8601().withMessage('Start time must be a valid ISO 8601 datetime'),
   body('timeRange.end')
     .optional()
     .notEmpty().withMessage('End time cannot be empty if provided')
-    .matches(timeFormatRegex).withMessage('End time must be in format "D.M. H:mm"'),
+    .isISO8601().withMessage('End time must be a valid ISO 8601 datetime'),
 ];
 
 /**
@@ -31,11 +29,12 @@ export const validateEventUpdate = [
 export const validateSetTime = [
   body('timeRange.start')
     .notEmpty().withMessage('Start time is required')
-    .matches(timeFormatRegex).withMessage('Start time must be in format "D.M. H:mm"'),
+    .isISO8601().withMessage('Start time must be a valid ISO 8601 datetime'),
   body('timeRange.end')
     .notEmpty().withMessage('End time is required')
-    .matches(timeFormatRegex).withMessage('End time must be in format "D.M. H:mm"'),
+    .isISO8601().withMessage('End time must be a valid ISO 8601 datetime'),
 ];
+
 
 /**
  * Validation rules for passage update requests
@@ -50,6 +49,16 @@ export const validatePassageUpdate = [
 export const handleValidationErrors = (req: Request, res: Response, next: NextFunction): void => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    // Log validation failure with details
+    logger.error('Validation failed for request', {
+      method: req.method,
+      url: req.originalUrl,
+      body: req.body,
+      errors: errors.array(),
+      ip: req.ip,
+      userAgent: req.get('User-Agent')
+    });
+
     res.status(400).json({
       success: false,
       errors: errors.array(),

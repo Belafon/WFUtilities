@@ -1,6 +1,5 @@
 import { TEvent } from 'types/TEvent';
 import { Time } from 'time/Time';
-import { {childEventImport} } from '{childEventPath}';
 
 export const {mainEventFunction}: TEvent<{quotedEventId}> = {
     eventId: {quotedEventId},
@@ -12,12 +11,7 @@ export const {mainEventFunction}: TEvent<{quotedEventId}> = {
     },
     location: {quotedLocation},
 
-    children: [
-        {
-            condition: {quotedChildCondition},
-            event: {childEventImport},
-        },
-    ],
+    children: [],
 
     triggers: [],
 

@@ -16,7 +16,7 @@ const getPrimaryPassagePath = (eventId: string, characterId: string, passagePart
   return path.join(
     ActualPaths.eventsDir(), // This will call the stubbed function during tests
     eventId,
-    `${characterId}${ActualPaths.evnetPassagesFilePostfixWithoutFileType}`, // Uses actual constant from Paths
+    `${characterId}${ActualPaths.eventPassagesFilePostfixWithoutFileType}`, // Uses actual constant from Paths
     `${passagePartId}${ActualPaths.passageFilePostfix}` // Uses actual constant from Paths
   );
 };

@@ -6,7 +6,7 @@ import {
   TPassageScreenBodyItemUpdateRequest,
   TLinkUpdateRequest,
 } from '../../types'; // Adjust path as necessary
-import { eventsDir, evnetPassagesFilePostfixWithoutFileType as eventPassagesFilePostfixWithoutFileType, passageFilePostfix, passageFilePostfixScreen, passageFilePostfixTransition, passageFilePostfixLinear } from '../../Paths';
+import { eventsDir, eventPassagesFilePostfixWithoutFileType as eventPassagesFilePostfixWithoutFileType, passageFilePostfix, passageFilePostfixScreen, passageFilePostfixTransition, passageFilePostfixLinear } from '../../Paths';
 import { DefaultEditorAdapter, EditorAdapter } from '../adapters/editorAdapter';
 import { TokenGroup, TypeScriptCodeBuilder } from '../../typescriptObjectParser/ObjectParser';
 import { TypeScriptObjectBuilder } from "../../typescriptObjectParser/TypeScriptObjectBuilder";
