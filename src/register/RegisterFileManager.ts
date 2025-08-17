@@ -1,15 +1,15 @@
 import path from 'path';
-import { getImportToEventPassagesFile, registerFilePath } from '../Paths';
+import { getImportToChapterPassagesFile, registerFilePath } from '../Paths';
 import { config } from '../WFServerConfig';
 import { TypeScriptCodeBuilder } from '../typescriptObjectParser/ObjectParser';
-import { EventTemplateVariables } from '../templates/event.template';
+import { ChapterTemplateVariables } from '../templates/chapter.template';
 import { CharacterTemplateVariables } from '../templates/character.template';
 
 /**
  * Enum for register section names
  */
 export enum RegisterSection {
-    Events = 'events',
+    Chapters = 'chapters',
     Characters = 'characters',
     SideCharacters = 'sideCharacters',
     Locations = 'locations',
@@ -29,19 +29,19 @@ export class RegisterFileManager {
     }
 
     /**
-     * Adds an event to the register
-     * @param eventId The ID of the event (e.g., 'wedding')
-     * @param eventFilePath The relative path to the event file from the register file
+     * Adds an chapter to the register
+     * @param chapterId The ID of the chapter (e.g., 'wedding')
+     * @param chapterFilePath The relative path to the chapter file from the register file
      */
-    public async addEventToRegister(eventId: string, eventFilePath: string): Promise<void> {
-        const eventVariables = new EventTemplateVariables(eventId);
+    public async addChapterToRegister(chapterId: string, chapterFilePath: string): Promise<void> {
+        const chapterVariables = new ChapterTemplateVariables(chapterId);
 
         await this.addItemToRegister({
-            itemId: eventId,
-            itemFilePath: eventFilePath,
-            sectionName: RegisterSection.Events,
-            importName: eventVariables.mainEventFunction,
-            variableName: eventVariables.mainEventFunction
+            itemId: chapterId,
+            itemFilePath: chapterFilePath,
+            sectionName: RegisterSection.Chapters,
+            importName: chapterVariables.mainChapterFunction,
+            variableName: chapterVariables.mainChapterFunction
         });
     }
 
@@ -97,17 +97,17 @@ export class RegisterFileManager {
      * Adds a passage to the register
      * @param passageId The ID of the passage (e.g., 'wedding')
      * @param passageFilePath The relative path to the passage file from the register file (without extension)
-     * @param eventId Optional event ID for template variables (if not provided, uses passageId)
+     * @param chapterId Optional chapter ID for template variables (if not provided, uses passageId)
      * @param characterId Optional character ID for template variables (if not provided, uses 'default')
      */
     public async addPassageToRegister(
         passageId: string,
         passageFilePath: string,
-        eventId?: string,
+        chapterId?: string,
         characterId?: string
     ): Promise<void> {
         // For passages, we still use dynamic imports but can optionally use template variables
-        // if eventId and characterId are provided
+        // if chapterId and characterId are provided
         const importValue = `() => import('${passageFilePath}')`;
 
         await this.addItemToRegister({
@@ -218,7 +218,7 @@ export class RegisterFileManager {
             // Find the register object
             codeBuilder.findObject('register', {
                 onFound: (registerBuilder) => {
-                    // Find the specific section (e.g., 'events', 'characters', etc.)
+                    // Find the specific section (e.g., 'chapters', 'characters', etc.)
                     registerBuilder.findObject(sectionName, {
                         onFound: (sectionBuilder) => {
                             // Add the new item to the section
@@ -230,11 +230,11 @@ export class RegisterFileManager {
                         }
                     });
 
-                    if(sectionName === RegisterSection.Events) {
+                    if(sectionName === RegisterSection.Chapters) {
                         // Add import into passages
                         registerBuilder.findObject('passages', {
                             onFound: (passagesBuilder) => {
-                                passagesBuilder.setPropertyValue(itemId, `() => ${getImportToEventPassagesFile(itemId)}`);
+                                passagesBuilder.setPropertyValue(itemId, `() => ${getImportToChapterPassagesFile(itemId)}`);
                             },
                             onNotFound: () => {
                                 reject(new Error(`Passages section not found in register object`));

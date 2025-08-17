@@ -213,22 +213,22 @@ const variable = 42;`;
         test('Should correctly handle the register.ts file structure', async () => {
             // This mimics the actual register.ts file structure
             const registerCode = `import { kingdomLocation } from './locations/kingdom.location';
-import { weddingEvent } from './events/wedding/wedding.event';
+import { weddingChapter } from './chapters/wedding/wedding.chapter';
 import { Annie } from './characters/annie';
 
 export const register = {
     characters: {
         annie: Annie,
     },
-    events: {
-        wedding: weddingEvent,
+    chapters: {
+        wedding: weddingChapter,
     },
     locations: {
         kingdom: kingdomLocation,
     },
 } as const;`;
 
-            const newImport = `import { asdfEvent } from '/home/belafon/Downloads/story/src/data/events/asdf/asdf.event.ts';`;
+            const newImport = `import { asdfChapter } from '/home/belafon/Downloads/story/src/data/chapters/asdf/asdf.chapter.ts';`;
             
             const builder = new TypeScriptCodeBuilder(registerCode);
             
@@ -252,46 +252,46 @@ export const register = {
             const result = await builder.toString();
             
             // Should start with the new import
-            assert.ok(result.startsWith('import { asdfEvent }'), 'Should start with new import');
+            assert.ok(result.startsWith('import { asdfChapter }'), 'Should start with new import');
             
             // Should maintain all existing imports
             assert.ok(result.includes('kingdomLocation'), 'Should keep kingdomLocation import');
-            assert.ok(result.includes('weddingEvent'), 'Should keep weddingEvent import');
+            assert.ok(result.includes('weddingChapter'), 'Should keep weddingChapter import');
             assert.ok(result.includes('Annie'), 'Should keep Annie import');
             
             // Should maintain the export structure
             assert.ok(result.includes('export const register'), 'Should keep register export');
             
             // The new import should come before existing imports
-            const newImportPos = result.indexOf('asdfEvent');
+            const newImportPos = result.indexOf('asdfChapter');
             const firstExistingPos = result.indexOf('kingdomLocation');
             assert.ok(newImportPos < firstExistingPos, 'New import should come before existing imports');
         });
 
         test('Should add import and object property correctly', async () => {
-            const registerCode = `import { weddingEvent } from './events/wedding/wedding.event';
+            const registerCode = `import { weddingChapter } from './chapters/wedding/wedding.chapter';
 
 export const register = {
-    events: {
-        wedding: weddingEvent,
+    chapters: {
+        wedding: weddingChapter,
     },
 } as const;`;
 
-            const newImport = `import { asdfEvent } from './events/asdf/asdf.event';`;
+            const newImport = `import { asdfChapter } from './chapters/asdf/asdf.chapter';`;
             
             const builder = new TypeScriptCodeBuilder(registerCode);
             
             // Add the import
             builder.insertCodeAtIndex(0, newImport);
             
-            // Add the property to the events object
+            // Add the property to the chapters object
             builder.findObject('register', {
                 onFound: (registerBuilder) => {
-                    registerBuilder.findObject('events', {
-                        onFound: (eventsBuilder) => {
-                            eventsBuilder.setPropertyValue('asdf', 'asdfEvent');
+                    registerBuilder.findObject('chapters', {
+                        onFound: (chaptersBuilder) => {
+                            chaptersBuilder.setPropertyValue('asdf', 'asdfChapter');
                         },
-                        onNotFound: () => assert.fail('Events object not found')
+                        onNotFound: () => assert.fail('Chapters object not found')
                     });
                 },
                 onNotFound: () => assert.fail('Register object not found')
@@ -300,15 +300,15 @@ export const register = {
             const result = await builder.toString();
             
             // Should have both imports
-            assert.ok(result.includes('asdfEvent'), 'Should include new import');
-            assert.ok(result.includes('weddingEvent'), 'Should include existing import');
+            assert.ok(result.includes('asdfChapter'), 'Should include new import');
+            assert.ok(result.includes('weddingChapter'), 'Should include existing import');
             
-            // Should have both events in the register
-            assert.ok(result.includes('wedding: weddingEvent'), 'Should have wedding event');
-            assert.ok(result.includes('asdf: asdfEvent'), 'Should have asdf event');
+            // Should have both chapters in the register
+            assert.ok(result.includes('wedding: weddingChapter'), 'Should have wedding chapter');
+            assert.ok(result.includes('asdf: asdfChapter'), 'Should have asdf chapter');
             
             // Import should come before the export
-            const importPos = result.indexOf('import { asdfEvent }');
+            const importPos = result.indexOf('import { asdfChapter }');
             const exportPos = result.indexOf('export const register');
             assert.ok(importPos < exportPos, 'Import should come before export');
         });

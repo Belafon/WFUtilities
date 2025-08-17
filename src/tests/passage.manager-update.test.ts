@@ -21,7 +21,7 @@ const mockPassageFilePostfixWithoutFileType = '.passages';
 // --- Mock Configurations ---
 const mockPathsConfiguration = {
   workspaceFolders: (): string => mockWorkspaceRoot,
-  eventsDir: (): string => path.join(mockWorkspaceRoot, 'src', 'data', 'events'),
+  chaptersDir: (): string => path.join(mockWorkspaceRoot, 'src', 'data', 'chapters'),
   passageFilePostfix: mockFilePostfix,
   evnetPassagesFilePostfixWithoutFileType: mockPassageFilePostfixWithoutFileType,
 };
@@ -67,7 +67,7 @@ const mockFileSystemController: IFileSystem = {
 
 function applyGlobalMocks() {
   (ActualPaths as any).workspaceFolders = mockPathsConfiguration.workspaceFolders;
-  (ActualPaths as any).eventsDir = mockPathsConfiguration.eventsDir;
+  (ActualPaths as any).chaptersDir = mockPathsConfiguration.chaptersDir;
   (ActualPaths as any).passageFilePostfix = mockPathsConfiguration.passageFilePostfix;
   (ActualPaths as any).evnetPassagesFilePostfixWithoutFileType = mockPathsConfiguration.evnetPassagesFilePostfixWithoutFileType;
   
@@ -79,12 +79,12 @@ suite('PassageManager - updatePassage', () => {
   let passageManager: PassageManager;
   let mockEditorAdapter: EditorAdapter;
 
-  const getEventsDir = () => mockPathsConfiguration.eventsDir();
+  const getChaptersDir = () => mockPathsConfiguration.chaptersDir();
 
-  const getPrimaryPassagePath = (eventId: string, characterId: string, passagePartId: string) => {
+  const getPrimaryPassagePath = (chapterId: string, characterId: string, passagePartId: string) => {
     return path.join(
-      getEventsDir(),
-      eventId,
+      getChaptersDir(),
+      chapterId,
       `${characterId}${mockPathsConfiguration.evnetPassagesFilePostfixWithoutFileType}`,
       `${passagePartId}${mockPathsConfiguration.passageFilePostfix}`
     );
@@ -113,8 +113,8 @@ suite('PassageManager - updatePassage', () => {
   const normalize = (str: string) => str.replace(/\s+/g, ' ').trim();
 
   test('should update a screen passage defined as a function in primary path', async () => {
-    const passageId = 'funcEvent-funcChar-visit';
-    const filePath = getPrimaryPassagePath('funcEvent', 'funcChar', 'visit');
+    const passageId = 'funcChapter-funcChar-visit';
+    const filePath = getPrimaryPassagePath('funcChapter', 'funcChar', 'visit');
 
     const originalContent = `
 // Mocked imports for test file content
@@ -128,7 +128,7 @@ const DeltaTime = {
 export const visitPassage = (s, e) => {
     void s; void e;
     return {
-        eventId: 'funcEvent',
+        chapterId: 'funcChapter',
         characterId: 'funcChar',
         id: 'visit',
         type: 'screen',
@@ -140,7 +140,7 @@ export const visitPassage = (s, e) => {
                 links: [
                     {
                         text: _('Next'),
-                        passageId: 'funcEvent-funcChar-next',
+                        passageId: 'funcChapter-funcChar-next',
                         cost: DeltaTime.fromMin(10),
                     },
                 ],
@@ -160,12 +160,12 @@ export const visitPassage = (s, e) => {
           links: [
             {
               text: "_('Go Back')",
-              passageId: 'funcEvent-funcChar-previous',
+              passageId: 'funcChapter-funcChar-previous',
               cost: { unit: 'hour', value: 1 },
             },
             {
               text: 'Complex Cost Link',
-              passageId: 'funcEvent-funcChar-complex',
+              passageId: 'funcChapter-funcChar-complex',
               cost: {
                 time: { unit: 'day', value: 2 },
                 items: [{ id: 'gold', amount: 100 }],
@@ -197,19 +197,19 @@ export const visitPassage = (s, e) => {
   });
 
   test('should update a linear passage defined as a const in primary path', async () => {
-    const passageId = 'constEvent-constChar-intro';
-    const primaryPath = getPrimaryPassagePath('constEvent', 'constChar', 'intro');
+    const passageId = 'constChapter-constChar-intro';
+    const primaryPath = getPrimaryPassagePath('constChapter', 'constChar', 'intro');
 
     const originalContent = `
 const _ = (str) => \`_('\${str}')\`;
 export const intro = { // Name 'intro' matches passagePartId
-    eventId: 'constEvent',
+    chapterId: 'constChapter',
     characterId: 'constChar',
     id: 'intro',
     type: 'linear',
     title: _('Old Title Const'),
     description: _('Old description const'),
-    nextPassageId: 'constEvent-constChar-start',
+    nextPassageId: 'constChapter-constChar-start',
     image: 'old_image_const.png',
 };`;
     mockFsStore = { [primaryPath]: originalContent };
@@ -218,7 +218,7 @@ export const intro = { // Name 'intro' matches passagePartId
       type: 'linear',
       title: "'New Linear Title'",
       description: 'New Description for Linear',
-      nextPassageId: 'constEvent-constChar-updatedNext',
+      nextPassageId: 'constChapter-constChar-updatedNext',
       image: '',
     };
 
@@ -231,32 +231,32 @@ export const intro = { // Name 'intro' matches passagePartId
     assert.ok(writtenContent.includes(`export const intro = {`), 'Const definition start missing.');
     assert.ok(writtenContent.includes(`title: _('New Linear Title')`), 'Updated title not found or incorrect.');
     assert.ok(writtenContent.includes(`description: _('New Description for Linear')`), 'Updated description not found or incorrect.');
-    assert.ok(writtenContent.includes(`nextPassageId: 'constEvent-constChar-updatedNext'`), 'Updated nextPassageId not found or incorrect.');
+    assert.ok(writtenContent.includes(`nextPassageId: 'constChapter-constChar-updatedNext'`), 'Updated nextPassageId not found or incorrect.');
     assert.ok(writtenContent.includes(`image: ''`), 'Updated image (empty) not found or incorrect.');
     assert.ok(writtenContent.includes(`id: 'intro'`), 'Original id property missing or incorrect.');
   });
 
   test('should update a transition passage, preserving unspecified fields', async () => {
-    const passageId = 'transEvent-transChar-move';
-    const filePath = getPrimaryPassagePath('transEvent', 'transChar', 'move');
+    const passageId = 'transChapter-transChar-move';
+    const filePath = getPrimaryPassagePath('transChapter', 'transChar', 'move');
     const originalContent = `
 const _ = (str) => \`_('\${str}')\`;
 export const movePassage = (s, e) => {
     return {
-        eventId: 'transEvent',
+        chapterId: 'transChapter',
         characterId: 'transChar',
         id: 'move',
         type: 'transition',
         title: _('Moving...'),
         image: 'move_img.jpg',
-        nextPassageId: 'transEvent-transChar-oldTarget',
+        nextPassageId: 'transChapter-transChar-oldTarget',
     };
 };`;
     mockFsStore[filePath] = originalContent;
 
     const updateData: ScreenPassageUpdateRequest = {
       type: 'transition',
-      nextPassageId: 'transEvent-transChar-newTarget',
+      nextPassageId: 'transChapter-transChar-newTarget',
     };
 
     await passageManager.updatePassage(passageId, updateData);
@@ -264,7 +264,7 @@ export const movePassage = (s, e) => {
     const { data: writtenContent } = writeFileSyncCalls[0];
 
     assert.ok(writtenContent.includes(`type: 'transition'`), 'Type property missing or incorrect.');
-    assert.ok(writtenContent.includes(`nextPassageId: 'transEvent-transChar-newTarget'`), 'Updated nextPassageId not found or incorrect.');
+    assert.ok(writtenContent.includes(`nextPassageId: 'transChapter-transChar-newTarget'`), 'Updated nextPassageId not found or incorrect.');
     assert.ok(writtenContent.includes(`title: _('Moving...')`), 'Preserved title missing or incorrect.');
     assert.ok(writtenContent.includes(`image: 'move_img.jpg'`), 'Preserved image missing or incorrect.');
   });
@@ -280,7 +280,7 @@ export const movePassage = (s, e) => {
     });
 
     test('should throw error if passage file not found in primary path', async () => {
-      const passageId = 'notFound-event-char';
+      const passageId = 'notFound-chapter-char';
       mockFsStore = {};
 
       const updateData: ScreenPassageUpdateRequest = { type: 'screen', title: 't' };
@@ -291,14 +291,14 @@ export const movePassage = (s, e) => {
           return error.message.includes('Passage file not found for passageId') &&
                  error.message.includes('char') &&
                  error.message.includes('notFound') &&
-                 error.message.includes('event');
+                 error.message.includes('chapter');
         }
       );
     });
 
     test('should throw error if passage definition (object or function) not found in file', async () => {
-      const passageId = 'noDefEvent-noDefChar-noDefPassagePart';
-      const filePath = getPrimaryPassagePath('noDefEvent', 'noDefChar', 'noDefPassagePart');
+      const passageId = 'noDefChapter-noDefChar-noDefPassagePart';
+      const filePath = getPrimaryPassagePath('noDefChapter', 'noDefChar', 'noDefPassagePart');
       const originalContent = `export const someOtherThing = 123;`;
       mockFsStore[filePath] = originalContent;
 
@@ -311,8 +311,8 @@ export const movePassage = (s, e) => {
   });
 
   suite('title i18n formatting variations', () => {
-    const passageId = 'i18nEvent-i18nChar-i18nTitle';
-    const filePath = getPrimaryPassagePath('i18nEvent', 'i18nChar', 'i18nTitle');
+    const passageId = 'i18nChapter-i18nChar-i18nTitle';
+    const filePath = getPrimaryPassagePath('i18nChapter', 'i18nChar', 'i18nTitle');
     const baseContent = (titleValue: string) => `
 const _ = (str) => \`_('\${str}')\`;
 export const i18nTitlePassage = (s,e) => {
@@ -354,8 +354,8 @@ export const i18nTitlePassage = (s,e) => {
     const normalize = (str: string) => str.replace(/\s+/g, ' ').trim();
 
     test('should correctly stringify various link costs in body', async () => {
-      const passageId = 'costEvent-costChar-costTest';
-      const filePath = getPrimaryPassagePath('costEvent', 'costChar', 'costTest');
+      const passageId = 'costChapter-costChar-costTest';
+      const filePath = getPrimaryPassagePath('costChapter', 'costChar', 'costTest');
       const originalContent = `
 const _ = (str) => \`_('\${str}')\`;
 const DeltaTime = { fromMin: (v) => \`DeltaTime.fromMin(\${v})\`, fromHours: (v) => \`DeltaTime.fromHours(\${v})\`, fromDays: (v) => \`DeltaTime.fromDays(\${v})\` };

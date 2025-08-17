@@ -42,69 +42,69 @@ export const register = {
         franta: Franta,
         nobleMan: NobleMan,
     },
-    events: {
-    	village: villageEvent,
-        kingdom: kingdomEvent,
-    	wedding: weddingEvent,
+    chapters: {
+    	village: villageChapter,
+        kingdom: kingdomChapter,
+    	wedding: weddingChapter,
     },
     locations: {
     	village: villageLocation,
     	kingdom: kingdomLocation,
     },
     passages: {
-    	village: () => import('./events/village/village.passages'),
-        kingdom: () => import('./events/kingdom/kingdom.passages'),
-    	wedding: () => import('./events/wedding/wedding.passages'),
+    	village: () => import('./chapters/village/village.passages'),
+        kingdom: () => import('./chapters/kingdom/kingdom.passages'),
+    	wedding: () => import('./chapters/wedding/wedding.passages'),
     },
     happenings: {
         village_under_attack: village_under_attackHappening,
     }
 } as const;`;
 
-    test('should add a new property to an existing nested object (events)', async () => {
+    test('should add a new property to an existing nested object (chapters)', async () => {
         const result = await testNestedPropertyModification(
             baseRegisterCode,
             'register',
-            'events',
+            'chapters',
             'festival',
-            'festivalEvent'
+            'festivalChapter'
         );
 
         const expectedSubstring = `
-    events: {
-    	village: villageEvent,
-        kingdom: kingdomEvent,
-    	wedding: weddingEvent,
-    	festival: festivalEvent,
+    chapters: {
+    	village: villageChapter,
+        kingdom: kingdomChapter,
+    	wedding: weddingChapter,
+    	festival: festivalChapter,
     },`;
         // Normalize whitespace for comparison, focusing on structure
         assert.ok(
             result.replace(/\s+/g, ' ').includes(expectedSubstring.replace(/\s+/g, ' ')),
-            `Result did not contain expected event structure. Got:\n${result}`
+            `Result did not contain expected chapter structure. Got:\n${result}`
         );
-        assert.ok(result.includes('festival: festivalEvent'), 'New property "festival" should be present.');
+        assert.ok(result.includes('festival: festivalChapter'), 'New property "festival" should be present.');
     });
 
-    test('should replace an existing property in a nested object (events.village)', async () => {
+    test('should replace an existing property in a nested object (chapters.village)', async () => {
         const result = await testNestedPropertyModification(
             baseRegisterCode,
             'register',
-            'events',
+            'chapters',
             'village',
-            'newVillageEvent'
+            'newVillageChapter'
         );
         const expectedSubstring = `
-    events: {
-    	village: newVillageEvent,
-        kingdom: kingdomEvent,
-    	wedding: weddingEvent,
+    chapters: {
+    	village: newVillageChapter,
+        kingdom: kingdomChapter,
+    	wedding: weddingChapter,
     },`;
         assert.ok(
             result.replace(/\s+/g, ' ').includes(expectedSubstring.replace(/\s+/g, ' ')),
-            `Result did not contain expected modified event structure. Got:\n${result}`
+            `Result did not contain expected modified chapter structure. Got:\n${result}`
         );
-        assert.ok(!result.includes('village: villageEvent'), 'Old village event should be replaced.');
-        assert.ok(result.includes('village: newVillageEvent'), 'New village event should be present.');
+        assert.ok(!result.includes('village: villageChapter'), 'Old village chapter should be replaced.');
+        assert.ok(result.includes('village: newVillageChapter'), 'New village chapter should be present.');
     });
 
     test('should add a new property to a different nested object (locations)', async () => {

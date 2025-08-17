@@ -16,21 +16,21 @@ export const sideCharacterDir = () => path.join(workspaceFolders(), 'src', 'data
 export const locationFilePostfix = '.location.ts';
 export const locationFilePostfixWithoutFileType = '.location';
 
-export const eventFilePostfix = '.event.ts';
-export const eventPassagesFilePostfix = '.passages.ts';
-export const eventPassagesFilePostfixWithoutFileType = '.passages';
-export const eventFilePostfixWithoutFileType = '.event';
+export const chapterFilePostfix = '.chapter.ts';
+export const chapterPassagesFilePostfix = '.passages.ts';
+export const chapterPassagesFilePostfixWithoutFileType = '.passages';
+export const chapterFilePostfixWithoutFileType = '.chapter';
 
-export const eventsDir = () => path.join(workspaceFolders(), 'src', 'data', 'events');
+export const chaptersDir = () => path.join(workspaceFolders(), 'src', 'data', 'chapters');
 
 /**
- * Gets the full path to an event file based on the event ID.
- * Creates a path structure like: /src/data/events/{eventId}/{eventId}.event.ts
- * @param eventId The ID of the event
- * @returns The full path to the event file
+ * Gets the full path to an chapter file based on the chapter ID.
+ * Creates a path structure like: /src/data/chapters/{chapterId}/{chapterId}.chapter.ts
+ * @param chapterId The ID of the chapter
+ * @returns The full path to the chapter file
  */
-export const getEventFilePath = (eventId: string): string => {
-  return path.join(eventsDir(), eventId, `${eventId}${eventFilePostfix}`);
+export const getChapterFilePath = (chapterId: string): string => {
+  return path.join(chaptersDir(), chapterId, `${chapterId}${chapterFilePostfix}`);
 };
 
 export const passageFilePostfix = '.ts';
@@ -47,8 +47,8 @@ export const mapFileExtension = '.json';
 
 // Templates functionality
 export const templatesDir = () => path.join(workspaceFolders(), 'src', 'templates');
-export const getImportToEventPassagesFile = (eventId: string): string => {
-  return 'import(\'./events/' + eventId + '/' + eventId + eventPassagesFilePostfixWithoutFileType + '\')';
+export const getImportToChapterPassagesFile = (chapterId: string): string => {
+  return 'import(\'./chapters/' + chapterId + '/' + chapterId + chapterPassagesFilePostfixWithoutFileType + '\')';
 }
 /**
  * Gets the full path to a template file

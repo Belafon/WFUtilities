@@ -15,9 +15,9 @@ suite('Error Handling Investigation', function() {
     const showErrorNotificationStub = sinon.stub(passageManager['editorAdapter'], 'showErrorNotification');
     const consoleErrorStub = sinon.stub(console, 'error');
     
-    sinon.stub(ActualPaths, 'eventsDir').returns('./test_dir');
+    sinon.stub(ActualPaths, 'chaptersDir').returns('./test_dir');
     
-    const passageId = 'event1-char1-passage1'; // Valid ID format
+    const passageId = 'chapter1-char1-passage1'; // Valid ID format
     
     try {
       // Make existsSync return true so code reaches the unlink call

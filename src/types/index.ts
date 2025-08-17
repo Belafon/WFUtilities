@@ -14,35 +14,35 @@ export interface TimeRange {
 }
 
 /**
- * Represents a child event with a condition
- * @interface TChildEvent
- * @property {string} condition - The condition that triggers this child event
- * @property {string} eventId - The ID of the child event to trigger
+ * Represents a child chapter with a condition
+ * @interface TChildChapter
+ * @property {string} condition - The condition that triggers this child chapter
+ * @property {string} chapterId - The ID of the child chapter to trigger
  */
-export interface TChildEvent {
+export interface TChildChapter {
   condition: string;
-  eventId: string;
+  chapterId: string;
 }
 
 /**
- * Request object for updating an event
- * @interface EventUpdateRequest
- * @property {string} title - The title of the event
- * @property {string} description - The description of the event
- * @property {string} location - The location where the event takes place
- * @property {TimeRange} timeRange - The time range for the event
- * @property {TChildEvent[]} children - Array of conditional child events
+ * Request object for updating an chapter
+ * @interface ChapterUpdateRequest
+ * @property {string} title - The title of the chapter
+ * @property {string} description - The description of the chapter
+ * @property {string} location - The location where the chapter takes place
+ * @property {TimeRange} timeRange - The time range for the chapter
+ * @property {TChildChapter[]} children - Array of conditional child chapters
  */
-export interface EventUpdateRequest {
+export interface ChapterUpdateRequest {
   title?: string;
   description?: string;
   location?: string;
   timeRange?: TimeRange;
-  children?: TChildEvent[];
+  children?: TChildChapter[];
 }
 
 /**
- * Request object for setting the time of an event
+ * Request object for setting the time of an chapter
  * @interface SetTimeRequest
  * @property {TimeRange} timeRange - The new time range to set
  */
@@ -142,7 +142,7 @@ export interface MapListResponse {
   data: string[];
 }
 
-export type TEventData = {
+export type TChapterData = {
   title: string;
   description: string;
   location: string;
@@ -153,8 +153,8 @@ export type TEventData = {
 };
 
 export type TScreenPassageData = {
-  type: TEventPassageType;
-  eventId: string;
+  type: TChapterPassageType;
+  chapterId: string;
   characterId: string;
   id: string;
   title: string;
@@ -171,4 +171,4 @@ export type TScreenPassageData = {
   }>;
 };
 
-export type TEventPassageType = "screen" | "linear" | "transition";
+export type TChapterPassageType = "screen" | "linear" | "transition";

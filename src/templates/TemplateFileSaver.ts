@@ -1,7 +1,7 @@
 import path from 'path';
 import { config } from '../WFServerConfig';
-import { charactersDir, eventsDir, passageFilePostfixScreen, locationsDir, sideCharacterDir, locationFilePostfix } from '../Paths';
-import { ICharacterParams, IEventParams, IEventPassagesParams, IScreenPassageParams, ILocationParams, ISideCharacterParams } from './TempalteGenerator';
+import { charactersDir, chaptersDir, passageFilePostfixScreen, locationsDir, sideCharacterDir, locationFilePostfix } from '../Paths';
+import { ICharacterParams, IChapterParams, IChapterPassagesParams, IScreenPassageParams, ILocationParams, ISideCharacterParams } from './TempalteGenerator';
 
 export interface ISaveResult {
     success: boolean;
@@ -38,15 +38,15 @@ export class TemplateFileSaver {
     }
 
     /**
-     * Saves an event file to the events directory
-     * Path: /src/data/events/{eventId}/{eventId}.event.ts
+     * Saves an chapter file to the chapters directory
+     * Path: /src/data/chapters/{chapterId}/{chapterId}.chapter.ts
      */
-    public async saveEvent(params: IEventParams, content: string): Promise<ISaveResult> {
+    public async saveChapter(params: IChapterParams, content: string): Promise<ISaveResult> {
         try {
-            const filePath = this.getEventFilePath(params.eventId);
-            const eventDir = path.dirname(filePath);
+            const filePath = this.getChapterFilePath(params.chapterId);
+            const chapterDir = path.dirname(filePath);
 
-            this.ensureDirectoryExists(eventDir);
+            this.ensureDirectoryExists(chapterDir);
 
             config.fileSystem.writeFileSync(filePath, content, 'utf8');
 
@@ -64,12 +64,12 @@ export class TemplateFileSaver {
     }
 
     /**
-     * Saves a screen passage file to the events directory
-     * Path: /src/data/events/{eventId}/{characterId}.passages/{passageId}.screen.ts
+     * Saves a screen passage file to the chapters directory
+     * Path: /src/data/chapters/{chapterId}/{characterId}.passages/{passageId}.screen.ts
      */
     public async saveScreenPassage(params: IScreenPassageParams, content: string): Promise<ISaveResult> {
         try {
-            const passagesDir = path.join(eventsDir(), params.eventId, `${params.characterId}.passages`);
+            const passagesDir = path.join(chaptersDir(), params.chapterId, `${params.characterId}.passages`);
             const fileName = `${params.passageId}${passageFilePostfixScreen}`;
             const filePath = path.join(passagesDir, fileName);
 
@@ -91,15 +91,15 @@ export class TemplateFileSaver {
     }
 
     /**
-     * Saves an event passages file to the events directory
-     * Path: /src/data/events/{eventId}/{eventId}.passages.ts
+     * Saves an chapter passages file to the chapters directory
+     * Path: /src/data/chapters/{chapterId}/{chapterId}.passages.ts
      */
-    public async saveEventPassages(params: IEventPassagesParams, content: string): Promise<ISaveResult> {
+    public async saveChapterPassages(params: IChapterPassagesParams, content: string): Promise<ISaveResult> {
         try {
-            const filePath = this.getEventPassagesFilePath(params.eventId);
-            const eventDir = path.dirname(filePath);
+            const filePath = this.getChapterPassagesFilePath(params.chapterId);
+            const chapterDir = path.dirname(filePath);
 
-            this.ensureDirectoryExists(eventDir);
+            this.ensureDirectoryExists(chapterDir);
 
             config.fileSystem.writeFileSync(filePath, content, 'utf8');
 
@@ -185,24 +185,24 @@ export class TemplateFileSaver {
     }
 
     /**
-     * Gets the file path that would be used for an event (without saving)
+     * Gets the file path that would be used for an chapter (without saving)
      */
-    public getEventFilePath(eventId: string): string {
-        return path.join(eventsDir(), eventId, `${eventId}.event.ts`);
+    public getChapterFilePath(chapterId: string): string {
+        return path.join(chaptersDir(), chapterId, `${chapterId}.chapter.ts`);
     }
 
     /**
-     * Gets the file path that would be used for an event passages file (without saving)
+     * Gets the file path that would be used for an chapter passages file (without saving)
      */
-    public getEventPassagesFilePath(eventId: string): string {
-        return path.join(eventsDir(), eventId, `${eventId}.passages.ts`);
+    public getChapterPassagesFilePath(chapterId: string): string {
+        return path.join(chaptersDir(), chapterId, `${chapterId}.passages.ts`);
     }
 
     /**
      * Gets the file path that would be used for a screen passage (without saving)
      */
-    public getScreenPassageFilePath(eventId: string, characterId: string, passageId: string): string {
-        const passagesDir = path.join(eventsDir(), eventId, `${characterId}.passages`);
+    public getScreenPassageFilePath(chapterId: string, characterId: string, passageId: string): string {
+        const passagesDir = path.join(chaptersDir(), chapterId, `${characterId}.passages`);
         return path.join(passagesDir, `${passageId}${passageFilePostfixScreen}`);
     }
 
@@ -243,12 +243,12 @@ export class TemplateFileSaver {
         }
 
         try {
-            // Check if events directory is accessible
-            if (!config.fileSystem.existsSync(eventsDir())) {
-                this.ensureDirectoryExists(eventsDir());
+            // Check if chapters directory is accessible
+            if (!config.fileSystem.existsSync(chaptersDir())) {
+                this.ensureDirectoryExists(chaptersDir());
             }
         } catch (error) {
-            errors.push(`Events directory: ${error instanceof Error ? error.message : String(error)}`);
+            errors.push(`Chapters directory: ${error instanceof Error ? error.message : String(error)}`);
         }
 
         try {

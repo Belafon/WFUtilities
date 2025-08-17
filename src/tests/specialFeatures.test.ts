@@ -409,9 +409,9 @@ suite('TypeScriptObjectBuilder Extended Features', () => {
             const objBuilder = await getObjectBuilder(builder, 'C'); // 'C' is the variable name
             assert.ok(objBuilder);
 
-            const events: string[] = [];
+            const chapters: string[] = [];
 
-            const simplifiedExpectedEvents = [
+            const simplifiedExpectedChapters = [
                 "objEnter:C|C",
                 "prop:C|p1|\"v1\"|primitive",
                 "primitive:C|p1|\"v1\"",
@@ -437,43 +437,43 @@ suite('TypeScriptObjectBuilder Extended Features', () => {
             objBuilder!.traverseObjectTree({
                 onProperty: (path, name, valueText, valueType) => {
                     // Use `path` directly. If path is empty for root, test output handles it.
-                    events.push(`prop:${path || variableNameForRootInTest}|${name}|${valueText.replace(/\s+/g, '')}|${valueType}`);
+                    chapters.push(`prop:${path || variableNameForRootInTest}|${name}|${valueText.replace(/\s+/g, '')}|${valueType}`);
                 },
                 onObjectEnter: (path, name) => {
-                    events.push(`objEnter:${path || variableNameForRootInTest}|${name || variableNameForRootInTest}`);
+                    chapters.push(`objEnter:${path || variableNameForRootInTest}|${name || variableNameForRootInTest}`);
                 },
                 onObjectLeave: (path, name) => {
-                    events.push(`objLeave:${path || variableNameForRootInTest}|${name || variableNameForRootInTest}`);
+                    chapters.push(`objLeave:${path || variableNameForRootInTest}|${name || variableNameForRootInTest}`);
                 },
                 onArrayEnter: (path, name) => {
-                    events.push(`arrEnter:${path || variableNameForRootInTest}|${name}`);
+                    chapters.push(`arrEnter:${path || variableNameForRootInTest}|${name}`);
                 },
                 onArrayLeave: (path, name) => {
-                    events.push(`arrLeave:${path || variableNameForRootInTest}|${name}`);
+                    chapters.push(`arrLeave:${path || variableNameForRootInTest}|${name}`);
                 },
                 onArrayItem: (path, index, itemText, itemType) => {
                     // Path is to the array. Item path is constructed like arrayPath.[index]
-                    events.push(`arrItem:${path}.${index}|${itemText.replace(/\s+/g, '')}|${itemType}`);
+                    chapters.push(`arrItem:${path}.${index}|${itemText.replace(/\s+/g, '')}|${itemType}`);
                 },
                 onPrimitive: (path, name, valueText) => {
-                    events.push(`primitive:${path || variableNameForRootInTest}|${name}|${valueText.replace(/\s+/g, '')}`);
+                    chapters.push(`primitive:${path || variableNameForRootInTest}|${name}|${valueText.replace(/\s+/g, '')}`);
                 },
             }, 'C'); // <--- IMPORTANT: Provide 'C' as the initial path
 
-            assert.deepStrictEqual(events, simplifiedExpectedEvents, "Traversal events did not match expected sequence.");
+            assert.deepStrictEqual(chapters, simplifiedExpectedChapters, "Traversal chapters did not match expected sequence.");
         });
 
         test('should handle an empty object', async () => {
             const builder = createCodeBuilder("const E = {};");
             const objBuilder = await getObjectBuilder(builder, 'E');
             assert.ok(objBuilder);
-            const events: string[] = [];
+            const chapters: string[] = [];
             objBuilder!.traverseObjectTree({
-                onObjectEnter: (path, name) => events.push(`objEnter:${path || 'E'}|${name || 'E'}`),
-                onObjectLeave: (path, name) => events.push(`objLeave:${path || 'E'}|${name || 'E'}`),
-                onProperty: () => events.push('prop'),
+                onObjectEnter: (path, name) => chapters.push(`objEnter:${path || 'E'}|${name || 'E'}`),
+                onObjectLeave: (path, name) => chapters.push(`objLeave:${path || 'E'}|${name || 'E'}`),
+                onProperty: () => chapters.push('prop'),
             });
-            assert.deepStrictEqual(events, ["objEnter:E|E", "objLeave:E|E"]); // Corrected expected path
+            assert.deepStrictEqual(chapters, ["objEnter:E|E", "objLeave:E|E"]); // Corrected expected path
         });
 
         test('should correctly identify types for onProperty and onArrayItem', async () => {

@@ -22,7 +22,7 @@ const server = createServer(3000);
 ### Using Components
 
 ```typescript
-import { app, EventController, MapController } from 'wfnodeserver';
+import { app, ChapterController, MapController } from 'wfnodeserver';
 import express from 'express';
 
 // Create your own Express app
@@ -32,8 +32,8 @@ const myApp = express();
 myApp.use('/wf-api', app);
 
 // Or use specific controllers
-const eventController = new EventController();
-myApp.get('/custom-events', eventController.getAllEvents);
+const chapterController = new ChapterController();
+myApp.get('/custom-chapters', chapterController.getAllChapters);
 ```
 
 ## API Documentation

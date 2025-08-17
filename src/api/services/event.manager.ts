@@ -1,6 +1,6 @@
 import path from 'path';
-import { EventUpdateRequest, SetTimeRequest, TimeRange, TChildEvent } from '../../types';
-import { eventsDir, eventFilePostfix, getEventFilePath } from '../../Paths';
+import { ChapterUpdateRequest, SetTimeRequest, TimeRange, TChildChapter } from '../../types';
+import { chaptersDir, chapterFilePostfix, getChapterFilePath } from '../../Paths';
 import { TypeScriptCodeBuilder } from '../../typescriptObjectParser/ObjectParser';
 import { TypeScriptObjectBuilder } from "../../typescriptObjectParser/TypeScriptObjectBuilder";
 import { CodeLiteral, ObjectToStringConverter } from '../../utils/objectToStringConverter';
@@ -8,15 +8,15 @@ import { config } from '../../WFServerConfig';
 import { logger } from '../../utils/logger';
 import { templateManager } from '../../templates/TemplateManager';
 import { registerFileManager } from '../../register/RegisterFileManager';
-import { EventTemplateVariables } from '../../templates/event.template';
+import { ChapterTemplateVariables } from '../../templates/chapter.template';
 import { worldStateFileManager } from '../../register/WorldStateFileManager';
 import { isoTimeConverter as IsoTimeConverter } from '../../utils/IsoTimeConverter';
 
 /**
- * Event Manager Service
- * Handles business logic for event operations
+ * Chapter Manager Service
+ * Handles business logic for chapter operations
  */
-export class EventManager {
+export class ChapterManager {
   private objectConverter: ObjectToStringConverter;
 
   constructor() {
@@ -24,180 +24,180 @@ export class EventManager {
   }
 
   /**
-   * Updates an event with the provided data.
-   * Assumes that if a field is present in eventData, it should be updated.
-   * If a field is undefined in eventData, it's left unchanged in the file.
-   * @param eventId The ID of the event to update (e.g., 'kingdom')
-   * @param eventData The data to update the event with.
+   * Updates an chapter with the provided data.
+   * Assumes that if a field is present in chapterData, it should be updated.
+   * If a field is undefined in chapterData, it's left unchanged in the file.
+   * @param chapterId The ID of the chapter to update (e.g., 'kingdom')
+   * @param chapterData The data to update the chapter with.
    */
-  public async updateEvent(eventId: string, eventData: EventUpdateRequest): Promise<void> {
-    if (!eventId || eventId.trim() === '') {
-      logger.error('Event ID cannot be empty.');
-      const errorMessage = 'Event ID cannot be empty.';
+  public async updateChapter(chapterId: string, chapterData: ChapterUpdateRequest): Promise<void> {
+    if (!chapterId || chapterId.trim() === '') {
+      logger.error('Chapter ID cannot be empty.');
+      const errorMessage = 'Chapter ID cannot be empty.';
       config.editorAdapter.showErrorNotification(errorMessage);
       throw new Error(errorMessage);
     }
-    logger.info(`Updating event with ID: ${eventId}`);
+    logger.info(`Updating chapter with ID: ${chapterId}`);
 
-    const eventFilePath = getEventFilePath(eventId);
-    logger.info(`Event file path resolved to: ${eventFilePath}`);
+    const chapterFilePath = getChapterFilePath(chapterId);
+    logger.info(`Chapter file path resolved to: ${chapterFilePath}`);
 
-    let eventFileContent: string | null = null;
-    if (!config.fileSystem.existsSync(eventFilePath)) {
-      logger.info(`Event file not found at ${eventFilePath}, creating new event.`);
-      // create new event
-      eventFileContent = await this.createNewEvent(eventId, eventFileContent, eventFilePath);
-      logger.info(`New event file created at ${eventFilePath}`);
+    let chapterFileContent: string | null = null;
+    if (!config.fileSystem.existsSync(chapterFilePath)) {
+      logger.info(`Chapter file not found at ${chapterFilePath}, creating new chapter.`);
+      // create new chapter
+      chapterFileContent = await this.createNewChapter(chapterId, chapterFileContent, chapterFilePath);
+      logger.info(`New chapter file created at ${chapterFilePath}`);
     }
 
     try {
-      if (eventFileContent === null) {
-        eventFileContent = config.fileSystem.readFileSync(eventFilePath, 'utf-8');
+      if (chapterFileContent === null) {
+        chapterFileContent = config.fileSystem.readFileSync(chapterFilePath, 'utf-8');
       }
 
       // convert time range from ISO to app format
       let convertedTimeRange: { start?: string; end?: string } | undefined;
-      if (eventData.timeRange) {
-        convertedTimeRange = IsoTimeConverter.convertTimeRangeFromIso(eventData.timeRange);
+      if (chapterData.timeRange) {
+        convertedTimeRange = IsoTimeConverter.convertTimeRangeFromIso(chapterData.timeRange);
         logger.info(`Converted time range from ISO to app format:`, {
-          original: eventData.timeRange,
+          original: chapterData.timeRange,
           converted: convertedTimeRange
         });
       }
 
-      const eventTemplateVariables = new EventTemplateVariables(
-        eventId,
-        eventData.title || '',
-        eventData.description || '',
-        eventData.location || 'village',
+      const chapterTemplateVariables = new ChapterTemplateVariables(
+        chapterId,
+        chapterData.title || '',
+        chapterData.description || '',
+        chapterData.location || 'village',
         convertedTimeRange?.start || '0.0. 0:00',
         convertedTimeRange?.end || '0.0. 0:00'
       );
-      logger.info(`Event template variables created for event ID: ${eventId}`, eventTemplateVariables);
-      logger.info(`Event file content length: ${eventFileContent.length} characters`);
-      logger.info(`Event eventId: ${eventTemplateVariables.eventId}`);
-      logger.info(`Event title: ${eventTemplateVariables.title}`);
-      logger.info(`Event description: ${eventTemplateVariables.description}`);
-      logger.info(`Event location: ${eventTemplateVariables.location}`);
-      logger.info(`Event timeStart: ${eventTemplateVariables.timeStart}`);
-      logger.info(`Event timeEnd: ${eventTemplateVariables.timeEnd}`);
+      logger.info(`Chapter template variables created for chapter ID: ${chapterId}`, chapterTemplateVariables);
+      logger.info(`Chapter file content length: ${chapterFileContent.length} characters`);
+      logger.info(`Chapter chapterId: ${chapterTemplateVariables.chapterId}`);
+      logger.info(`Chapter title: ${chapterTemplateVariables.title}`);
+      logger.info(`Chapter description: ${chapterTemplateVariables.description}`);
+      logger.info(`Chapter location: ${chapterTemplateVariables.location}`);
+      logger.info(`Chapter timeStart: ${chapterTemplateVariables.timeStart}`);
+      logger.info(`Chapter timeEnd: ${chapterTemplateVariables.timeEnd}`);
 
-      const codeBuilder = new TypeScriptCodeBuilder(eventFileContent);
-      const eventObjectName = eventTemplateVariables.mainEventFunction;
-      let eventObjectBuilder: TypeScriptObjectBuilder | null = null;
+      const codeBuilder = new TypeScriptCodeBuilder(chapterFileContent);
+      const chapterObjectName = chapterTemplateVariables.mainChapterFunction;
+      let chapterObjectBuilder: TypeScriptObjectBuilder | null = null;
 
-      codeBuilder.findObject(eventObjectName, {
+      codeBuilder.findObject(chapterObjectName, {
         onFound: (objBuilder: TypeScriptObjectBuilder) => {
-          logger.info(`Found event object builder for '${eventObjectName}'`);
-          eventObjectBuilder = objBuilder;
+          logger.info(`Found chapter object builder for '${chapterObjectName}'`);
+          chapterObjectBuilder = objBuilder;
         },
         onNotFound: () => {
-          logger.error(`Could not find event object builder for '${eventObjectName}'`);
+          logger.error(`Could not find chapter object builder for '${chapterObjectName}'`);
         }
       });
 
-      if (!eventObjectBuilder) {
-        const errorMessage = `Could not find event object definition for '${eventObjectName}' in ${eventFilePath}`;
+      if (!chapterObjectBuilder) {
+        const errorMessage = `Could not find chapter object definition for '${chapterObjectName}' in ${chapterFilePath}`;
         config.editorAdapter.showErrorNotification(errorMessage);
         throw new Error(errorMessage);
       }
 
-      const builder = eventObjectBuilder as TypeScriptObjectBuilder;
+      const builder = chapterObjectBuilder as TypeScriptObjectBuilder;
 
-      if (eventData.title !== undefined) {
-        logger.info(`Setting event title to: ${eventData.title}`);
+      if (chapterData.title !== undefined) {
+        logger.info(`Setting chapter title to: ${chapterData.title}`);
         builder.setPropertyValue(
-          eventTemplateVariables.propertyNames.title,
-          this.formatStringForI18nCode(eventData.title)
+          chapterTemplateVariables.propertyNames.title,
+          this.formatStringForI18nCode(chapterData.title)
         );
       }
 
-      if (eventData.description !== undefined) {
-        logger.info(`Setting event description to: ${eventData.description}`);
+      if (chapterData.description !== undefined) {
+        logger.info(`Setting chapter description to: ${chapterData.description}`);
         builder.setPropertyValue(
-          eventTemplateVariables.propertyNames.description,
-          this.formatStringForI18nCode(eventData.description)
+          chapterTemplateVariables.propertyNames.description,
+          this.formatStringForI18nCode(chapterData.description)
         );
       }
 
-      if (eventData.location !== undefined) {
-        logger.info(`Setting event location to: ${eventData.location}`);
+      if (chapterData.location !== undefined) {
+        logger.info(`Setting chapter location to: ${chapterData.location}`);
         builder.setPropertyValue(
-          eventTemplateVariables.propertyNames.location,
-          eventTemplateVariables.quotedLocation
+          chapterTemplateVariables.propertyNames.location,
+          chapterTemplateVariables.quotedLocation
         );
       }
 
-      if (eventData.timeRange !== undefined) {
-        logger.info(`Setting event time range to: ${JSON.stringify(eventData.timeRange)}`);
+      if (chapterData.timeRange !== undefined) {
+        logger.info(`Setting chapter time range to: ${JSON.stringify(chapterData.timeRange)}`);
         const timeRangeObject = {
-          start: new CodeLiteral(`Time.fromString(${eventTemplateVariables.quotedTimeStart})`),
-          end: new CodeLiteral(`Time.fromString(${eventTemplateVariables.quotedTimeEnd})`)
+          start: new CodeLiteral(`Time.fromString(${chapterTemplateVariables.quotedTimeStart})`),
+          end: new CodeLiteral(`Time.fromString(${chapterTemplateVariables.quotedTimeEnd})`)
         };
-        logger.info(`Setting event time range to: ${JSON.stringify(timeRangeObject)}`);
+        logger.info(`Setting chapter time range to: ${JSON.stringify(timeRangeObject)}`);
         const timeRangeString = this.objectConverter.convert(timeRangeObject);
         logger.info(`Formatted time range string: ${timeRangeString}`);
-        builder.setPropertyValue(eventTemplateVariables.propertyNames.timeRange, timeRangeString);
+        builder.setPropertyValue(chapterTemplateVariables.propertyNames.timeRange, timeRangeString);
       }
 
-      // Handle children events update
-      if (eventData.children !== undefined) {
-        logger.info(`Updating children events for event ID: ${eventId}`);
-        await this.updateChildrenProperty(builder, eventData.children, codeBuilder);
+      // Handle children chapters update
+      if (chapterData.children !== undefined) {
+        logger.info(`Updating children chapters for chapter ID: ${chapterId}`);
+        await this.updateChildrenProperty(builder, chapterData.children, codeBuilder);
       }
 
       const updatedContent = await codeBuilder.toString();
-      config.fileSystem.writeFileSync(eventFilePath, updatedContent, 'utf-8');
-      config.editorAdapter.showInformationNotification(`Event '${eventId}' updated successfully.`);
-      console.log(`Event '${eventId}' updated successfully in ${eventFilePath}`);
+      config.fileSystem.writeFileSync(chapterFilePath, updatedContent, 'utf-8');
+      config.editorAdapter.showInformationNotification(`Chapter '${chapterId}' updated successfully.`);
+      console.log(`Chapter '${chapterId}' updated successfully in ${chapterFilePath}`);
 
     } catch (error) {
-      const errorMessage = `Failed to update event '${eventId}': ${error instanceof Error ? error.message : String(error)}`;
+      const errorMessage = `Failed to update chapter '${chapterId}': ${error instanceof Error ? error.message : String(error)}`;
       config.editorAdapter.showErrorNotification(errorMessage);
       console.error(errorMessage, error);
       throw error;
     }
   }
 
-  private async createNewEvent(eventId: string, eventFileContent: string | null, eventFilePath: string) {
+  private async createNewChapter(chapterId: string, chapterFileContent: string | null, chapterFilePath: string) {
     try {
-      // create event file from template
-      const templateGenerationOutput = await templateManager.generateAndSaveEvent({
-        eventId: eventId,
+      // create chapter file from template
+      const templateGenerationOutput = await templateManager.generateAndSaveChapter({
+        chapterId: chapterId,
       });
       if (!templateGenerationOutput.success) {
-        const errorMessage = `Failed to create new event file for '${eventId}': ${templateGenerationOutput.error}`;
+        const errorMessage = `Failed to create new chapter file for '${chapterId}': ${templateGenerationOutput.error}`;
         config.editorAdapter.showErrorNotification(errorMessage);
         throw new Error(errorMessage);
       }
 
-      eventFileContent = templateGenerationOutput.content;
+      chapterFileContent = templateGenerationOutput.content;
 
-      // add eventPassages file from template
-      const eventPassagesFileGenerationOutput = await templateManager.generateAndSaveEventPassages({
-        eventId: eventId
+      // add chapterPassages file from template
+      const chapterPassagesFileGenerationOutput = await templateManager.generateAndSaveChapterPassages({
+        chapterId: chapterId
       });
-      if (!eventPassagesFileGenerationOutput.success) {
-        const errorMessage = `Failed to create new event passages file for '${eventId}': ${eventPassagesFileGenerationOutput.error}`;
+      if (!chapterPassagesFileGenerationOutput.success) {
+        const errorMessage = `Failed to create new chapter passages file for '${chapterId}': ${chapterPassagesFileGenerationOutput.error}`;
         config.editorAdapter.showErrorNotification(errorMessage);
         throw new Error(errorMessage);
       }
 
-      // add event to register
-      await registerFileManager.addEventToRegister(eventId, eventFilePath);
+      // add chapter to register
+      await registerFileManager.addChapterToRegister(chapterId, chapterFilePath);
 
       try {
-        await worldStateFileManager.addEventToWorldState(eventId, eventFilePath);
+        await worldStateFileManager.addChapterToWorldState(chapterId, chapterFilePath);
       } catch (worldStateError) {
-        const errorMessage = `Event '${eventId}' was created and added to register, but failed to add to world state: ${worldStateError instanceof Error ? worldStateError.message : String(worldStateError)}`;
+        const errorMessage = `Chapter '${chapterId}' was created and added to register, but failed to add to world state: ${worldStateError instanceof Error ? worldStateError.message : String(worldStateError)}`;
         config.editorAdapter.showWarningNotification(errorMessage);
         console.error(errorMessage, worldStateError);
       }
 
-      return eventFileContent;
+      return chapterFileContent;
     } catch (error) {
-      this.deleteEvent(eventId).catch((err) => {
-        console.error(`Failed to rollback event deletion for '${eventId}':`, err);
+      this.deleteChapter(chapterId).catch((err) => {
+        console.error(`Failed to rollback chapter deletion for '${chapterId}':`, err);
       });
       throw error;
     }
@@ -219,65 +219,65 @@ export class EventManager {
   }
 
   /**
-   * Deletes an event file.
-   * @param eventId The ID of the event to delete.
+   * Deletes an chapter file.
+   * @param chapterId The ID of the chapter to delete.
    */
-  public async deleteEvent(eventId: string): Promise<void> {
-    if (!eventId || eventId.trim() === '') {
-      const errorMessage = 'Event ID cannot be empty for deletion.';
+  public async deleteChapter(chapterId: string): Promise<void> {
+    if (!chapterId || chapterId.trim() === '') {
+      const errorMessage = 'Chapter ID cannot be empty for deletion.';
       config.editorAdapter.showErrorNotification(errorMessage);
       throw new Error(errorMessage);
     }
 
-    const eventFilePath = getEventFilePath(eventId);
+    const chapterFilePath = getChapterFilePath(chapterId);
 
-    if (!config.fileSystem.existsSync(eventFilePath)) {
-      const errorMessage = `Event file to delete not found at ${eventFilePath}`;
+    if (!config.fileSystem.existsSync(chapterFilePath)) {
+      const errorMessage = `Chapter file to delete not found at ${chapterFilePath}`;
       config.editorAdapter.showErrorNotification(errorMessage);
       throw new Error(errorMessage);
     }
 
     try {
-      config.fileSystem.unlinkSync(eventFilePath);
-      config.editorAdapter.showInformationNotification(`Event file ${eventFilePath} deleted successfully.`);
-      console.log(`Event file ${eventFilePath} deleted successfully.`);
+      config.fileSystem.unlinkSync(chapterFilePath);
+      config.editorAdapter.showInformationNotification(`Chapter file ${chapterFilePath} deleted successfully.`);
+      console.log(`Chapter file ${chapterFilePath} deleted successfully.`);
     } catch (error) {
-      const errorMessageText = `Failed to delete event file ${eventFilePath}: ${error instanceof Error ? error.message : String(error)}`;
+      const errorMessageText = `Failed to delete chapter file ${chapterFilePath}: ${error instanceof Error ? error.message : String(error)}`;
       config.editorAdapter.showErrorNotification(errorMessageText);
-      console.error(`Error deleting event file ${eventFilePath}:`, error);
+      console.error(`Error deleting chapter file ${chapterFilePath}:`, error);
       throw error;
     }
   }
 
   /**
-   * Opens an event file in the configured editor.
-   * @param eventId The ID of the event to open.
+   * Opens an chapter file in the configured editor.
+   * @param chapterId The ID of the chapter to open.
    */
-  public async openEvent(eventId: string): Promise<void> {
-    logger.info(`Attempting to open event with ID: ${eventId}`);
-    if (!eventId || eventId.trim() === '') {
-      logger.error('Event ID cannot be empty for opening.');
-      const errorMessage = 'Event ID cannot be empty for opening.';
+  public async openChapter(chapterId: string): Promise<void> {
+    logger.info(`Attempting to open chapter with ID: ${chapterId}`);
+    if (!chapterId || chapterId.trim() === '') {
+      logger.error('Chapter ID cannot be empty for opening.');
+      const errorMessage = 'Chapter ID cannot be empty for opening.';
       config.editorAdapter.showErrorNotification(errorMessage);
       throw new Error(errorMessage);
     }
 
-    const eventFilePath = getEventFilePath(eventId);
-    logger.info(`Event file path resolved to: ${eventFilePath}`);
+    const chapterFilePath = getChapterFilePath(chapterId);
+    logger.info(`Chapter file path resolved to: ${chapterFilePath}`);
 
-    if (!config.fileSystem.existsSync(eventFilePath)) {
-      const errorMessage = `Event file to open not found at ${eventFilePath}`;
+    if (!config.fileSystem.existsSync(chapterFilePath)) {
+      const errorMessage = `Chapter file to open not found at ${chapterFilePath}`;
       config.editorAdapter.showErrorNotification(errorMessage);
       logger.error(errorMessage);
       throw new Error(errorMessage);
     }
 
     try {
-      await config.editorAdapter.openFile(eventFilePath);
-      logger.info(`Event file ${eventFilePath} opened successfully.`);
-      console.log(`Attempted to open event file: ${eventFilePath}`);
+      await config.editorAdapter.openFile(chapterFilePath);
+      logger.info(`Chapter file ${chapterFilePath} opened successfully.`);
+      console.log(`Attempted to open chapter file: ${chapterFilePath}`);
     } catch (error) {
-      logger.error(`Failed to open event file ${eventFilePath}:`, error);
+      logger.error(`Failed to open chapter file ${chapterFilePath}:`, error);
       let detailMessage = '';
       if (error instanceof Error) {
         detailMessage = (error as Error).message || (error as any).name || String(error); // Prioritize message, then name, then full string
@@ -285,41 +285,41 @@ export class EventManager {
         detailMessage = String(error);
       }
 
-      const errorMessageText = `Failed to open event file ${eventFilePath}: ${detailMessage}`;
+      const errorMessageText = `Failed to open chapter file ${chapterFilePath}: ${detailMessage}`;
 
       config.editorAdapter.showErrorNotification(errorMessageText);
-      console.error(`Error opening event file ${eventFilePath}:`, error);
-      logger.error(`Error opening event file ${eventFilePath}:`, error);
+      console.error(`Error opening chapter file ${chapterFilePath}:`, error);
+      logger.error(`Error opening chapter file ${chapterFilePath}:`, error);
       throw error;
     }
-    logger.info(`Event file ${eventFilePath} opened successfully.`);
+    logger.info(`Chapter file ${chapterFilePath} opened successfully.`);
   }
 
   /**
-   * Sets the time range for an event.
-   * @param eventId The ID of the event
+   * Sets the time range for an chapter.
+   * @param chapterId The ID of the chapter
    * @param timeRange The time range to set
    */
-  public async setEventTime(eventId: string, timeRange: SetTimeRequest['timeRange']): Promise<void> {
+  public async setChapterTime(chapterId: string, timeRange: SetTimeRequest['timeRange']): Promise<void> {
     if (!timeRange || timeRange.start === undefined || timeRange.end === undefined) {
-      const errorMessage = 'Invalid timeRange provided for setEventTime. Both start and end are required.';
+      const errorMessage = 'Invalid timeRange provided for setChapterTime. Both start and end are required.';
       config.editorAdapter.showErrorNotification(errorMessage);
       throw new Error(errorMessage);
     }
-    const eventUpdateData = { timeRange } as EventUpdateRequest;
-    await this.updateEvent(eventId, eventUpdateData);
-    console.log(`Time range for event '${eventId}' set successfully via updateEvent.`);
+    const chapterUpdateData = { timeRange } as ChapterUpdateRequest;
+    await this.updateChapter(chapterId, chapterUpdateData);
+    console.log(`Time range for chapter '${chapterId}' set successfully via updateChapter.`);
   }
 
   /**
-   * Updates the children property of an event
-   * @param builder The TypeScript object builder for the event
-   * @param children Array of child events
+   * Updates the children property of an chapter
+   * @param builder The TypeScript object builder for the chapter
+   * @param children Array of child chapters
    * @param codeBuilder The main code builder for import management
    */
   private async updateChildrenProperty(
     builder: TypeScriptObjectBuilder,
-    children: TChildEvent[],
+    children: TChildChapter[],
     codeBuilder: TypeScriptCodeBuilder
   ): Promise<void> {
     if (children.length === 0) {
@@ -332,15 +332,15 @@ export class EventManager {
     const childrenArray: any[] = [];
 
     for (const child of children) {
-      // Validate that the child event exists
-      const childEventPath = getEventFilePath(child.eventId);
-      if (!config.fileSystem.existsSync(childEventPath)) {
-        throw new Error(`Child event '${child.eventId}' does not exist at ${childEventPath}`);
+      // Validate that the child chapter exists
+      const childChapterPath = getChapterFilePath(child.chapterId);
+      if (!config.fileSystem.existsSync(childChapterPath)) {
+        throw new Error(`Child chapter '${child.chapterId}' does not exist at ${childChapterPath}`);
       }
 
-      // Add import for the child event
-      const importName = `${child.eventId}Event`;
-      const importPath = `../${child.eventId}/${child.eventId}.event`;
+      // Add import for the child chapter
+      const importName = `${child.chapterId}Chapter`;
+      const importPath = `../${child.chapterId}/${child.chapterId}.chapter`;
 
       // Add the import using the code builder's import manager
       const importManager = codeBuilder.getImportManager();
@@ -349,7 +349,7 @@ export class EventManager {
       // Create the child object
       const childObject = {
         condition: new CodeLiteral(`'${child.condition.replace(/'/g, "\\'")}'`),
-        event: new CodeLiteral(importName)
+        chapter: new CodeLiteral(importName)
       };
 
       childrenArray.push(childObject);
@@ -361,4 +361,4 @@ export class EventManager {
   }
 }
 
-export const eventManager = new EventManager();
+export const chapterManager = new ChapterManager();

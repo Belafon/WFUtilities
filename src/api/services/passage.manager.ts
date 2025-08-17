@@ -6,7 +6,7 @@ import {
   TPassageScreenBodyItemUpdateRequest,
   TLinkUpdateRequest,
 } from '../../types'; // Adjust path as necessary
-import { eventsDir, eventPassagesFilePostfixWithoutFileType as eventPassagesFilePostfixWithoutFileType, passageFilePostfix, passageFilePostfixScreen, passageFilePostfixTransition, passageFilePostfixLinear } from '../../Paths';
+import { chaptersDir, chapterPassagesFilePostfixWithoutFileType as chapterPassagesFilePostfixWithoutFileType, passageFilePostfix, passageFilePostfixScreen, passageFilePostfixTransition, passageFilePostfixLinear } from '../../Paths';
 import { DefaultEditorAdapter, EditorAdapter } from '../adapters/editorAdapter';
 import { TokenGroup, TypeScriptCodeBuilder } from '../../typescriptObjectParser/ObjectParser';
 import { TypeScriptObjectBuilder } from "../../typescriptObjectParser/TypeScriptObjectBuilder";
@@ -20,7 +20,7 @@ function validatePassageId(passageId: string): [string, string, string] | null {
   const parts = passageId.split('-');
 
   if (parts.length !== 3 || !parts.every(p => p.length > 0)) {
-    console.error(`Invalid passageId format: ${passageId}. Expected 3 hyphen-separated, non-empty parts (e.g., eventName-characterName-passageName).`);
+    console.error(`Invalid passageId format: ${passageId}. Expected 3 hyphen-separated, non-empty parts (e.g., chapterName-characterName-passageName).`);
     return null;
   }
 
@@ -56,9 +56,9 @@ export class PassageManager {
       this.editorAdapter.showErrorNotification(errorMessage);
       throw new Error(errorMessage);
     }
-    const [eventId, characterId, passagePartId] = parts;
+    const [chapterId, characterId, passagePartId] = parts;
 
-    const resolvedPassageFilePath = this.resolvePassageFilePath(eventId, characterId, passagePartId);
+    const resolvedPassageFilePath = this.resolvePassageFilePath(chapterId, characterId, passagePartId);
 
     const originalContent = config.fileSystem.readFileSync(resolvedPassageFilePath, 'utf-8');
     const codeBuilder = new TypeScriptCodeBuilder(originalContent);
@@ -294,13 +294,13 @@ export class PassageManager {
   public async deletePassage(passageId: string): Promise<void> {
     const parts = validatePassageId(passageId);
     if (!parts) {
-      const errorMessage = `Invalid passageId format: ${passageId}. Expected format: eventId-characterId-passagePartId`;
+      const errorMessage = `Invalid passageId format: ${passageId}. Expected format: chapterId-characterId-passagePartId`;
       this.editorAdapter.showErrorNotification(errorMessage);
       throw new Error(errorMessage);
     }
-    const [eventId, characterId, passagePartId] = parts;
+    const [chapterId, characterId, passagePartId] = parts;
 
-    const resolvedPassageFilePath = this.resolvePassageFilePath(eventId, characterId, passagePartId);
+    const resolvedPassageFilePath = this.resolvePassageFilePath(chapterId, characterId, passagePartId);
 
     try {
       config.fileSystem.unlinkSync(resolvedPassageFilePath);
@@ -317,13 +317,13 @@ export class PassageManager {
   public async openScreenPassage(passageId: string): Promise<void> {
     const parts = validatePassageId(passageId);
     if (!parts) {
-      const errorMessage = `Invalid passageId format: ${passageId}. Expected format: eventId-characterId-passagePartId`;
+      const errorMessage = `Invalid passageId format: ${passageId}. Expected format: chapterId-characterId-passagePartId`;
       this.editorAdapter.showErrorNotification(errorMessage);
       throw new Error(errorMessage);
     }
-    const [eventId, characterId, passagePartId] = parts;
+    const [chapterId, characterId, passagePartId] = parts;
 
-    const resolvedPassageFilePath = this.resolvePassageFilePath(eventId, characterId, passagePartId);
+    const resolvedPassageFilePath = this.resolvePassageFilePath(chapterId, characterId, passagePartId);
 
     try {
       await this.editorAdapter.openFile(resolvedPassageFilePath);
@@ -337,15 +337,15 @@ export class PassageManager {
   }
 
   private resolvePassageFilePath(
-    eventId: string,
+    chapterId: string,
     characterId: string,
     passagePartId: string,
   ): string {
 
     const primaryPassageParentDir = path.join(
-      eventsDir(),
-      eventId,
-      `${characterId}${eventPassagesFilePostfixWithoutFileType}`
+      chaptersDir(),
+      chapterId,
+      `${characterId}${chapterPassagesFilePostfixWithoutFileType}`
     );
 
     const possiblePaths = [
@@ -361,7 +361,7 @@ export class PassageManager {
       }
     }
 
-    const errorMessage = `Passage file not found for passageId '${passagePartId}' in event '${eventId}' and character '${characterId}'. Tried paths: ${possiblePaths.join(', ')}`;
+    const errorMessage = `Passage file not found for passageId '${passagePartId}' in chapter '${chapterId}' and character '${characterId}'. Tried paths: ${possiblePaths.join(', ')}`;
     this.editorAdapter.showErrorNotification(errorMessage);
     throw new Error(errorMessage);
   }

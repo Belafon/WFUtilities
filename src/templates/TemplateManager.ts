@@ -1,4 +1,4 @@
-import { ICharacterParams, IEventParams, IScreenPassageParams, IEventPassagesParams, ILocationParams, ISideCharacterParams, TemplateGenerator } from './TempalteGenerator';
+import { ICharacterParams, IChapterParams, IScreenPassageParams, IChapterPassagesParams, ILocationParams, ISideCharacterParams, TemplateGenerator } from './TempalteGenerator';
 import { TemplateFileSaver, ISaveResult } from './TemplateFileSaver';
 
 export interface IGenerateAndSaveResult extends ISaveResult {
@@ -37,12 +37,12 @@ class TemplateManager {
     }
 
     /**
-     * Generates and saves an event file in one operation
+     * Generates and saves an chapter file in one operation
      */
-    public async generateAndSaveEvent(params: IEventParams): Promise<IGenerateAndSaveResult> {
+    public async generateAndSaveChapter(params: IChapterParams): Promise<IGenerateAndSaveResult> {
         try {
-            const content = await this.generator.createEvent(params);
-            const saveResult = await this.fileSaver.saveEvent(params, content);
+            const content = await this.generator.createChapter(params);
+            const saveResult = await this.fileSaver.saveChapter(params, content);
             
             return {
                 ...saveResult,
@@ -81,12 +81,12 @@ class TemplateManager {
     }
 
     /**
-     * Generates and saves an event passages file in one operation
+     * Generates and saves an chapter passages file in one operation
      */
-    public async generateAndSaveEventPassages(params: IEventPassagesParams): Promise<IGenerateAndSaveResult> {
+    public async generateAndSaveChapterPassages(params: IChapterPassagesParams): Promise<IGenerateAndSaveResult> {
         try {
-            const content = await this.generator.createEventPassages(params);
-            const saveResult = await this.fileSaver.saveEventPassages(params, content);
+            const content = await this.generator.createChapterPassages(params);
+            const saveResult = await this.fileSaver.saveChapterPassages(params, content);
             
             return {
                 ...saveResult,
@@ -149,8 +149,8 @@ class TemplateManager {
     /**
      * Preview file paths without generating or saving
      */
-    public previewFilePaths(params: ICharacterParams | IEventParams | IScreenPassageParams | IEventPassagesParams | ILocationParams | ISideCharacterParams): string {
-        if ('characterId' in params && !('eventId' in params)) {
+    public previewFilePaths(params: ICharacterParams | IChapterParams | IScreenPassageParams | IChapterPassagesParams | ILocationParams | ISideCharacterParams): string {
+        if ('characterId' in params && !('chapterId' in params)) {
             // Character params
             return this.fileSaver.getCharacterFilePath(params.characterId);
         } else if ('locationId' in params) {
@@ -159,19 +159,19 @@ class TemplateManager {
         } else if ('sideCharacterId' in params) {
             // Side character params
             return this.fileSaver.getSideCharacterFilePath((params as ISideCharacterParams).sideCharacterId);
-        } else if ('eventId' in params && !('characterId' in params) && !('passageId' in params)) {
-            // Could be Event params or EventPassages params
+        } else if ('chapterId' in params && !('characterId' in params) && !('passageId' in params)) {
+            // Could be Chapter params or ChapterPassages params
             if ('title' in params || 'description' in params) {
-                // Event params (has properties specific to events)
-                return this.fileSaver.getEventFilePath((params as IEventParams).eventId);
+                // Chapter params (has properties specific to chapters)
+                return this.fileSaver.getChapterFilePath((params as IChapterParams).chapterId);
             } else {
-                // EventPassages params
-                return this.fileSaver.getEventPassagesFilePath((params as IEventPassagesParams).eventId);
+                // ChapterPassages params
+                return this.fileSaver.getChapterPassagesFilePath((params as IChapterPassagesParams).chapterId);
             }
-        } else if ('eventId' in params && 'characterId' in params && 'passageId' in params) {
+        } else if ('chapterId' in params && 'characterId' in params && 'passageId' in params) {
             // Screen passage params
             const p = params as IScreenPassageParams;
-            return this.fileSaver.getScreenPassageFilePath(p.eventId, p.characterId, p.passageId);
+            return this.fileSaver.getScreenPassageFilePath(p.chapterId, p.characterId, p.passageId);
         }
         
         throw new Error('Invalid parameters provided');
@@ -180,7 +180,7 @@ class TemplateManager {
     /**
      * Check if files would overwrite existing files
      */
-    public async checkForConflicts(params: ICharacterParams | IEventParams | IScreenPassageParams | IEventPassagesParams | ILocationParams | ISideCharacterParams): Promise<{
+    public async checkForConflicts(params: ICharacterParams | IChapterParams | IScreenPassageParams | IChapterPassagesParams | ILocationParams | ISideCharacterParams): Promise<{
         hasConflict: boolean;
         existingFilePath?: string;
     }> {

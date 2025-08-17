@@ -1,10 +1,10 @@
-import { TEvent } from 'types/TEvent';
+import { TChapter } from 'types/TChapter';
 import { Time } from 'time/Time';
 
-export const {mainEventFunction}: TEvent<{quotedEventId}> = {
-    eventId: {quotedEventId},
-    title: '{eventTitle}',
-    description: '{eventDescription}',
+export const {mainChapterFunction}: TChapter<{quotedChapterId}> = {
+    chapterId: {quotedChapterId},
+    title: '{chapterTitle}',
+    description: '{chapterDescription}',
     timeRange: {
         start: Time.fromString({quotedTimeStart}),
         end: Time.fromString({quotedTimeEnd}),
@@ -20,6 +20,6 @@ export const {mainEventFunction}: TEvent<{quotedEventId}> = {
     },
 };
 
-export type {eventDataTypeName} = {
-    {eventDataTypeContent}
+export type {chapterDataTypeName} = {
+    {chapterDataTypeContent}
 };

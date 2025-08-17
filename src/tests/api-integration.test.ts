@@ -4,23 +4,23 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { app as wfApp } from '../index'; // Adjust path as necessary
-import { EventUpdateRequest } from '../types';
+import { ChapterUpdateRequest } from '../types';
 import { config } from '../WFServerConfig';
 import { StaticWorkspaceAdapter } from '../api/adapters/workspaceAdapter';
 
 suite('WFUtilities Library - API Integration Tests', () => {
   let testWorkspaceRoot: string;
-  let testEventsDir: string;
+  let testChaptersDir: string;
   let testMapsDir: string;
 
   suiteSetup(() => {
     // Create temporary test workspace
     testWorkspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'wf-api-test-'));
-    testEventsDir = path.join(testWorkspaceRoot, 'src', 'data', 'events');
+    testChaptersDir = path.join(testWorkspaceRoot, 'src', 'data', 'chapters');
     testMapsDir = path.join(testWorkspaceRoot, 'src', 'data', 'maps');
 
     // Create directory structure
-    fs.mkdirSync(testEventsDir, { recursive: true });
+    fs.mkdirSync(testChaptersDir, { recursive: true });
     fs.mkdirSync(testMapsDir, { recursive: true });
 
     // Configure the application to use test workspace
@@ -52,18 +52,18 @@ suite('WFUtilities Library - API Integration Tests', () => {
     });
   });
 
-  suite('Event API Endpoints', () => {
-    test('should handle event update requests with proper validation', (done) => {
-      const eventId = 'testEvent';
-      const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+  suite('Chapter API Endpoints', () => {
+    test('should handle chapter update requests with proper validation', (done) => {
+      const chapterId = 'testChapter';
+      const chapterFilePath = path.join(testChaptersDir, `${chapterId}.chapter.ts`);
 
-      // Create a simple event file
-      const eventContent = `export const ${eventId}Event = { title: 'Test' };`;
-      fs.writeFileSync(eventFilePath, eventContent, 'utf-8');
+      // Create a simple chapter file
+      const chapterContent = `export const ${chapterId}Chapter = { title: 'Test' };`;
+      fs.writeFileSync(chapterFilePath, chapterContent, 'utf-8');
 
-      const updateData: EventUpdateRequest = {
-        title: 'Test Event Title',
-        description: 'A test event description',
+      const updateData: ChapterUpdateRequest = {
+        title: 'Test Chapter Title',
+        description: 'A test chapter description',
         location: 'test_location',
         timeRange: {
           start: '1.1. 10:00',
@@ -72,7 +72,7 @@ suite('WFUtilities Library - API Integration Tests', () => {
       };
 
       request(wfApp)
-        .put(`/api/event/${eventId}`)
+        .put(`/api/chapter/${chapterId}`)
         .send(updateData)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -84,10 +84,10 @@ suite('WFUtilities Library - API Integration Tests', () => {
         });
     });
 
-    test('should reject event updates with invalid time format', (done) => {
-      const eventId = 'testEvent';
+    test('should reject chapter updates with invalid time format', (done) => {
+      const chapterId = 'testChapter';
       const invalidData = {
-        title: 'Test Event',
+        title: 'Test Chapter',
         description: 'Test description',
         location: 'test_location',
         timeRange: {
@@ -97,7 +97,7 @@ suite('WFUtilities Library - API Integration Tests', () => {
       };
 
       request(wfApp)
-        .put(`/api/event/${eventId}`)
+        .put(`/api/chapter/${chapterId}`)
         .send(invalidData)
         .expect(400)
         .expect('Content-Type', /json/)
@@ -108,14 +108,14 @@ suite('WFUtilities Library - API Integration Tests', () => {
         });
     });
 
-    test('should handle event time setting requests', (done) => {
-      const eventId = 'testEvent';
-      const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+    test('should handle chapter time setting requests', (done) => {
+      const chapterId = 'testChapter';
+      const chapterFilePath = path.join(testChaptersDir, `${chapterId}.chapter.ts`);
 
-      // Ensure event file exists
-      if (!fs.existsSync(eventFilePath)) {
-        const eventContent = `export const ${eventId}Event = { title: 'Test' };`;
-        fs.writeFileSync(eventFilePath, eventContent, 'utf-8');
+      // Ensure chapter file exists
+      if (!fs.existsSync(chapterFilePath)) {
+        const chapterContent = `export const ${chapterId}Chapter = { title: 'Test' };`;
+        fs.writeFileSync(chapterFilePath, chapterContent, 'utf-8');
       }
 
       const timeData = {
@@ -126,7 +126,7 @@ suite('WFUtilities Library - API Integration Tests', () => {
       };
 
       request(wfApp)
-        .post(`/api/event/${eventId}/setTime`)
+        .post(`/api/chapter/${chapterId}/setTime`)
         .send(timeData)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -136,18 +136,18 @@ suite('WFUtilities Library - API Integration Tests', () => {
         });
     });
 
-    test('should handle event open requests', (done) => {
-      const eventId = 'testEvent';
-      const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+    test('should handle chapter open requests', (done) => {
+      const chapterId = 'testChapter';
+      const chapterFilePath = path.join(testChaptersDir, `${chapterId}.chapter.ts`);
 
-      // Ensure event file exists
-      if (!fs.existsSync(eventFilePath)) {
-        const eventContent = `export const ${eventId}Event = { title: 'Test' };`;
-        fs.writeFileSync(eventFilePath, eventContent, 'utf-8');
+      // Ensure chapter file exists
+      if (!fs.existsSync(chapterFilePath)) {
+        const chapterContent = `export const ${chapterId}Chapter = { title: 'Test' };`;
+        fs.writeFileSync(chapterFilePath, chapterContent, 'utf-8');
       }
 
       request(wfApp)
-        .post(`/api/event/${eventId}/open`)
+        .post(`/api/chapter/${chapterId}/open`)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
@@ -156,16 +156,16 @@ suite('WFUtilities Library - API Integration Tests', () => {
         });
     });
 
-    test('should handle event deletion requests', (done) => {
-      const eventId = 'testEvent';
-      const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+    test('should handle chapter deletion requests', (done) => {
+      const chapterId = 'testChapter';
+      const chapterFilePath = path.join(testChaptersDir, `${chapterId}.chapter.ts`);
 
-      // Create event file to delete
-      const eventContent = `export const ${eventId}Event = { title: 'Test' };`;
-      fs.writeFileSync(eventFilePath, eventContent, 'utf-8');
+      // Create chapter file to delete
+      const chapterContent = `export const ${chapterId}Chapter = { title: 'Test' };`;
+      fs.writeFileSync(chapterFilePath, chapterContent, 'utf-8');
 
       request(wfApp)
-        .delete(`/api/event/${eventId}`)
+        .delete(`/api/chapter/${chapterId}`)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
@@ -177,7 +177,7 @@ suite('WFUtilities Library - API Integration Tests', () => {
 
   suite('Passage API Endpoints', () => {
     test('should handle passage update requests', (done) => {
-      const passageId = 'event1-char1-passage1';
+      const passageId = 'chapter1-char1-passage1';
       const passageData = {
         type: 'screen',
         title: 'Test Passage',
@@ -308,9 +308,9 @@ suite('WFUtilities Library - API Integration Tests', () => {
   });
 
   suite('Error Handling', () => {
-    test('should return 404 for non-existent event', (done) => {
+    test('should return 404 for non-existent chapter', (done) => {
       request(wfApp)
-        .get('/api/event/non-existent-event')
+        .get('/api/chapter/non-existent-chapter')
         .expect(404)
         .end(done);
     });
@@ -338,15 +338,15 @@ suite('WFUtilities Library - API Integration Tests', () => {
 
   suite('Content Type Handling', () => {
     test('should accept JSON content type', (done) => {
-      const eventId = 'jsonTest';  // Changed from 'json-test'
-      const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+      const chapterId = 'jsonTest';  // Changed from 'json-test'
+      const chapterFilePath = path.join(testChaptersDir, `${chapterId}.chapter.ts`);
 
-      // Create event file
-      const eventContent = `export const ${eventId}Event = { title: 'Test' };`;
-      fs.writeFileSync(eventFilePath, eventContent, 'utf-8');
+      // Create chapter file
+      const chapterContent = `export const ${chapterId}Chapter = { title: 'Test' };`;
+      fs.writeFileSync(chapterFilePath, chapterContent, 'utf-8');
 
-      const eventData: EventUpdateRequest = {
-        title: 'JSON Test Event',
+      const chapterData: ChapterUpdateRequest = {
+        title: 'JSON Test Chapter',
         description: 'Testing JSON content type',
         location: 'json_location',
         timeRange: {
@@ -356,9 +356,9 @@ suite('WFUtilities Library - API Integration Tests', () => {
       };
 
       request(wfApp)
-        .put(`/api/event/${eventId}`)
+        .put(`/api/chapter/${chapterId}`)
         .set('Content-Type', 'application/json')
-        .send(eventData)
+        .send(chapterData)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
@@ -368,15 +368,15 @@ suite('WFUtilities Library - API Integration Tests', () => {
     });
 
     test('should accept URL encoded content type', (done) => {
-      const eventId = 'urlTest';  // Changed from 'url-test'
-      const eventFilePath = path.join(testEventsDir, `${eventId}.event.ts`);
+      const chapterId = 'urlTest';  // Changed from 'url-test'
+      const chapterFilePath = path.join(testChaptersDir, `${chapterId}.chapter.ts`);
 
-      // Create event file
-      const eventContent = `export const ${eventId}Event = { title: 'Test' };`;
-      fs.writeFileSync(eventFilePath, eventContent, 'utf-8');
+      // Create chapter file
+      const chapterContent = `export const ${chapterId}Chapter = { title: 'Test' };`;
+      fs.writeFileSync(chapterFilePath, chapterContent, 'utf-8');
 
       request(wfApp)
-        .post(`/api/event/${eventId}/setTime`)
+        .post(`/api/chapter/${chapterId}/setTime`)
         .set('Content-Type', 'application/x-www-form-urlencoded')
         .send('timeRange[start]=1.1. 10:00&timeRange[end]=1.1. 12:00')
         .expect('Content-Type', /json/)

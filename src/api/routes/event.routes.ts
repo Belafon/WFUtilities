@@ -1,21 +1,21 @@
 import { Router } from 'express';
 import {
-  updateEvent,
-  deleteEvent,
-  openEvent,
-  setEventTime
-} from '../controllers/event.controller';
+  updateChapter,
+  deleteChapter,
+  openChapter,
+  setChapterTime
+} from '../controllers/chapter.controller';
 import {
-  validateEventUpdate,
+  validateChapterUpdate,
   validateSetTime,
   handleValidationErrors
 } from '../middlewares/validation';
 
 const router = Router();
 
-router.put('/:eventId', validateEventUpdate, handleValidationErrors, updateEvent);
-router.delete('/:eventId', deleteEvent);
-router.post('/:eventId/open', openEvent);
-router.post('/:eventId/setTime', validateSetTime, handleValidationErrors, setEventTime);
+router.put('/:chapterId', validateChapterUpdate, handleValidationErrors, updateChapter);
+router.delete('/:chapterId', deleteChapter);
+router.post('/:chapterId/open', openChapter);
+router.post('/:chapterId/setTime', validateSetTime, handleValidationErrors, setChapterTime);
 
 export default router;

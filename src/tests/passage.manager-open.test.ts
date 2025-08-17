@@ -8,16 +8,16 @@ import { config } from '../WFServerConfig'; // Import the config object
 // Mocks
 let unlinkSyncStub: sinon.SinonStub;
 let existsSyncStub: sinon.SinonStub;
-let eventsDirStub: sinon.SinonStub;
+let chaptersDirStub: sinon.SinonStub;
 let showInfoNotificationStub: sinon.SinonStub;
 let showErrorNotificationStub: sinon.SinonStub;
 let openFileStub: sinon.SinonStub;
 
-const getPrimaryPassagePath = (eventId: string, characterId: string, passagePartId: string) => {
+const getPrimaryPassagePath = (chapterId: string, characterId: string, passagePartId: string) => {
   return path.join(
-    ActualPaths.eventsDir(),
-    eventId,
-    `${characterId}${ActualPaths.eventPassagesFilePostfixWithoutFileType}`,
+    ActualPaths.chaptersDir(),
+    chapterId,
+    `${characterId}${ActualPaths.chapterPassagesFilePostfixWithoutFileType}`,
     `${passagePartId}${ActualPaths.passageFilePostfix}`
   );
 };
@@ -28,7 +28,7 @@ suite('PassageManager - openPassage', function() {
     // Stub directly on the fileSystem that passageManager is using
     unlinkSyncStub = sinon.stub(config.fileSystem, 'unlinkSync'); // Not used by openPassage, but good to have for consistency
     existsSyncStub = sinon.stub(config.fileSystem, 'existsSync');
-    eventsDirStub = sinon.stub(ActualPaths, 'eventsDir').returns('./test_events_root_dir');
+    chaptersDirStub = sinon.stub(ActualPaths, 'chaptersDir').returns('./test_chapters_root_dir');
     
     // Important: Stub directly on the passageManager's editorAdapter
     showInfoNotificationStub = sinon.stub(passageManager['editorAdapter'], 'showInformationNotification');
@@ -48,8 +48,8 @@ suite('PassageManager - openPassage', function() {
   test('should successfully open a passage at the primary path', async function() {
     setupStubs();
     try {
-      const passageId = 'eventOpen-charPrim-passageFile';
-      const expectedPrimaryPath = getPrimaryPassagePath('eventOpen', 'charPrim', 'passageFile');
+      const passageId = 'chapterOpen-charPrim-passageFile';
+      const expectedPrimaryPath = getPrimaryPassagePath('chapterOpen', 'charPrim', 'passageFile');
       
       existsSyncStub.withArgs(expectedPrimaryPath).returns(true);
       openFileStub.withArgs(expectedPrimaryPath).resolves(); // Simulate successful file open
@@ -111,7 +111,7 @@ suite('PassageManager - openPassage', function() {
   test('should throw error if passage file is not found at any path (openPassage)', async function() {
     setupStubs();
     try {
-      const passageId = 'eventMissing-charGone-passageLost';
+      const passageId = 'chapterMissing-charGone-passageLost';
 
       // Set up all possible paths to return false (the implementation tries multiple file extensions)
       existsSyncStub.returns(false);
@@ -121,7 +121,7 @@ suite('PassageManager - openPassage', function() {
         (error: Error) => {
           return error.message.includes('Passage file not found for passageId') &&
                  error.message.includes('passageLost') &&
-                 error.message.includes('eventMissing') &&
+                 error.message.includes('chapterMissing') &&
                  error.message.includes('charGone');
         }
       );
@@ -135,8 +135,8 @@ suite('PassageManager - openPassage', function() {
   test('should throw error if editorAdapter.openFile fails', async function() {
     setupStubs();
     try {
-      const passageId = 'eventOpen-charFail-passageError';
-      const primaryPath = getPrimaryPassagePath('eventOpen', 'charFail', 'passageError');
+      const passageId = 'chapterOpen-charFail-passageError';
+      const primaryPath = getPrimaryPassagePath('chapterOpen', 'charFail', 'passageError');
       const openError = new Error('Editor failed to open file');
 
       existsSyncStub.withArgs(primaryPath).returns(true);
@@ -157,8 +157,8 @@ suite('PassageManager - openPassage', function() {
   test('should handle non-Error objects thrown by editorAdapter.openFile', async function() {
     setupStubs();
     try {
-      const passageId = 'eventOpen-charNonError-passageOddFail';
-      const primaryPath = getPrimaryPassagePath('eventOpen', 'charNonError', 'passageOddFail');
+      const passageId = 'chapterOpen-charNonError-passageOddFail';
+      const primaryPath = getPrimaryPassagePath('chapterOpen', 'charNonError', 'passageOddFail');
       const openErrorString = "Editor crashed unexpectedly";
 
       existsSyncStub.withArgs(primaryPath).returns(true);

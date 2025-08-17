@@ -576,7 +576,7 @@ chokidar@^3.5.2:
     normalize-path "~3.0.0"
     readdirp "~3.6.0"
   optionalDependencies:
-    fsevents "~2.3.2"
+    fschapters "~2.3.2"
 
 chokidar@^4.0.1:
   version "4.0.3"

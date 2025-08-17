@@ -8,10 +8,10 @@ import app from './app';
 export { app };
 
 // Export API components
-export * from './api/controllers/event.controller';
+export * from './api/controllers/chapter.controller';
 export * from './api/controllers/map.controller';
 export * from './api/controllers/passage.controller';
-export * from './api/services/event.manager';
+export * from './api/services/chapter.manager';
 export * from './api/services/map.manager';
 export * from './api/services/passage.manager';
 

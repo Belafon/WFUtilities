@@ -36,7 +36,7 @@ const swaggerOptions: Options = {
             }
           }
         },
-        EventUpdateRequest: {
+        ChapterUpdateRequest: {
           type: 'object',
           required: ['title', 'description', 'location', 'timeRange'],
           properties: {
@@ -90,12 +90,12 @@ const swaggerOptions: Options = {
       }
     },
     paths: {
-      '/api/event/{eventId}': {
+      '/api/chapter/{chapterId}': {
         put: {
-          summary: 'Update event details',
+          summary: 'Update chapter details',
           parameters: [
             {
-              name: 'eventId',
+              name: 'chapterId',
               in: 'path',
               required: true,
               schema: { type: 'string' }
@@ -105,7 +105,7 @@ const swaggerOptions: Options = {
             required: true,
             content: {
               'application/json': {
-                schema: { $ref: '#/components/schemas/EventUpdateRequest' }
+                schema: { $ref: '#/components/schemas/ChapterUpdateRequest' }
               }
             }
           },

@@ -4,7 +4,7 @@ export class CharacterTemplateVariables {
     constructor(
         public readonly characterId: string,
         public readonly characterName: string = '',
-        public readonly startEventId: string = 'kingdom',
+        public readonly startChapterId: string = 'kingdom',
         public readonly startPassageId: string = 'intro',
         public readonly startLocation: string = 'village',
         public readonly health: number = 100,
@@ -19,7 +19,7 @@ export class CharacterTemplateVariables {
     public static get propertyNames() {
         return {
             characterName: 'characterName' as const,
-            startEventId: 'startEventId' as const,
+            startChapterId: 'startChapterId' as const,
             startPassageId: 'startPassageId' as const,
             startLocation: 'startLocation' as const,
             health: 'health' as const,
@@ -52,7 +52,7 @@ export class CharacterTemplateVariables {
     }
 
     public get fullStartPassageId(): string {
-        return `${this.startEventId}-${this.characterId}-${this.startPassageId}`;
+        return `${this.startChapterId}-${this.characterId}-${this.startPassageId}`;
     }
 
     public get quotedStartPassageId(): string {

@@ -118,7 +118,7 @@ const swaggerOptions = {
             }
           }
         },
-        EventUpdateRequest: {
+        ChapterUpdateRequest: {
           type: 'object',
           required: ['title', 'description', 'location', 'timeRange'],
           properties: {
@@ -172,12 +172,12 @@ const swaggerOptions = {
       }
     },
     paths: {
-      '/api/event/{eventId}': {
+      '/api/chapter/{chapterId}': {
         put: {
-          summary: 'Update event details',
+          summary: 'Update chapter details',
           parameters: [
             {
-              name: 'eventId',
+              name: 'chapterId',
               in: 'path',
               required: true,
               schema: { type: 'string' }
@@ -187,7 +187,7 @@ const swaggerOptions = {
             required: true,
             content: {
               'application/json': {
-                schema: { $ref: '#/components/schemas/EventUpdateRequest' }
+                schema: { $ref: '#/components/schemas/ChapterUpdateRequest' }
               }
             }
           },
@@ -197,10 +197,10 @@ const swaggerOptions = {
           }
         },
         delete: {
-          summary: 'Delete an event',
+          summary: 'Delete an chapter',
           parameters: [
             {
-              name: 'eventId',
+              name: 'chapterId',
               in: 'path',
               required: true,
               schema: { type: 'string' }
@@ -212,12 +212,12 @@ const swaggerOptions = {
           }
         }
       },
-      '/api/event/{eventId}/open': {
+      '/api/chapter/{chapterId}/open': {
         post: {
-          summary: 'Open an event in VS Code',
+          summary: 'Open an chapter in VS Code',
           parameters: [
             {
-              name: 'eventId',
+              name: 'chapterId',
               in: 'path',
               required: true,
               schema: { type: 'string' }
@@ -229,12 +229,12 @@ const swaggerOptions = {
           }
         }
       },
-      '/api/event/{eventId}/setTime': {
+      '/api/chapter/{chapterId}/setTime': {
         post: {
-          summary: 'Set event time range',
+          summary: 'Set chapter time range',
           parameters: [
             {
-              name: 'eventId',
+              name: 'chapterId',
               in: 'path',
               required: true,
               schema: { type: 'string' }

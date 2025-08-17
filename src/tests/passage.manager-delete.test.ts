@@ -8,15 +8,15 @@ import { config } from '../WFServerConfig'; // Import the config object
 // Mocks
 let unlinkSyncStub: sinon.SinonStub;
 let existsSyncStub: sinon.SinonStub;
-let eventsDirStub: sinon.SinonStub;
+let chaptersDirStub: sinon.SinonStub;
 let showInfoNotificationStub: sinon.SinonStub;
 let showErrorNotificationStub: sinon.SinonStub;
 
-const getPrimaryPassagePath = (eventId: string, characterId: string, passagePartId: string) => {
+const getPrimaryPassagePath = (chapterId: string, characterId: string, passagePartId: string) => {
   return path.join(
-    ActualPaths.eventsDir(), // This will call the stubbed function during tests
-    eventId,
-    `${characterId}${ActualPaths.eventPassagesFilePostfixWithoutFileType}`, // Uses actual constant from Paths
+    ActualPaths.chaptersDir(), // This will call the stubbed function during tests
+    chapterId,
+    `${characterId}${ActualPaths.chapterPassagesFilePostfixWithoutFileType}`, // Uses actual constant from Paths
     `${passagePartId}${ActualPaths.passageFilePostfix}` // Uses actual constant from Paths
   );
 };
@@ -28,7 +28,7 @@ suite('PassageManager - deletePassage', function() {
     // Stub methods directly on the fileSystem that passageManager is using
     unlinkSyncStub = sinon.stub(config.fileSystem, 'unlinkSync');
     existsSyncStub = sinon.stub(config.fileSystem, 'existsSync');
-    eventsDirStub = sinon.stub(ActualPaths, 'eventsDir').returns('./test_events_root_dir');
+    chaptersDirStub = sinon.stub(ActualPaths, 'chaptersDir').returns('./test_chapters_root_dir');
     
     // Stub the editor adapter notification methods directly on passageManager's editorAdapter
     showInfoNotificationStub = sinon.stub(passageManager['editorAdapter'], 'showInformationNotification');
@@ -48,8 +48,8 @@ suite('PassageManager - deletePassage', function() {
     setupStubs();
     
     try {
-      const passageId = 'eventA-charB-passageC';
-      const expectedPrimaryPath = getPrimaryPassagePath('eventA', 'charB', 'passageC');
+      const passageId = 'chapterA-charB-passageC';
+      const expectedPrimaryPath = getPrimaryPassagePath('chapterA', 'charB', 'passageC');
   
       existsSyncStub.withArgs(expectedPrimaryPath).returns(true);
       unlinkSyncStub.withArgs(expectedPrimaryPath).returns(undefined);
@@ -92,8 +92,8 @@ suite('PassageManager - deletePassage', function() {
     setupStubs();
     
     try {
-      const passageId = 'eventGone-charLost-passageMissing';
-      const primaryPath = getPrimaryPassagePath('eventGone', 'charLost', 'passageMissing');
+      const passageId = 'chapterGone-charLost-passageMissing';
+      const primaryPath = getPrimaryPassagePath('chapterGone', 'charLost', 'passageMissing');
 
       // Set up all possible paths to return false (the implementation tries multiple file extensions)
       existsSyncStub.returns(false);
@@ -103,7 +103,7 @@ suite('PassageManager - deletePassage', function() {
         (error: Error) => {
           return error.message.includes('Passage file not found for passageId') &&
                  error.message.includes('passageMissing') &&
-                 error.message.includes('eventGone') &&
+                 error.message.includes('chapterGone') &&
                  error.message.includes('charLost');
         }
       );
@@ -118,8 +118,8 @@ suite('PassageManager - deletePassage', function() {
     setupStubs();
     
     try {
-      const passageId = 'eventFail-charError-passageBad';
-      const primaryPath = getPrimaryPassagePath('eventFail', 'charError', 'passageBad');
+      const passageId = 'chapterFail-charError-passageBad';
+      const primaryPath = getPrimaryPassagePath('chapterFail', 'charError', 'passageBad');
       const deletionError = new Error('Permission denied');
 
       existsSyncStub.withArgs(primaryPath).returns(true);
@@ -141,8 +141,8 @@ suite('PassageManager - deletePassage', function() {
     setupStubs();
     
     try {
-      const passageId = 'eventWeird-charStrange-passageOdd';
-      const primaryPath = getPrimaryPassagePath('eventWeird', 'charStrange', 'passageOdd');
+      const passageId = 'chapterWeird-charStrange-passageOdd';
+      const primaryPath = getPrimaryPassagePath('chapterWeird', 'charStrange', 'passageOdd');
       const deletionErrorString = "Unexpected unlink issue";
 
       existsSyncStub.withArgs(primaryPath).returns(true);

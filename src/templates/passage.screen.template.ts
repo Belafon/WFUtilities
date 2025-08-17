@@ -1,21 +1,21 @@
 export class PassageScreenTemplateVariables {
-    public readonly eventIdCapitalized: string;
+    public readonly chapterIdCapitalized: string;
     public readonly characterIdCapitalized: string;
     public readonly passageIdCapitalized: string;
 
     constructor(
-        public readonly eventId: string,
+        public readonly chapterId: string,
         public readonly characterId: string,
         public readonly passageId: string,
     ) {
-        this.eventIdCapitalized = eventId.charAt(0).toUpperCase() + eventId.slice(1);
+        this.chapterIdCapitalized = chapterId.charAt(0).toUpperCase() + chapterId.slice(1);
         this.characterIdCapitalized = characterId.charAt(0).toUpperCase() + characterId.slice(1);
         this.passageIdCapitalized = passageId.charAt(0).toUpperCase() + passageId.slice(1);
     }
 
     public static get propertyNames() {
         return {
-            eventId: 'eventId' as const,
+            chapterId: 'chapterId' as const,
             characterId: 'characterId' as const,
             passageId: 'passageId' as const,
             titleTranslationKey: 'titleTranslationKey' as const,
@@ -36,15 +36,15 @@ export class PassageScreenTemplateVariables {
     }
 
     public get passageIdTypeName(): string {
-        return `T${this.eventIdCapitalized}${this.characterIdCapitalized}PassageId`;
+        return `T${this.chapterIdCapitalized}${this.characterIdCapitalized}PassageId`;
     }
 
     public get fullPassageReference(): string {
-        return `${this.eventId}-${this.characterId}-${this.passageId}`;
+        return `${this.chapterId}-${this.characterId}-${this.passageId}`;
     }
 
     public get passageIdTypeImportPath(): string {
-        return `../${this.eventId}.passages`;
+        return `../${this.chapterId}.passages`;
     }
 
     public get titleTranslationKey(): string {
@@ -59,8 +59,8 @@ export class PassageScreenTemplateVariables {
         return '';
     }
 
-    public get quotedEventId(): string {
-        return `'${this.eventId}'`;
+    public get quotedChapterId(): string {
+        return `'${this.chapterId}'`;
     }
 
     public get quotedCharacterId(): string {
@@ -77,7 +77,7 @@ export class PassageScreenTemplateVariables {
             .replace(/{mainPassageFunction}/g, this.mainPassageFunction)
             .replace(/{passageIdTypeName}/g, this.passageIdTypeName)
             .replace(/{passageIdTypeImportPath}/g, this.passageIdTypeImportPath)
-            .replace(/{quotedEventId}/g, this.quotedEventId)
+            .replace(/{quotedChapterId}/g, this.quotedChapterId)
             .replace(/{quotedCharacterId}/g, this.quotedCharacterId)
             .replace(/{quotedPassageId}/g, this.quotedPassageId)
             .replace(/{titleTranslationKey}/g, this.titleTranslationKey)

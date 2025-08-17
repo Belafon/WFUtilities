@@ -197,10 +197,10 @@ suite('TypeScriptObjectBuilder.setPropertyValue - Indentation Tests', () => {
         franta: Franta,
         nobleMan: NobleMan,
     },
-    events: {
-    	village: villageEvent,
-        kingdom: kingdomEvent,
-    	wedding: weddingEvent,
+    chapters: {
+    	village: villageChapter,
+        kingdom: kingdomChapter,
+    	wedding: weddingChapter,
     },
     locations: {
     	village: villageLocation,
@@ -210,38 +210,38 @@ suite('TypeScriptObjectBuilder.setPropertyValue - Indentation Tests', () => {
 
             const codeBuilder = new TypeScriptCodeBuilder(originalCode);
 
-            // Find the events object within the register
-            let eventsBuilder: TypeScriptObjectBuilder | null = null;
+            // Find the chapters object within the register
+            let chaptersBuilder: TypeScriptObjectBuilder | null = null;
             codeBuilder.findObject('register', {
                 onFound: (registerBuilder) => {
-                    registerBuilder.findObject('events', {
-                        onFound: (builder) => { eventsBuilder = builder; },
+                    registerBuilder.findObject('chapters', {
+                        onFound: (builder) => { chaptersBuilder = builder; },
                         onNotFound: () => { /* ignore */ }
                     });
                 },
                 onNotFound: () => { /* ignore */ }
             });
 
-            assert.ok(eventsBuilder, 'Should find events object');
+            assert.ok(chaptersBuilder, 'Should find chapters object');
 
-            if (eventsBuilder) {
-                (eventsBuilder as TypeScriptObjectBuilder).setPropertyValue('gegas', 'gegasEvent');
+            if (chaptersBuilder) {
+                (chaptersBuilder as TypeScriptObjectBuilder).setPropertyValue('gegas', 'gegasChapter');
 
                 const result = await codeBuilder.toString();
 
                 // The new property should be indented consistently with existing properties
-                // Looking at the existing events object, it uses mixed indentation
+                // Looking at the existing chapters object, it uses mixed indentation
                 // The method should detect the predominant pattern
-                assert.ok(result.includes('gegas: gegasEvent'), 'Should add the gegas property');
+                assert.ok(result.includes('gegas: gegasChapter'), 'Should add the gegas property');
 
                 // Check that the indentation is consistent
                 const lines = result.split('\n');
-                const eventsLine = lines.findIndex(line => line.includes('events: {'));
-                const gegasLine = lines.findIndex(line => line.includes('gegas: gegasEvent'));
+                const chaptersLine = lines.findIndex(line => line.includes('chapters: {'));
+                const gegasLine = lines.findIndex(line => line.includes('gegas: gegasChapter'));
 
-                assert.ok(eventsLine !== -1, 'Should find events line');
+                assert.ok(chaptersLine !== -1, 'Should find chapters line');
                 assert.ok(gegasLine !== -1, 'Should find gegas line');
-                assert.ok(gegasLine > eventsLine, 'gegas should be after events line');
+                assert.ok(gegasLine > chaptersLine, 'gegas should be after chapters line');
 
                 // Check that gegas line has reasonable indentation (not excessive)
                 const gegasIndentation = lines[gegasLine].match(/^(\s*)/)?.[1] || '';

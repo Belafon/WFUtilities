@@ -118,7 +118,7 @@ config.setLoggerAdapter(createWinstonLoggerAdapter());
 import { passageManager } from 'wf-utilities/api/services/passage.manager';
 
 // This will log using your configured adapter
-await passageManager.updatePassage('event1-char1-passage1', passageData);
+await passageManager.updatePassage('chapter1-char1-passage1', passageData);
 ```
 
 ## Interface Reference

@@ -1,14 +1,14 @@
-import { TEventPassage } from 'types/TPassage';
+import { TChapterPassage } from 'types/TPassage';
 import { TWorldState } from 'data/TWorldState';
 import { Engine } from 'code/Engine/ts/Engine';
 {characterImports}
 
-export type {eventPassageIdType} = {passageIdUnion};
+export type {chapterPassageIdType} = {passageIdUnion};
 
 {characterPassageIdTypes}
 
-const {eventPassagesConstName}: Record<{eventPassageIdType}, (s: TWorldState, e: Engine) => TEventPassage<{quotedEventId}>> = {
+const {chapterPassagesConstName}: Record<{chapterPassageIdType}, (s: TWorldState, e: Engine) => TChapterPassage<{quotedChapterId}>> = {
 {passageRecordEntries}
 };
 
-export default {eventPassagesConstName};
+export default {chapterPassagesConstName};

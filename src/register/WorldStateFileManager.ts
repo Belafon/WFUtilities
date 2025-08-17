@@ -2,7 +2,7 @@ import path from 'path';
 import { worldStateFilePath } from '../Paths';
 import { config } from '../WFServerConfig';
 import { TypeScriptCodeBuilder } from '../typescriptObjectParser/ObjectParser';
-import { EventTemplateVariables } from '../templates/event.template';
+import { ChapterTemplateVariables } from '../templates/chapter.template';
 import { CharacterTemplateVariables } from '../templates/character.template';
 
 /**
@@ -11,7 +11,7 @@ import { CharacterTemplateVariables } from '../templates/character.template';
 export enum WorldStateSection {
     Characters = 'characters',
     SideCharacters = 'sideCharacters',
-    Events = 'events',
+    Chapters = 'chapters',
     Locations = 'locations',
     Happenings = 'happenings'
 }
@@ -91,26 +91,26 @@ export class WorldStateFileManager {
     }
 
     /**
-     * Adds an event to the world state
-     * @param eventId The ID of the event (e.g., 'wedding')
-     * @param eventFilePath The relative path to the event file from the world state file
+     * Adds an chapter to the world state
+     * @param chapterId The ID of the chapter (e.g., 'wedding')
+     * @param chapterFilePath The relative path to the chapter file from the world state file
      */
-    public async addEventToWorldState(eventId: string, eventFilePath: string): Promise<void> {
-        const capitalizedId = this.capitalizeFirstLetter(eventId);
-        const importPath = this.getRelativeImportPath(eventFilePath);
+    public async addChapterToWorldState(chapterId: string, chapterFilePath: string): Promise<void> {
+        const capitalizedId = this.capitalizeFirstLetter(chapterId);
+        const importPath = this.getRelativeImportPath(chapterFilePath);
 
         const typeImports: TypeImport[] = [
             {
-                typeName: `T${capitalizedId}EventData`,
+                typeName: `T${capitalizedId}ChapterData`,
                 importPath: importPath
             }
         ];
 
-        const typeDefinition = `${eventId}: { ref: TEvent<'${eventId}'> } & T${capitalizedId}EventData;`;
+        const typeDefinition = `${chapterId}: { ref: TChapter<'${chapterId}'> } & T${capitalizedId}ChapterData;`;
 
         await this.addItemToWorldState({
-            sectionName: WorldStateSection.Events,
-            itemId: eventId,
+            sectionName: WorldStateSection.Chapters,
+            itemId: chapterId,
             typeDefinition,
             typeImports
         });

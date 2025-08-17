@@ -3,8 +3,8 @@ import path from 'path';
 import sinon from 'sinon'; // Using sinon for spies and stubs
 
 // --- SUT and Types ---
-import { EventManager } from '../api/services/event.manager'; // Adjust path
-import { EventUpdateRequest, TimeRange } from '../types'; // Adjust path
+import { ChapterManager } from '../api/services/chapter.manager'; // Adjust path
+import { ChapterUpdateRequest, TimeRange } from '../types'; // Adjust path
 import { EditorAdapter, DefaultEditorAdapter } from '../api/adapters/editorAdapter'; // Adjust path
 import { config } from '../WFServerConfig'; // Import the config object
 
@@ -14,14 +14,14 @@ import { IFileSystem } from '../api/adapters/fileSystem'; // Adjust path
 
 // --- Test Constants ---
 const mockWorkspaceRoot = '/test-workspace';
-const mockEventFilePostfix = '.event.ts'; // Matches what EventManager uses
+const mockChapterFilePostfix = '.chapter.ts'; // Matches what ChapterManager uses
 
 // --- Mock Configurations ---
 const mockPathsConfiguration = {
   workspaceFolders: (): string => mockWorkspaceRoot,
-  eventsDir: (): string => path.join(mockWorkspaceRoot, 'src', 'data', 'events'),
-  eventFilePostfix: mockEventFilePostfix,
-  // Add other Paths properties if EventManager uses them, though it seems to only use eventsDir and eventFilePostfix
+  chaptersDir: (): string => path.join(mockWorkspaceRoot, 'src', 'data', 'chapters'),
+  chapterFilePostfix: mockChapterFilePostfix,
+  // Add other Paths properties if ChapterManager uses them, though it seems to only use chaptersDir and chapterFilePostfix
 };
 
 let mockFsStore: { [filePath: string]: string } = {};
@@ -42,10 +42,10 @@ const mockFileSystemController: IFileSystem = {
     mockFsStore[p] = data;
     writeFileSyncCalls.push({ path: p, data });
   },
-  unlinkSync: (p: string): void => { // Not used by updateEvent/setEventTime, but good for IFileSystem completeness
+  unlinkSync: (p: string): void => { // Not used by updateChapter/setChapterTime, but good for IFileSystem completeness
     delete mockFsStore[p];
   },
-  // mkdirSync, statSync, isDirectory etc. would be here if IFileSystem defined them and EventManager used them
+  // mkdirSync, statSync, isDirectory etc. would be here if IFileSystem defined them and ChapterManager used them
   readdirSync: (p: string): string[] => {
     return Object.keys(mockFsStore).filter(key => key.startsWith(p));
   },
@@ -64,8 +64,8 @@ const mockFileSystemController: IFileSystem = {
 
 function applyGlobalMocks() {
   (ActualPaths as any).workspaceFolders = mockPathsConfiguration.workspaceFolders;
-  (ActualPaths as any).eventsDir = mockPathsConfiguration.eventsDir;
-  (ActualPaths as any).eventFilePostfix = mockPathsConfiguration.eventFilePostfix;
+  (ActualPaths as any).chaptersDir = mockPathsConfiguration.chaptersDir;
+  (ActualPaths as any).chapterFilePostfix = mockPathsConfiguration.chapterFilePostfix;
   
   // Set the mock file system in the config
   config.setFileSystem(mockFileSystemController);
@@ -74,16 +74,16 @@ function applyGlobalMocks() {
 // Helper to normalize string content for easier comparison
 const normalize = (str: string) => str.replace(/\s+/g, ' ').trim();
 
-suite('EventManager - updateEvent & setEventTime', () => {
-  let eventManager: EventManager;
+suite('ChapterManager - updateChapter & setChapterTime', () => {
+  let chapterManager: ChapterManager;
   let mockEditorAdapter: EditorAdapter;
   let showErrorNotificationSpy: sinon.SinonSpy;
   let showInformationNotificationSpy: sinon.SinonSpy;
   let showWarningNotificationSpy: sinon.SinonSpy;
 
-  const getEventsDir = () => mockPathsConfiguration.eventsDir();
-  const getEventFilePath = (eventId: string) => {
-    return path.join(getEventsDir(), eventId, `${eventId}${mockPathsConfiguration.eventFilePostfix}`);
+  const getChaptersDir = () => mockPathsConfiguration.chaptersDir();
+  const getChapterFilePath = (chapterId: string) => {
+    return path.join(getChaptersDir(), chapterId, `${chapterId}${mockPathsConfiguration.chapterFilePostfix}`);
   };
 
   setup(() => {
@@ -100,8 +100,8 @@ suite('EventManager - updateEvent & setEventTime', () => {
     // Set the mock editor adapter in the config
     config.setEditorAdapter(mockEditorAdapter);
 
-    // Create EventManager without arguments - it will use config
-    eventManager = new EventManager();
+    // Create ChapterManager without arguments - it will use config
+    chapterManager = new ChapterManager();
   });
 
   teardown(() => {
@@ -110,11 +110,11 @@ suite('EventManager - updateEvent & setEventTime', () => {
     config.reset();
   });
 
-  suite('updateEvent', () => {
-    const eventId = 'testEvent';
-    const filePath = getEventFilePath(eventId);
+  suite('updateChapter', () => {
+    const chapterId = 'testChapter';
+    const filePath = getChapterFilePath(chapterId);
 
-    const originalEventContent = (
+    const originalChapterContent = (
         title = "_('Original Title')",
         description = "_('Original Description')",
         location = "'original_location'",
@@ -127,9 +127,9 @@ const Time = {
     fromString: (val) => \`Time.fromString(\${val})\`,
 };
 
-// Actual event structure
-export const ${eventId}Event = {
-    eventId: '${eventId}',
+// Actual chapter structure
+export const ${chapterId}Chapter = {
+    chapterId: '${chapterId}',
     title: ${title},
     description: ${description},
     location: ${location},
@@ -142,20 +142,20 @@ export const ${eventId}Event = {
     init: {},
 };`;
 
-    test('should update all event properties successfully', async () => {
-      mockFsStore[filePath] = originalEventContent();
+    test('should update all chapter properties successfully', async () => {
+      mockFsStore[filePath] = originalChapterContent();
 
-      const updateData: EventUpdateRequest = {
+      const updateData: ChapterUpdateRequest = {
         title: 'New Awesome Title',
         description: '  A brand new description for testing  ',
-        location: 'new_event_location',
+        location: 'new_chapter_location',
         timeRange: {
           start: '2.2. 14:00',
           end: '2.2. 18:00',
         },
       };
 
-      await eventManager.updateEvent(eventId, updateData);
+      await chapterManager.updateChapter(chapterId, updateData);
 
       assert.strictEqual(writeFileSyncCalls.length, 1, 'writeFileSync should have been called once.');
       const { path: writtenPath, data: writtenContent } = writeFileSyncCalls[0];
@@ -164,19 +164,19 @@ export const ${eventId}Event = {
       const normContent = normalize(writtenContent);
       assert.ok(normContent.includes(normalize(`title: _('New Awesome Title')`)), 'Updated title not found or incorrect.');
       assert.ok(normContent.includes(normalize(`description: _('A brand new description for testing')`)), 'Updated description not found or incorrect.');
-      assert.ok(normContent.includes(normalize(`location: 'new_event_location'`)), 'Updated location not found or incorrect.');
+      assert.ok(normContent.includes(normalize(`location: 'new_chapter_location'`)), 'Updated location not found or incorrect.');
       assert.ok(normContent.includes(normalize(`start: Time.fromString('2.2. 14:00')`)), 'Updated timeRange.start not found or incorrect.');
       assert.ok(normContent.includes(normalize(`end: Time.fromString('2.2. 18:00')`)), 'Updated timeRange.end not found or incorrect.');
-      assert.ok(normContent.includes(normalize(`export const ${eventId}Event = {`)), 'Event object definition missing.');
+      assert.ok(normContent.includes(normalize(`export const ${chapterId}Chapter = {`)), 'Chapter object definition missing.');
       assert.ok(showInformationNotificationSpy.calledOnceWith(sinon.match(/updated successfully/)), 'Success notification not shown.');
     });
 
     test('should update only title and preserve other fields', async () => {
-      mockFsStore[filePath] = originalEventContent();
+      mockFsStore[filePath] = originalChapterContent();
       const newTitle = 'Only Title Updated';
-      const updateData: Partial<EventUpdateRequest> = { title: newTitle }; // Testing partial update
+      const updateData: Partial<ChapterUpdateRequest> = { title: newTitle }; // Testing partial update
 
-      await eventManager.updateEvent(eventId, updateData as EventUpdateRequest);
+      await chapterManager.updateChapter(chapterId, updateData as ChapterUpdateRequest);
 
       assert.strictEqual(writeFileSyncCalls.length, 1);
       const { data: writtenContent } = writeFileSyncCalls[0];
@@ -190,70 +190,70 @@ export const ${eventId}Event = {
     });
 
     test('should correctly format title if already wrapped with _() but no inner quotes', async () => {
-        mockFsStore[filePath] = originalEventContent();
+        mockFsStore[filePath] = originalChapterContent();
         const newTitleInput = "_('Title with inner quotes')";
-        const updateData: Partial<EventUpdateRequest> = { title: newTitleInput };
+        const updateData: Partial<ChapterUpdateRequest> = { title: newTitleInput };
 
-        await eventManager.updateEvent(eventId, updateData as EventUpdateRequest);
+        await chapterManager.updateChapter(chapterId, updateData as ChapterUpdateRequest);
         const { data: writtenContent } = writeFileSyncCalls[0];
         assert.ok(writtenContent.includes(`title: _('Title with inner quotes')`), "Title with existing _() and inner quotes not handled correctly.");
     });
 
     test('should correctly format title with single quotes inside', async () => {
-      mockFsStore[filePath] = originalEventContent();
+      mockFsStore[filePath] = originalChapterContent();
       const newTitle = "Title with 'single' quotes";
-      const updateData: Partial<EventUpdateRequest> = { title: newTitle };
+      const updateData: Partial<ChapterUpdateRequest> = { title: newTitle };
 
-      await eventManager.updateEvent(eventId, updateData as EventUpdateRequest);
+      await chapterManager.updateChapter(chapterId, updateData as ChapterUpdateRequest);
       const { data: writtenContent } = writeFileSyncCalls[0];
       assert.ok(writtenContent.includes(`title: _('Title with \\'single\\' quotes')`), "Title with single quotes not escaped correctly.");
     });
 
-    test('should throw error if eventId is empty', async () => {
-      const updateData: EventUpdateRequest = { title: 'T', description: 'D', location: 'L', timeRange: {start:'s', end:'e'} };
+    test('should throw error if chapterId is empty', async () => {
+      const updateData: ChapterUpdateRequest = { title: 'T', description: 'D', location: 'L', timeRange: {start:'s', end:'e'} };
       await assert.rejects(
-        async () => eventManager.updateEvent('', updateData),
-        new Error('Event ID cannot be empty.')
+        async () => chapterManager.updateChapter('', updateData),
+        new Error('Chapter ID cannot be empty.')
       );
       assert.strictEqual(writeFileSyncCalls.length, 0);
     });
 
-    test('should throw error if event file not found', async () => {
-      const nonExistentEventId = 'nonExistentEvent';
-      const updateData: EventUpdateRequest = { title: 'T', description: 'D', location: 'L', timeRange: {start:'s', end:'e'} };
-      const expectedPath = getEventFilePath(nonExistentEventId);
+    test('should throw error if chapter file not found', async () => {
+      const nonExistentChapterId = 'nonExistentChapter';
+      const updateData: ChapterUpdateRequest = { title: 'T', description: 'D', location: 'L', timeRange: {start:'s', end:'e'} };
+      const expectedPath = getChapterFilePath(nonExistentChapterId);
 
       await assert.rejects(
-        async () => eventManager.updateEvent(nonExistentEventId, updateData),
+        async () => chapterManager.updateChapter(nonExistentChapterId, updateData),
         (error: Error) => error.message.includes(`no such file or directory`)
       );
       assert.strictEqual(writeFileSyncCalls.length, 0);
     });
 
-    test('should throw error if event object (e.g., testEventEvent) not found in file', async () => {
-      const fileContentWithoutEventObject = `export const someOtherObject = {};`;
-      mockFsStore[filePath] = fileContentWithoutEventObject;
-      const updateData: EventUpdateRequest = { title: 'T', description: 'D', location: 'L', timeRange: {start:'s', end:'e'} };
-      const expectedObjectName = `${eventId}Event`; // eventId is 'testEvent'
+    test('should throw error if chapter object (e.g., testChapterChapter) not found in file', async () => {
+      const fileContentWithoutChapterObject = `export const someOtherObject = {};`;
+      mockFsStore[filePath] = fileContentWithoutChapterObject;
+      const updateData: ChapterUpdateRequest = { title: 'T', description: 'D', location: 'L', timeRange: {start:'s', end:'e'} };
+      const expectedObjectName = `${chapterId}Chapter`; // chapterId is 'testChapter'
 
       // This part correctly checks that the expected error is ultimately thrown and rejected.
       await assert.rejects(
-        async () => eventManager.updateEvent(eventId, updateData),
-        new Error(`Could not find event object definition for '${expectedObjectName}' in ${filePath}`)
+        async () => chapterManager.updateChapter(chapterId, updateData),
+        new Error(`Could not find chapter object definition for '${expectedObjectName}' in ${filePath}`)
       );
 
       // Ensure writeFileSync was not called
       assert.strictEqual(writeFileSyncCalls.length, 0);
     });    test('should propagate error if writeFileSync fails', async () => {
-        mockFsStore[filePath] = originalEventContent();
-        const updateData: EventUpdateRequest = { title: 'New Title', description: 'D', location: 'L', timeRange: {start:'s', end:'e'} };
+        mockFsStore[filePath] = originalChapterContent();
+        const updateData: ChapterUpdateRequest = { title: 'New Title', description: 'D', location: 'L', timeRange: {start:'s', end:'e'} };
         const writeError = new Error('Disk full');
 
         // Sabotage writeFileSync for this test
         const writeFileSyncStub = sinon.stub(config.fileSystem, 'writeFileSync').throws(writeError);
 
         await assert.rejects(
-            async () => eventManager.updateEvent(eventId, updateData),
+            async () => chapterManager.updateChapter(chapterId, updateData),
             writeError // Expect the original error to be re-thrown
         );
 
@@ -262,15 +262,15 @@ export const ${eventId}Event = {
     });
   });
 
-  suite('setEventTime', () => {
-    const eventId = 'timeSetEvent';
-    const filePath = getEventFilePath(eventId);
+  suite('setChapterTime', () => {
+    const chapterId = 'timeSetChapter';
+    const filePath = getChapterFilePath(chapterId);
 
-    const originalEventContentForTimeSet = `
+    const originalChapterContentForTimeSet = `
 const _ = (str) => \`_('\${str}')\`;
 const Time = { fromString: (val) => \`Time.fromString(\${val})\` };
-export const ${eventId}Event = {
-    eventId: '${eventId}',
+export const ${chapterId}Chapter = {
+    chapterId: '${chapterId}',
     title: _('Original Title'),
     description: _('Original Description'),
     location: 'original_location',
@@ -280,54 +280,54 @@ export const ${eventId}Event = {
     },
 };`;
 
-    test('should call updateEvent with correct parameters and update timeRange', async () => {
-      mockFsStore[filePath] = originalEventContentForTimeSet;
+    test('should call updateChapter with correct parameters and update timeRange', async () => {
+      mockFsStore[filePath] = originalChapterContentForTimeSet;
       const newTimeRange: TimeRange = {
         start: '3.3. 08:00',
         end: '3.3. 12:30',
       };
 
-      // Spy on the updateEvent method of the specific eventManager instance
-      const updateEventSpy = sinon.spy(eventManager, 'updateEvent');
+      // Spy on the updateChapter method of the specific chapterManager instance
+      const updateChapterSpy = sinon.spy(chapterManager, 'updateChapter');
 
-      await eventManager.setEventTime(eventId, newTimeRange);
+      await chapterManager.setChapterTime(chapterId, newTimeRange);
 
-      assert.ok(updateEventSpy.calledOnce, 'updateEvent was not called by setEventTime.');
-      assert.deepStrictEqual(updateEventSpy.firstCall.args[0], eventId, 'updateEvent called with wrong eventId.');
-      // Check that updateEvent was called with an object that *only* contains timeRange
-      const expectedUpdateData = { timeRange: newTimeRange } as EventUpdateRequest;
-      assert.deepStrictEqual(updateEventSpy.firstCall.args[1], expectedUpdateData, 'updateEvent called with wrong data.');
+      assert.ok(updateChapterSpy.calledOnce, 'updateChapter was not called by setChapterTime.');
+      assert.deepStrictEqual(updateChapterSpy.firstCall.args[0], chapterId, 'updateChapter called with wrong chapterId.');
+      // Check that updateChapter was called with an object that *only* contains timeRange
+      const expectedUpdateData = { timeRange: newTimeRange } as ChapterUpdateRequest;
+      assert.deepStrictEqual(updateChapterSpy.firstCall.args[1], expectedUpdateData, 'updateChapter called with wrong data.');
 
-      // Verify the file was actually written with the new time (by the spied updateEvent)
-      assert.strictEqual(writeFileSyncCalls.length, 1, 'writeFileSync should have been called once via updateEvent.');
+      // Verify the file was actually written with the new time (by the spied updateChapter)
+      assert.strictEqual(writeFileSyncCalls.length, 1, 'writeFileSync should have been called once via updateChapter.');
       const { data: writtenContent } = writeFileSyncCalls[0];
       const normContent = normalize(writtenContent);
 
       assert.ok(normContent.includes(normalize(`start: Time.fromString('${newTimeRange.start}')`)), 'Updated timeRange.start not found.');
       assert.ok(normContent.includes(normalize(`end: Time.fromString('${newTimeRange.end}')`)), 'Updated timeRange.end not found.');
       assert.ok(normContent.includes(normalize(`title: _('Original Title')`)), 'Original title not preserved.'); // Check other fields preserved
-      assert.ok(showInformationNotificationSpy.calledOnceWith(sinon.match(/updated successfully/)), 'Success notification from underlying updateEvent not shown.');
+      assert.ok(showInformationNotificationSpy.calledOnceWith(sinon.match(/updated successfully/)), 'Success notification from underlying updateChapter not shown.');
     });
 
     test('should throw error and show notification if timeRange is invalid (e.g., missing start)', async () => {
       const invalidTimeRange = { end: '1.1. 10:00' } as any as TimeRange; // Cast to bypass TS for test
 
       await assert.rejects(
-        async () => eventManager.setEventTime(eventId, invalidTimeRange),
-        new Error('Invalid timeRange provided for setEventTime. Both start and end are required.')
+        async () => chapterManager.setChapterTime(chapterId, invalidTimeRange),
+        new Error('Invalid timeRange provided for setChapterTime. Both start and end are required.')
       );
-      assert.ok(showErrorNotificationSpy.calledOnceWith('Invalid timeRange provided for setEventTime. Both start and end are required.'), 'Error notification for invalid timeRange not shown.');
+      assert.ok(showErrorNotificationSpy.calledOnceWith('Invalid timeRange provided for setChapterTime. Both start and end are required.'), 'Error notification for invalid timeRange not shown.');
       assert.strictEqual(writeFileSyncCalls.length, 0);
     });
 
-    test('should propagate errors from updateEvent (e.g., file not found)', async () => {
-        const nonExistentEventId = 'noFileForTimeSet';
+    test('should propagate errors from updateChapter (e.g., file not found)', async () => {
+        const nonExistentChapterId = 'noFileForTimeSet';
         const timeRange: TimeRange = { start: '1.1. 10:00', end: '1.1. 11:00' };
-        const expectedPath = getEventFilePath(nonExistentEventId);
+        const expectedPath = getChapterFilePath(nonExistentChapterId);
 
-        // updateEvent will be called by setEventTime and should throw
+        // updateChapter will be called by setChapterTime and should throw
         await assert.rejects(
-            async () => eventManager.setEventTime(nonExistentEventId, timeRange),
+            async () => chapterManager.setChapterTime(nonExistentChapterId, timeRange),
             (error: Error) => error.message.includes('no such file or directory')
         );
     });

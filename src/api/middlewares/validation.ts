@@ -7,9 +7,9 @@ import { logger } from '../../utils/logger';
  */
 
 /**
- * Validation rules for event updates
+ * Validation rules for chapter updates
  */
-export const validateEventUpdate = [
+export const validateChapterUpdate = [
   body('title').optional().notEmpty().withMessage('Title cannot be empty if provided'),
   body('description').optional(), 
   body('location').optional().notEmpty().withMessage('Location cannot be empty if provided'),
@@ -24,7 +24,7 @@ export const validateEventUpdate = [
 ];
 
 /**
- * Validation rules for event time setting requests
+ * Validation rules for chapter time setting requests
  */
 export const validateSetTime = [
   body('timeRange.start')

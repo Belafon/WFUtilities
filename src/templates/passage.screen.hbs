@@ -4,12 +4,12 @@ import { {passageIdTypeName} } from '{passageIdTypeImportPath}';
 import { TWorldState } from 'data/TWorldState';
 import { Engine } from 'code/Engine/ts/Engine';
 
-export const {mainPassageFunction} = (s: TWorldState, e: Engine): TPassage<{quotedEventId}, {quotedCharacterId}, {passageIdTypeName}> => {
+export const {mainPassageFunction} = (s: TWorldState, e: Engine): TPassage<{quotedChapterId}, {quotedCharacterId}, {passageIdTypeName}> => {
     void s;
     void e;
 
     return {
-        eventId: {quotedEventId},
+        chapterId: {quotedChapterId},
         characterId: {quotedCharacterId},
         id: {quotedPassageId},
 

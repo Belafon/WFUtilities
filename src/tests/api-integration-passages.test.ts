@@ -15,7 +15,7 @@ import { ScreenPassageUpdateRequest } from '../types';
 
 // Test workspace setup
 let testWorkspaceRoot: string;
-let testEventsDir: string;
+let testChaptersDir: string;
 
 const createTestPassageFileContent = (passagePartId: string, options: {
     type?: 'screen' | 'linear' | 'transition';
@@ -43,7 +43,7 @@ export const ${passagePartId}Passage = (s: TWorldState, e: Engine): TPassage<'ki
     void e;
 
     return {
-        eventId: 'kingdom',
+        chapterId: 'kingdom',
         characterId: 'annie',
         id: '${passagePartId}',
         
@@ -67,7 +67,7 @@ export const ${passagePartId}Passage = (s: TWorldState, e: Engine): TPassage<'ki
 };`;
     } else if (type === 'linear') {
         return `export const ${passagePartId}Passage = {
-    eventId: 'kingdom',
+    chapterId: 'kingdom',
     characterId: 'annie',
     id: '${passagePartId}',
     
@@ -77,7 +77,7 @@ export const ${passagePartId}Passage = (s: TWorldState, e: Engine): TPassage<'ki
 };`;
     } else { // transition
         return `export const ${passagePartId}Passage = {
-    eventId: 'kingdom',
+    chapterId: 'kingdom',
     characterId: 'annie',
     id: '${passagePartId}',
     
@@ -94,10 +94,10 @@ suite('PassageManager Integration Tests', () => {
     suiteSetup(() => {
         // Create temporary test workspace
         testWorkspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'wf-passage-test-'));
-        testEventsDir = path.join(testWorkspaceRoot, 'src', 'data', 'events');
+        testChaptersDir = path.join(testWorkspaceRoot, 'src', 'data', 'chapters');
 
         // Create directory structure
-        fs.mkdirSync(testEventsDir, { recursive: true });
+        fs.mkdirSync(testChaptersDir, { recursive: true });
 
         // Configure the application to use test workspace
         const workspaceAdapter = new StaticWorkspaceAdapter(testWorkspaceRoot);
@@ -111,8 +111,8 @@ suite('PassageManager Integration Tests', () => {
     });
 
     setup(() => {
-        // Clean events directory before each test
-        if (fs.existsSync(testEventsDir)) {
+        // Clean chapters directory before each test
+        if (fs.existsSync(testChaptersDir)) {
             const cleanDir = (dir: string) => {
                 const files = fs.readdirSync(dir);
                 files.forEach(file => {
@@ -125,7 +125,7 @@ suite('PassageManager Integration Tests', () => {
                     }
                 });
             };
-            cleanDir(testEventsDir);
+            cleanDir(testChaptersDir);
         }
 
         // Reset stub call history but keep the same stub instance
@@ -147,10 +147,10 @@ suite('PassageManager Integration Tests', () => {
     suite('PUT /api/passage/screen/:passageId - Update Passage', () => {
         test('should successfully update a screen passage', async () => {
             const passageId = 'kingdom-annie-intro';
-            const [eventId, characterId, passagePartId] = passageId.split('-');
+            const [chapterId, characterId, passagePartId] = passageId.split('-');
 
             // Create passage directory and file
-            const passageDir = path.join(testEventsDir, eventId, `${characterId}.passages`);
+            const passageDir = path.join(testChaptersDir, chapterId, `${characterId}.passages`);
             fs.mkdirSync(passageDir, { recursive: true });
             const passageFilePath = path.join(passageDir, `${passagePartId}.ts`);
 
@@ -209,10 +209,10 @@ suite('PassageManager Integration Tests', () => {
 
         test('should successfully update a linear passage', async () => {
             const passageId = 'kingdom-annie-journey';
-            const [eventId, characterId, passagePartId] = passageId.split('-');
+            const [chapterId, characterId, passagePartId] = passageId.split('-');
 
             // Create passage directory and file
-            const passageDir = path.join(testEventsDir, eventId, `${characterId}.passages`);
+            const passageDir = path.join(testChaptersDir, chapterId, `${characterId}.passages`);
             fs.mkdirSync(passageDir, { recursive: true });
             const passageFilePath = path.join(passageDir, `${passagePartId}.ts`);
 
@@ -246,10 +246,10 @@ suite('PassageManager Integration Tests', () => {
 
         test('should successfully update a transition passage', async () => {
             const passageId = 'kingdom-annie-cutscene';
-            const [eventId, characterId, passagePartId] = passageId.split('-');
+            const [chapterId, characterId, passagePartId] = passageId.split('-');
 
             // Create passage directory and file
-            const passageDir = path.join(testEventsDir, eventId, `${characterId}.passages`);
+            const passageDir = path.join(testChaptersDir, chapterId, `${characterId}.passages`);
             fs.mkdirSync(passageDir, { recursive: true });
             const passageFilePath = path.join(passageDir, `${passagePartId}.ts`);
 
@@ -280,9 +280,9 @@ suite('PassageManager Integration Tests', () => {
 
         test('should handle complex cost objects in links', async () => {
             const passageId = 'kingdom-annie-shop';
-            const [eventId, characterId, passagePartId] = passageId.split('-');
+            const [chapterId, characterId, passagePartId] = passageId.split('-');
 
-            const passageDir = path.join(testEventsDir, eventId, `${characterId}.passages`);
+            const passageDir = path.join(testChaptersDir, chapterId, `${characterId}.passages`);
             fs.mkdirSync(passageDir, { recursive: true });
             const passageFilePath = path.join(passageDir, `${passagePartId}.ts`);
 
@@ -361,9 +361,9 @@ suite('PassageManager Integration Tests', () => {
 
         test('should handle passages with conditions and redirects', async () => {
             const passageId = 'kingdom-annie-conditional';
-            const [eventId, characterId, passagePartId] = passageId.split('-');
+            const [chapterId, characterId, passagePartId] = passageId.split('-');
 
-            const passageDir = path.join(testEventsDir, eventId, `${characterId}.passages`);
+            const passageDir = path.join(testChaptersDir, chapterId, `${characterId}.passages`);
             fs.mkdirSync(passageDir, { recursive: true });
             const passageFilePath = path.join(passageDir, `${passagePartId}.ts`);
 
@@ -403,9 +403,9 @@ suite('PassageManager Integration Tests', () => {
 
         test('should preserve special characters in text fields', async () => {
             const passageId = 'kingdom-annie-special';
-            const [eventId, characterId, passagePartId] = passageId.split('-');
+            const [chapterId, characterId, passagePartId] = passageId.split('-');
 
-            const passageDir = path.join(testEventsDir, eventId, `${characterId}.passages`);
+            const passageDir = path.join(testChaptersDir, chapterId, `${characterId}.passages`);
             fs.mkdirSync(passageDir, { recursive: true });
             const passageFilePath = path.join(passageDir, `${passagePartId}.ts`);
 
@@ -445,10 +445,10 @@ suite('PassageManager Integration Tests', () => {
     suite('DELETE /api/passage/screen/:passageId - Delete Passage', () => {
         test('should successfully delete an existing passage', async () => {
             const passageId = 'kingdom-annie-delete';
-            const [eventId, characterId, passagePartId] = passageId.split('-');
+            const [chapterId, characterId, passagePartId] = passageId.split('-');
 
             // Create passage file to delete
-            const passageDir = path.join(testEventsDir, eventId, `${characterId}.passages`);
+            const passageDir = path.join(testChaptersDir, chapterId, `${characterId}.passages`);
             fs.mkdirSync(passageDir, { recursive: true });
             const passageFilePath = path.join(passageDir, `${passagePartId}.ts`);
 
@@ -496,9 +496,9 @@ suite('PassageManager Integration Tests', () => {
     suite('POST /api/passage/screen/:passageId/open - Open Passage', () => {
         test('should successfully open an existing passage file', async () => {
             const passageId = 'kingdom-annie-open';
-            const [eventId, characterId, passagePartId] = passageId.split('-');
+            const [chapterId, characterId, passagePartId] = passageId.split('-');
 
-            const passageDir = path.join(testEventsDir, eventId, `${characterId}.passages`);
+            const passageDir = path.join(testChaptersDir, chapterId, `${characterId}.passages`);
             fs.mkdirSync(passageDir, { recursive: true });
             const passageFilePath = path.join(passageDir, `${passagePartId}.ts`);
 
@@ -533,9 +533,9 @@ suite('PassageManager Integration Tests', () => {
 
         test('should handle editor failures gracefully', async () => {
             const passageId = 'kingdom-annie-openfail';
-            const [eventId, characterId, passagePartId] = passageId.split('-');
+            const [chapterId, characterId, passagePartId] = passageId.split('-');
 
-            const passageDir = path.join(testEventsDir, eventId, `${characterId}.passages`);
+            const passageDir = path.join(testChaptersDir, chapterId, `${characterId}.passages`);
             fs.mkdirSync(passageDir, { recursive: true });
             const passageFilePath = path.join(passageDir, `${passagePartId}.ts`);
 
@@ -560,9 +560,9 @@ suite('PassageManager Integration Tests', () => {
     suite('Complex Integration Scenarios', () => {
         test('should handle complete passage lifecycle', async () => {
             const passageId = 'kingdom-annie-lifecycle';
-            const [eventId, characterId, passagePartId] = passageId.split('-');
+            const [chapterId, characterId, passagePartId] = passageId.split('-');
 
-            const passageDir = path.join(testEventsDir, eventId, `${characterId}.passages`);
+            const passageDir = path.join(testChaptersDir, chapterId, `${characterId}.passages`);
             fs.mkdirSync(passageDir, { recursive: true });
             const passageFilePath = path.join(passageDir, `${passagePartId}.ts`);
 
@@ -624,8 +624,8 @@ suite('PassageManager Integration Tests', () => {
             assert.ok(!fs.existsSync(passageFilePath), 'Passage file should be deleted');
         });
 
-        test('should handle multiple passage types in same event', async () => {
-            const eventId = 'kingdom';
+        test('should handle multiple passage types in same chapter', async () => {
+            const chapterId = 'kingdom';
             const characterId = 'annie';
 
             // Create multiple passages of different types
@@ -635,7 +635,7 @@ suite('PassageManager Integration Tests', () => {
                 { id: 'transition1', type: 'transition' as const }
             ];
 
-            const passageDir = path.join(testEventsDir, eventId, `${characterId}.passages`);
+            const passageDir = path.join(testChaptersDir, chapterId, `${characterId}.passages`);
             fs.mkdirSync(passageDir, { recursive: true });
 
             // Create all passage files
@@ -665,21 +665,21 @@ suite('PassageManager Integration Tests', () => {
 
             // Update screen passage
             let response = await request(app)
-                .put(`/api/passage/screen/${eventId}-${characterId}-screen1`)
+                .put(`/api/passage/screen/${chapterId}-${characterId}-screen1`)
                 .send(screenUpdate)
                 .expect(200);
             assert.strictEqual(response.body.success, true);
 
             // Update linear passage
             response = await request(app)
-                .put(`/api/passage/screen/${eventId}-${characterId}-linear1`)
+                .put(`/api/passage/screen/${chapterId}-${characterId}-linear1`)
                 .send(linearUpdate)
                 .expect(200);
             assert.strictEqual(response.body.success, true);
 
             // Update transition passage
             response = await request(app)
-                .put(`/api/passage/screen/${eventId}-${characterId}-transition1`)
+                .put(`/api/passage/screen/${chapterId}-${characterId}-transition1`)
                 .send(transitionUpdate)
                 .expect(200);
             assert.strictEqual(response.body.success, true);
@@ -711,7 +711,7 @@ suite('PassageManager Integration Tests', () => {
             assert.ok(response.body.message.includes('demo mode'));
 
             // Verify no actual file operations occurred
-            const passageDir = path.join(testEventsDir, 'kingdom', 'annie.passages');
+            const passageDir = path.join(testChaptersDir, 'kingdom', 'annie.passages');
             assert.ok(!fs.existsSync(passageDir), 'No directories should be created in demo mode');
         });
     });
@@ -748,9 +748,9 @@ suite('PassageManager Integration Tests', () => {
 
         test('should handle passage files with malformed TypeScript', async () => {
             const passageId = 'kingdom-annie-malformed';
-            const [eventId, characterId, passagePartId] = passageId.split('-');
+            const [chapterId, characterId, passagePartId] = passageId.split('-');
 
-            const passageDir = path.join(testEventsDir, eventId, `${characterId}.passages`);
+            const passageDir = path.join(testChaptersDir, chapterId, `${characterId}.passages`);
             fs.mkdirSync(passageDir, { recursive: true });
             const passageFilePath = path.join(passageDir, `${passagePartId}.ts`);
 
@@ -774,9 +774,9 @@ suite('PassageManager Integration Tests', () => {
 
         test('should handle concurrent updates to same passage', async () => {
             const passageId = 'kingdom-annie-concurrent';
-            const [eventId, characterId, passagePartId] = passageId.split('-');
+            const [chapterId, characterId, passagePartId] = passageId.split('-');
 
-            const passageDir = path.join(testEventsDir, eventId, `${characterId}.passages`);
+            const passageDir = path.join(testChaptersDir, chapterId, `${characterId}.passages`);
             fs.mkdirSync(passageDir, { recursive: true });
             const passageFilePath = path.join(passageDir, `${passagePartId}.ts`);
 

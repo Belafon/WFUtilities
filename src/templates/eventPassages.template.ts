@@ -9,51 +9,51 @@ export interface IPassageInfo {
     filePath: string;
 }
 
-export class EventPassagesTemplateVariables {
-    public readonly eventIdCapitalized: string;
+export class ChapterPassagesTemplateVariables {
+    public readonly chapterIdCapitalized: string;
 
     constructor(
-        public readonly eventId: string,
+        public readonly chapterId: string,
     ) {
-        this.eventIdCapitalized = eventId.charAt(0).toUpperCase() + eventId.slice(1);
+        this.chapterIdCapitalized = chapterId.charAt(0).toUpperCase() + chapterId.slice(1);
     }
 
     public static get propertyNames() {
         return {
-            eventId: 'eventId' as const,
+            chapterId: 'chapterId' as const,
             passages: 'passages' as const,
             characterPassages: 'characterPassages' as const,
         };
     }
 
     public get propertyNames() {
-        return EventPassagesTemplateVariables.propertyNames;
+        return ChapterPassagesTemplateVariables.propertyNames;
     }
 
-    public get eventPassagesConstName(): string {
-        return `${this.eventId}EventPassages`;
+    public get chapterPassagesConstName(): string {
+        return `${this.chapterId}ChapterPassages`;
     }
 
-    public get eventPassageIdType(): string {
-        return `T${this.eventIdCapitalized}PassageId`;
+    public get chapterPassageIdType(): string {
+        return `T${this.chapterIdCapitalized}PassageId`;
     }
 
-    public get quotedEventId(): string {
-        return `'${this.eventId}'`;
+    public get quotedChapterId(): string {
+        return `'${this.chapterId}'`;
     }
 
     public get passageIdUnion(): string {
         return 'never';
     }
 
-    public generateEventPassagesCode(template: string): string {
+    public generateChapterPassagesCode(template: string): string {
         return template
             .replace(/{characterImports}/g, '\n')
-            .replace(/{eventPassageIdType}/g, this.eventPassageIdType)
+            .replace(/{chapterPassageIdType}/g, this.chapterPassageIdType)
             .replace(/{passageIdUnion}/g, this.passageIdUnion)
             .replace(/{characterPassageIdTypes}/g, '\n')
-            .replace(/{eventPassagesConstName}/g, this.eventPassagesConstName)
-            .replace(/{quotedEventId}/g, this.quotedEventId)
+            .replace(/{chapterPassagesConstName}/g, this.chapterPassagesConstName)
+            .replace(/{quotedChapterId}/g, this.quotedChapterId)
             .replace(/{passageRecordEntries}/g, '\n');
     }
 }

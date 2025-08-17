@@ -26,7 +26,7 @@ components:
           example: '5.1. 8:00'
           pattern: '^\d{1,2}\.\d{1,2}\.\s\d{1,2}:\d{2}$'
 
-    EventUpdateRequest:
+    ChapterUpdateRequest:
       type: object
       required:
         - title
@@ -336,11 +336,11 @@ components:
             $ref: '#/components/schemas/ErrorResponse'
 
 paths:
-  /event/{eventId}:
+  /chapter/{chapterId}:
     put:
-      summary: Update event details
+      summary: Update chapter details
       parameters:
-        - name: eventId
+        - name: chapterId
           in: path
           required: true
           schema:
@@ -350,7 +350,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EventUpdateRequest'
+              $ref: '#/components/schemas/ChapterUpdateRequest'
       responses:
         '200':
           $ref: '#/components/responses/Success'
@@ -363,9 +363,9 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      summary: Delete an event
+      summary: Delete an chapter
       parameters:
-        - name: eventId
+        - name: chapterId
           in: path
           required: true
           schema:
@@ -376,11 +376,11 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /event/{eventId}/open:
+  /chapter/{chapterId}/open:
     post:
-      summary: Open an event in VS Code
+      summary: Open an chapter in VS Code
       parameters:
-        - name: eventId
+        - name: chapterId
           in: path
           required: true
           schema:
@@ -391,11 +391,11 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /event/{eventId}/setTime:
+  /chapter/{chapterId}/setTime:
     post:
-      summary: Set event time range
+      summary: Set chapter time range
       parameters:
-        - name: eventId
+        - name: chapterId
           in: path
           required: true
           schema:

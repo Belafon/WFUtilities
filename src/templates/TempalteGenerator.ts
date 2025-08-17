@@ -1,8 +1,8 @@
 import path from 'path';
 import { config } from '../WFServerConfig';
 import { CharacterTemplateVariables } from './character.template';
-import { EventTemplateVariables } from './event.template';
-import { EventPassagesTemplateVariables } from './eventPassages.template';
+import { ChapterTemplateVariables } from './chapter.template';
+import { ChapterPassagesTemplateVariables } from './chapterPassages.template';
 import { PassageScreenTemplateVariables } from './passage.screen.template';
 import { LocationTemplateVariables } from './location.template';
 import { SideCharacterTemplateVariables } from './sideCharacter.template';
@@ -10,7 +10,7 @@ import { SideCharacterTemplateVariables } from './sideCharacter.template';
 export interface ICharacterParams {
     characterId: string;
     characterName?: string;
-    startEventId?: string;
+    startChapterId?: string;
     startPassageId?: string;
     startLocation?: string;
     health?: number;
@@ -21,25 +21,25 @@ export interface ICharacterParams {
     characterDataTypeContent?: string;
 }
 
-export interface IEventParams {
-    eventId: string;
+export interface IChapterParams {
+    chapterId: string;
     title?: string;
     description?: string;
     location?: string;
     timeStart?: string;
     timeEnd?: string;
     initObjectContent?: string;
-    eventDataTypeContent?: string;
+    chapterDataTypeContent?: string;
 }
 
 export interface IScreenPassageParams {
-    eventId: string;
+    chapterId: string;
     characterId: string;
     passageId: string;
 }
 
-export interface IEventPassagesParams {
-    eventId: string;
+export interface IChapterPassagesParams {
+    chapterId: string;
 }
 
 export interface ILocationParams {
@@ -109,7 +109,7 @@ export class TemplateGenerator {
         const variables = new CharacterTemplateVariables(
             params.characterId,
             params.characterName,
-            params.startEventId,
+            params.startChapterId,
             params.startPassageId,
             params.startLocation,
             params.health,
@@ -122,13 +122,13 @@ export class TemplateGenerator {
     }
 
     /**
-     * Creates an event file using the event template
+     * Creates an chapter file using the chapter template
      */
-    public async createEvent(params: IEventParams): Promise<string> {
-        const template = this.loadTemplate('event.hbs');
+    public async createChapter(params: IChapterParams): Promise<string> {
+        const template = this.loadTemplate('chapter.hbs');
 
-        const variables = new EventTemplateVariables(
-            params.eventId,
+        const variables = new ChapterTemplateVariables(
+            params.chapterId,
             params.title,
             params.description,
             params.location,
@@ -136,7 +136,7 @@ export class TemplateGenerator {
             params.timeEnd,
         );
 
-        return variables.generateEventCode(template, params.initObjectContent, params.eventDataTypeContent);
+        return variables.generateChapterCode(template, params.initObjectContent, params.chapterDataTypeContent);
     }
 
     /**
@@ -146,7 +146,7 @@ export class TemplateGenerator {
         const template = this.loadTemplate('passage.screen.hbs');
 
         const variables = new PassageScreenTemplateVariables(
-            params.eventId,
+            params.chapterId,
             params.characterId,
             params.passageId
         );
@@ -155,16 +155,16 @@ export class TemplateGenerator {
     }
 
     /**
-     * Creates an event passages file using the event passages template
+     * Creates an chapter passages file using the chapter passages template
      */
-    public async createEventPassages(params: IEventPassagesParams): Promise<string> {
-        const template = this.loadTemplate('eventPassages.hbs');
+    public async createChapterPassages(params: IChapterPassagesParams): Promise<string> {
+        const template = this.loadTemplate('chapterPassages.hbs');
 
-        const variables = new EventPassagesTemplateVariables(
-            params.eventId
+        const variables = new ChapterPassagesTemplateVariables(
+            params.chapterId
         );
 
-        return variables.generateEventPassagesCode(template);
+        return variables.generateChapterPassagesCode(template);
     }
 
     /**
@@ -209,17 +209,17 @@ export class TemplateGenerator {
     }
 
     /**
-     * Creates an event with minimal required parameters
+     * Creates an chapter with minimal required parameters
      */
-    public async createSimpleEvent(eventId: string, title?: string): Promise<string> {
-        return this.createEvent({ eventId, title });
+    public async createSimpleChapter(chapterId: string, title?: string): Promise<string> {
+        return this.createChapter({ chapterId, title });
     }
 
     /**
-     * Creates an empty event passages file with minimal required parameters
+     * Creates an empty chapter passages file with minimal required parameters
      */
-    public async createSimpleEventPassages(eventId: string): Promise<string> {
-        return this.createEventPassages({ eventId });
+    public async createSimpleChapterPassages(chapterId: string): Promise<string> {
+        return this.createChapterPassages({ chapterId });
     }
 
     /**

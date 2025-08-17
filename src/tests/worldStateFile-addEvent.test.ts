@@ -16,15 +16,15 @@ suite('WorldStateFileManager Correctness Tests', () => {
     setup(() => {
         initialContent = `
             import { TKingdomLocationData } from './locations/kingdom.location';
-            import { TWeddingEventData } from './events/wedding/wedding.event';
+            import { TWeddingChapterData } from './chapters/wedding/wedding.chapter';
             // ... other imports
 
             type TWorldState = {
                 time: Time;
                 // ... other properties
-                events: {
-                    village: { ref: TEvent<'village'> } & TVillageEventData;
-                    wedding: { ref: TEvent <'wedding'> } & TWeddingEventData;
+                chapters: {
+                    village: { ref: TChapter<'village'> } & TVillageChapterData;
+                    wedding: { ref: TChapter <'wedding'> } & TWeddingChapterData;
                 };
                 locations: {
                     village: { ref: TLocation<'village'> } & TVillageLocationData;
@@ -34,16 +34,16 @@ suite('WorldStateFileManager Correctness Tests', () => {
         mockCodeBuilder = new TypeScriptCodeBuilder(initialContent);
     });
 
-    test('Should add a new event property to TWorldState without breaking syntax', async () => {
+    test('Should add a new chapter property to TWorldState without breaking syntax', async () => {
         // Arrange
-        const sectionName = WorldStateSection.Events;
-        const itemId = 'newEventName';
-        const typeDefinition = `${itemId}: { ref: TEvent<'${itemId}'> } & TNewEventNameEventData;`;
+        const sectionName = WorldStateSection.Chapters;
+        const itemId = 'newChapterName';
+        const typeDefinition = `${itemId}: { ref: TChapter<'${itemId}'> } & TNewChapterNameChapterData;`;
 
         const expectedBlockContent = `
-            village: { ref: TEvent<'village'> } & TVillageEventData;
-            wedding: { ref: TEvent <'wedding'> } & TWeddingEventData;
-            newEventName: { ref: TEvent<'newEventName'> } & TNewEventNameEventData;
+            village: { ref: TChapter<'village'> } & TVillageChapterData;
+            wedding: { ref: TChapter <'wedding'> } & TWeddingChapterData;
+            newChapterName: { ref: TChapter<'newChapterName'> } & TNewChapterNameChapterData;
         `;
 
         // Act: We simulate the core logic of the file manager by calling the builder directly
@@ -52,7 +52,7 @@ suite('WorldStateFileManager Correctness Tests', () => {
                 onFound: (typeBuilder: { findNestedTypeObject: (arg0: WorldStateSection[], arg1: { onFound: (sectionBuilder: any) => void; onNotFound: () => void; }) => void; }) => {
                     typeBuilder.findNestedTypeObject([sectionName], {
                         onFound: (sectionBuilder) => {
-                            sectionBuilder.addProperty(itemId, `{ ref: TEvent<'${itemId}'> } & TNewEventNameEventData`);
+                            sectionBuilder.addProperty(itemId, `{ ref: TChapter<'${itemId}'> } & TNewChapterNameChapterData`);
                             resolve();
                         },
                         onNotFound: () => reject(new Error(`Section '${sectionName}' not found`))
@@ -65,11 +65,11 @@ suite('WorldStateFileManager Correctness Tests', () => {
         const finalCode = await mockCodeBuilder.toString();
 
         // Assert
-        // Find the 'events' block in the final output
-        const eventsRegex = /events:\s*{([\s\S]*?)\s*};/;
-        const match = finalCode.match(eventsRegex);
+        // Find the 'chapters' block in the final output
+        const chaptersRegex = /chapters:\s*{([\s\S]*?)\s*};/;
+        const match = finalCode.match(chaptersRegex);
 
-        assert.ok(match && match[1], 'The "events" block could not be found or was malformed.');
+        assert.ok(match && match[1], 'The "chapters" block could not be found or was malformed.');
 
         const actualBlockContent = match[1];
 
@@ -77,7 +77,7 @@ suite('WorldStateFileManager Correctness Tests', () => {
         assert.strictEqual(
             normalizeWhitespace(actualBlockContent),
             normalizeWhitespace(expectedBlockContent),
-            'The content of the events block is incorrect.'
+            'The content of the chapters block is incorrect.'
         );
     });
 
@@ -88,23 +88,23 @@ suite('WorldStateFileManager Correctness Tests', () => {
             return str.replace(/[\s;]/g, '').trim();
         }
 
-        test('Should add a new event property to the END of the list correctly', async () => {
+        test('Should add a new chapter property to the END of the list correctly', async () => {
             // This test replicates the exact problem: adding an item to the end of a list in a type alias.
             // The key is ensuring the new property is inserted *before* the closing brace.
             const initialContent = `
             type TWorldState = {
-                events: {
-                    village: { ref: TEvent<'village'> } & TVillageEventData;
-                    wedding: { ref: TEvent <'wedding'> } & TWeddingEventData;
+                chapters: {
+                    village: { ref: TChapter<'village'> } & TVillageChapterData;
+                    wedding: { ref: TChapter <'wedding'> } & TWeddingChapterData;
                 };
             };
         `;
 
-            const expectedEventsBlock = `
-            events: {
-                village: { ref: TEvent<'village'> } & TVillageEventData;
-                wedding: { ref: TEvent <'wedding'> } & TWeddingEventData;
-                newEvent: { ref: TEvent<'newEvent'> } & TNewEventEventData;
+            const expectedChaptersBlock = `
+            chapters: {
+                village: { ref: TChapter<'village'> } & TVillageChapterData;
+                wedding: { ref: TChapter <'wedding'> } & TWeddingChapterData;
+                newChapter: { ref: TChapter<'newChapter'> } & TNewChapterChapterData;
             };
         `;
 
@@ -114,9 +114,9 @@ suite('WorldStateFileManager Correctness Tests', () => {
             await new Promise<void>((resolve) => {
                 codeBuilder.findTypeDeclaration('TWorldState', {
                     onFound: (typeBuilder: { findNestedTypeObject: (arg0: string[], arg1: { onFound: (sectionBuilder: any) => void; }) => void; }) => {
-                        typeBuilder.findNestedTypeObject(['events'], {
+                        typeBuilder.findNestedTypeObject(['chapters'], {
                             onFound: (sectionBuilder) => {
-                                sectionBuilder.addProperty('newEvent', `{ ref: TEvent<'newEvent'> } & TNewEventEventData`);
+                                sectionBuilder.addProperty('newChapter', `{ ref: TChapter<'newChapter'> } & TNewChapterChapterData`);
                                 resolve();
                             }
                         });
@@ -127,16 +127,16 @@ suite('WorldStateFileManager Correctness Tests', () => {
             const finalCode = await codeBuilder.toString();
 
             // Assert
-            const finalMatch = finalCode.match(/events:\s*{([\s\S]*?)}/);
-            const expectedMatch = expectedEventsBlock.match(/events:\s*{([\s\S]*?)}/);
+            const finalMatch = finalCode.match(/chapters:\s*{([\s\S]*?)}/);
+            const expectedMatch = expectedChaptersBlock.match(/chapters:\s*{([\s\S]*?)}/);
 
-            assert.ok(finalMatch, 'Final code did not contain a valid events block');
-            assert.ok(expectedMatch, 'Expected code did not contain a valid events block');
+            assert.ok(finalMatch, 'Final code did not contain a valid chapters block');
+            assert.ok(expectedMatch, 'Expected code did not contain a valid chapters block');
 
             assert.strictEqual(
                 normalizeBlockContent(finalMatch[1]),
                 normalizeBlockContent(expectedMatch[1]),
-                'The content of the events block was not correctly modified.'
+                'The content of the chapters block was not correctly modified.'
             );
         });
     });
@@ -147,12 +147,12 @@ suite('WorldStateFileManager Correctness Tests', () => {
         test('Should correctly add an import and a type property in sequence', async () => {
             // Arrange: A realistic starting state for the world state file.
             const initialContent = `
-import { TWeddingEventData } from './events/wedding/wedding.event';
-import { TEvent } from 'types/TEvent';
+import { TWeddingChapterData } from './chapters/wedding/wedding.chapter';
+import { TChapter } from 'types/TChapter';
 
 type TWorldState = {
-    events: {
-        wedding: { ref: TEvent <'wedding'> } & TWeddingEventData;
+    chapters: {
+        wedding: { ref: TChapter <'wedding'> } & TWeddingChapterData;
     };
 };
 `;
@@ -163,19 +163,19 @@ type TWorldState = {
             // 1. Simulate adding the import statement.
             // We use the import manager as your `WorldStateFileManager` does.
             const importManager = codeBuilder.getImportManager();
-            importManager.addNamedImport('TNewEventEventData', './events/newEvent/newEvent.event');
+            importManager.addNamedImport('TNewChapterChapterData', './chapters/newChapter/newChapter.chapter');
 
             // 2. Simulate adding the property to the type definition.
             await new Promise<void>((resolve, reject) => {
                 codeBuilder.findTypeDeclaration('TWorldState', {
                     onFound: (typeBuilder) => {
-                        typeBuilder.findNestedTypeObject(['events'], {
+                        typeBuilder.findNestedTypeObject(['chapters'], {
                             onFound: (sectionBuilder) => {
                                 // This is the call that likely fails due to incorrect offset calculation
-                                sectionBuilder.addProperty('newEvent', `{ ref: TEvent<'newEvent'> } & TNewEventEventData`);
+                                sectionBuilder.addProperty('newChapter', `{ ref: TChapter<'newChapter'> } & TNewChapterChapterData`);
                                 resolve();
                             },
-                            onNotFound: () => reject(new Error("Nested 'events' section not found"))
+                            onNotFound: () => reject(new Error("Nested 'chapters' section not found"))
                         });
                     },
                     onNotFound: () => reject(new Error("TWorldState declaration not found"))
@@ -189,31 +189,31 @@ type TWorldState = {
 
             // Assert 1: The new import was added correctly.
             assert.ok(
-                finalCode.includes("import { TNewEventEventData } from './events/newEvent/newEvent.event';"),
+                finalCode.includes("import { TNewChapterChapterData } from './chapters/newChapter/newChapter.chapter';"),
                 'The new import statement is missing or incorrect.'
             );
 
-            // Assert 2: The structure of the 'events' type block is correct.
+            // Assert 2: The structure of the 'chapters' type block is correct.
             // This regex is the key: it checks that the new property was inserted *before* the closing brace.
             // If it fails, it means the insertion point was wrong.
-            const eventsBlockRegex = /events:\s*{([\s\S]*?)};/s;
-            const match = finalCode.match(eventsBlockRegex);
+            const chaptersBlockRegex = /chapters:\s*{([\s\S]*?)};/s;
+            const match = finalCode.match(chaptersBlockRegex);
 
-            assert.ok(match, "The 'events' type block is syntactically broken.");
+            assert.ok(match, "The 'chapters' type block is syntactically broken.");
 
             // Assert 3: The content within the block is exactly as expected.
-            const eventsBlockContent = match[1];
+            const chaptersBlockContent = match[1];
             const expectedBlockContent = `
-        wedding: { ref: TEvent <'wedding'> } & TWeddingEventData;
-        newEvent: { ref: TEvent<'newEvent'> } & TNewEventEventData;
+        wedding: { ref: TChapter <'wedding'> } & TWeddingChapterData;
+        newChapter: { ref: TChapter<'newChapter'> } & TNewChapterChapterData;
         `;
 
             // We compare without whitespace to avoid formatting noise, but we've already confirmed
             // the structural integrity with the regex.
             assert.strictEqual(
-                eventsBlockContent.replace(/\s/g, ''),
+                chaptersBlockContent.replace(/\s/g, ''),
                 expectedBlockContent.replace(/\s/g, ''),
-                'The content inside the events block is not correct.'
+                'The content inside the chapters block is not correct.'
             );
         });
     });
@@ -226,17 +226,17 @@ suite('WorldStateFileManager - Definitive Failing Test', () => {
         // Arrange: The EXACT initial content from your logs.
         const initialContent = `
 import { TKingdomLocationData } from './locations/kingdom.location';
-import { TWeddingEventData } from './events/wedding/wedding.event';
-import { TVillageEventData } from './events/village/village.event';
+import { TWeddingChapterData } from './chapters/wedding/wedding.chapter';
+import { TVillageChapterData } from './chapters/village/village.chapter';
 import { TCharacter, TCharacterData, TSideCharacter, TSideCharacterData } from '../types/TCharacter';
 import { TThomasCharacterData } from './characters/thomas';
 import { TFrantaSideCharacterData } from './sideCharacters/Franta';
 import { TVillageLocationData } from './locations/village.location';
-import { TEvent } from 'types/TEvent';
+import { TChapter } from 'types/TChapter';
 import { TLocation } from 'types/TLocation';
 import { TNobleManSideCharacterData } from './sideCharacters/NobleMan';
 import { TAnnieCharacterData } from './characters/annie';
-import { TKingdomEventData } from './events/kingdom/kingdom.event';
+import { TKingdomChapterData } from './chapters/kingdom/kingdom.chapter';
 import { TCharacterId } from 'types/TIds';
 import { THistoryItem } from 'code/Engine/ts/History';
 import { THappening } from 'types/THappening';
@@ -256,10 +256,10 @@ type TWorldState = {
         nobleMan: { ref: TSideCharacter<'nobleMan'> } & TSideCharacterData & Partial<TNobleManSideCharacterData>;
     };
 
-    events: {
-        village: { ref: TEvent<'village'> } & TVillageEventData;
-        kingdom: { ref: TEvent<'kingdom'> } & TKingdomEventData;
-        wedding: { ref: TEvent <'wedding'> } & TWeddingEventData;
+    chapters: {
+        village: { ref: TChapter<'village'> } & TVillageChapterData;
+        kingdom: { ref: TChapter<'kingdom'> } & TKingdomChapterData;
+        wedding: { ref: TChapter <'wedding'> } & TWeddingChapterData;
     };
     locations: {
         village: { ref: TLocation<'village'> } & TVillageLocationData;
@@ -274,15 +274,15 @@ type TWorldState = {
 
         // Act: Perform the EXACT sequence of edits from your file manager.
         // 1. Add the import.
-        codeBuilder.getImportManager().addNamedImport('TNewEventNameEventData', './events/newEventName/newEventName.event');
+        codeBuilder.getImportManager().addNamedImport('TNewChapterNameChapterData', './chapters/newChapterName/newChapterName.chapter');
 
         // 2. Add the property to the nested type.
         await new Promise<void>((resolve) => {
             codeBuilder.findTypeDeclaration('TWorldState', {
                 onFound: (typeBuilder) => {
-                    typeBuilder.findNestedTypeObject(['events'], {
+                    typeBuilder.findNestedTypeObject(['chapters'], {
                         onFound: (sectionBuilder) => {
-                            sectionBuilder.addProperty('newEventName', `{ ref: TEvent<'newEventName'> } & TNewEventNameEventData`);
+                            sectionBuilder.addProperty('newChapterName', `{ ref: TChapter<'newChapterName'> } & TNewChapterNameChapterData`);
                             resolve();
                         }
                     });
@@ -295,7 +295,7 @@ type TWorldState = {
         // Assert: Check for the specific malformation.
         // This test will FAIL if the bug exists.
         assert.ok(
-            !finalCode.includes('TNewEventNameEventData; };'),
+            !finalCode.includes('TNewChapterNameChapterData; };'),
             "Test Failed: An extra closing brace '}' was inserted before the semicolon, breaking the syntax."
         );
     });
